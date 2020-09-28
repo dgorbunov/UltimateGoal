@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.robot.drivetrainController;
 
 @TeleOp(name="mainTele", group="Iterative Opmode")
 public class mainTele extends OpMode {
 
     DcMotor leftMotor;
+    drivetrainController drive;
 
     public void init(){
         leftMotor = hardwareMap.dcMotor.get("left");
