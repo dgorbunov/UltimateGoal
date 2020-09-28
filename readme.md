@@ -1,15 +1,14 @@
 To-Do:
 
-OpenRC
-RoadRunner
-RevExtensions
-Organize into folders for mechanisms/DT/tele, etc.
-Update Control Hub firmware
-Tele with/ RR localization
-Basic shooter test code
-Use PID for shooter motors
-Get OpenCV/Vuforia model working
-Look at examples
+- OpenRC
+- RoadRunner
+- RevExtensions
+- Organize into folders for mechanisms/DT/tele, etc.
+- TeleOp with/ RR localization
+- Basic shooter test code
+- Use PID for shooter motors
+- Get OpenCV/Vuforia model working
+- Look at examples
 
 ## OpenRC-Turbo
 
