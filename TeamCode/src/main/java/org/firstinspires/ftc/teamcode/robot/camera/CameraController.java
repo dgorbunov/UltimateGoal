@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.camera;
 
-public class cameraController {
+public class CameraController {
 }

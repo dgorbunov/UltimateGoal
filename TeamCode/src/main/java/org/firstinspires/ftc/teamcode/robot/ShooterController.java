@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-public class shooterController {
+public class ShooterController {
 }
