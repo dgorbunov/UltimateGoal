@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 public interface Controller {
-    boolean init ();
-
-    void startingtoMove();
+    void init ();
+    void start();
+    void stop();
 }
