@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.mech.IntakeController;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.lang.reflect.Constructor;
 import java.sql.Array;
@@ -23,8 +24,10 @@ public class MainTele extends OpMode {
     private IntakeController intake;
     private List<Controller> controllers = new ArrayList<Controller>();
 
-    public static Telemetry s_telemetry;
-    MainTele() {s_telemetry = telemetry;}
+    public static Telemetry sTelemetry;
+    MainTele() {sTelemetry = telemetry;}
+
+    ExpansionHubEx Hub;
 
 
     public void init() {
@@ -37,9 +40,6 @@ public class MainTele extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_rear"),
                 hardwareMap);
 
-        drive.defGoBilda();
-
-        //TODO: how to init all implementations of Controller?
 
         controllers.add(drive);
         controllers.add(intake);
@@ -54,26 +54,21 @@ public class MainTele extends OpMode {
     }
 
     public void start() { //code to run once when play is hit
-        /*
-        Concept class hierarchy
-         */
-//        if (gamepadController.macro1) {
-//                drive.beginMoving();
-//        } else drive.stopMoving();
-//        gamepadController.intake();
     }
 
     public void loop() {
 
         drive.drive(gamepad1);
+        telemetry.addLine("Using " + Hub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + "A");
 
     }
 
     public void stop() { //code to run when program is stopped
+        telemetry.addLine("Stopping Program");
         drive.stop();
     }
 
     public static Telemetry GetTelemetry() {
-        return s_telemetry;
+        return sTelemetry;
     }
 }
