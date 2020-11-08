@@ -29,9 +29,6 @@ public class MainTele extends OpMode {
 
     private List<Controller> controllers = new ArrayList<Controller>();
 
-    public static Telemetry sTelemetry;
-    //MainTele() {sTelemetry = telemetry;}
-
 
 
     public void init() {
@@ -40,7 +37,7 @@ public class MainTele extends OpMode {
         if (noChassis) {
             //TODO: implement mockDcMotor
         } else {
-            drive = new DrivetrainController(hardwareMap);
+            drive = new DrivetrainController(hardwareMap, telemetry);
             hub = new HubController(hardwareMap);
         }
 
@@ -78,7 +75,7 @@ public class MainTele extends OpMode {
         telemetry.addLine("Stop");
     }
 
-    public static Telemetry GetTelemetry() {
-        return sTelemetry;
-    }
+//    public static Telemetry GetTelemetry() {
+//        return sTelemetry;
+//    }
 }

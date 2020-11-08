@@ -16,15 +16,21 @@ public class DrivetrainController implements Controller {
     DcMotor rightFront;
     DcMotor rightRear;
 
-    Telemetry telemetry = MainTele.sTelemetry;
+    //Telemetry telemetry = MainTele.sTelemetry;
+    Telemetry telemetry;
+
+    boolean slowMode = false;
+    boolean justHit = false;
 
 
-    public DrivetrainController(HardwareMap hardwareMap) {
+    public DrivetrainController(HardwareMap hardwareMap, Telemetry tel) {
 
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         leftRear = hardwareMap.get(DcMotor.class, "left_rear");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
+
+        telemetry = tel;
     }
 
     private void defGoBilda(){ //GoBilda has motor mounts flipped
@@ -34,11 +40,35 @@ public class DrivetrainController implements Controller {
 
     public void drive(Gamepad gamepad){
 
-        if (!gamepad.atRest()) { //applies to analog sticks
+            if (!slowMode & gamepad.right_bumper & !justHit) {
+                slowMode = true;
+                justHit = true;
+                telemetry.addLine("Slow Mode");
+                //TODO: fix telemetry, or use static
+            }
+            else if (slowMode & gamepad.right_bumper & !justHit){
+                slowMode = false;
+                justHit = true;
+                telemetry.clear();
+            }
 
-            double y = -gamepad.left_stick_y; //reversed
-            double x = gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
-            double rx = -gamepad.right_stick_x; //Might need to change for Acto
+            if (!gamepad.right_bumper){
+                justHit = false;
+            }
+
+            double y;
+            double x;
+            double rx;
+            if (slowMode) {
+                y = -gamepad.left_stick_y * 0.5; //reversed
+                x = -gamepad.left_stick_x * 0.75; // Counteract imperfect strafing
+                rx = -gamepad.right_stick_x * 0.5; //Might need to change for Acto
+            }
+            else {
+                y = -gamepad.left_stick_y; //reversed
+                x = -gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
+                rx = -gamepad.right_stick_x; //Might need to change for Acto
+            }
 
             double leftFrontPower = y + x + rx;
             double leftRearPower = y - x + rx;
@@ -65,7 +95,6 @@ public class DrivetrainController implements Controller {
             }
 
             setPower(leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
-        }
     };
 
     public void setPower(double LF, double LR, double RF, double RR){

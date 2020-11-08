@@ -15,7 +15,7 @@ public class ShooterController implements Controller {
 
     float wheelRadius = 0.051f; //meters
 
-    Telemetry telemetry = MainTele.GetTelemetry();
+    //Telemetry telemetry = MainTele.GetTelemetry();
     DcMotorEx shooter;
 
     public ShooterController (DcMotor shooter,
@@ -35,8 +35,8 @@ public class ShooterController implements Controller {
 
         String velocity = shooter.getVelocity(AngleUnit.RADIANS) + " rad/s";
         String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
-        telemetry.addData("Shooter Velocity:", velocity);
-        telemetry.addData("Shooter Velocity:", velocityTangential); //v = r*w
+//        telemetry.addData("Shooter Velocity:", velocity);
+//        telemetry.addData("Shooter Velocity:", velocityTangential); //v = r*w
     }
 
     @Override
