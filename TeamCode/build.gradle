@@ -19,5 +19,8 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.2' //RoadRunner
     implementation 'org.openftc:easyopencv:1.4.1' //EasyOpenCV
     implementation 'org.apache.commons:commons-math3:3.6.1' //Math for RR
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+
+    implementation('com.acmerobotics.dashboard:dashboard:0.3.10') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }

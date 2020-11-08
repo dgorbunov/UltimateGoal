@@ -16,16 +16,15 @@ public class DrivetrainController implements Controller {
     DcMotor rightFront;
     DcMotor rightRear;
 
-    Telemetry telemetry = MainTele.GetTelemetry();
+    Telemetry telemetry = MainTele.sTelemetry;
 
 
-    public DrivetrainController(DcMotor left_front ,
-                                DcMotor left_rear,
-                                DcMotor right_front,
-                                DcMotor right_rear,
-                                HardwareMap hardwareMap) {
+    public DrivetrainController(HardwareMap hardwareMap) {
 
-
+        leftFront = hardwareMap.get(DcMotor.class, "left_front");
+        leftRear = hardwareMap.get(DcMotor.class, "left_rear");
+        rightFront = hardwareMap.get(DcMotor.class, "right_front");
+        rightRear = hardwareMap.get(DcMotor.class, "right_rear");
     }
 
     private void defGoBilda(){ //GoBilda has motor mounts flipped
