@@ -17,16 +17,6 @@ public class fieldNavigation extends OpMode  {
 
     @Override
     public void init() {
-        if (noChassis) {
-            //    drive = new mockController;
-        } else drive = new DrivetrainController(
-                hardwareMap.get(DcMotor.class, "left_front"),
-                hardwareMap.get(DcMotor.class, "left_rear"),
-                hardwareMap.get(DcMotor.class, "right_front"),
-                hardwareMap.get(DcMotor.class, "right_rear"),
-                hardwareMap, telemetry);
-
-        drive.defGoBilda();
 
     }
 
