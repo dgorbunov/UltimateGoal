@@ -68,11 +68,12 @@ public class MainTele extends OpMode {
     }
 
     public void stop() { //code to run when program is stopped
-        telemetry.addLine("Stopping");
+        telemetry.addLine("Stopping...");
         for (Controller c:controllers) {
             c.stop();
         }
-        telemetry.addLine("Stop");
+        telemetry.clear();
+        telemetry.addLine("Stopped");
     }
 
 //    public static Telemetry GetTelemetry() {

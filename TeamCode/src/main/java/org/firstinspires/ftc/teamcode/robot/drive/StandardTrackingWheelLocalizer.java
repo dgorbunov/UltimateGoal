@@ -32,12 +32,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.6889764; // in (35mm/2 = 17.5mm)
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 16.4375; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 16.4135; // in; distance between the left and right wheels (calibrated)
     public static double FORWARD_OFFSET = 0.39; // in; offset of the lateral wheel (about 1cm forward)
 
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
-    //TODO: Tune X/Y Mulitplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
+    //TODO: Tune X/Y Multiplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
+
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
@@ -70,9 +71,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @NonNull
     @Override
     public List<Double> getWheelVelocities() {
-        // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
-        //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
-        //  compensation method
 
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCorrectedVelocity()),

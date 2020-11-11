@@ -34,8 +34,8 @@ public class DrivetrainController implements Controller {
     }
 
     private void defGoBilda(){ //GoBilda has motor mounts flipped
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void drive(Gamepad gamepad){
@@ -62,12 +62,12 @@ public class DrivetrainController implements Controller {
             if (slowMode) {
                 y = -gamepad.left_stick_y * 0.5; //reversed
                 x = -gamepad.left_stick_x * 0.75; // Counteract imperfect strafing
-                rx = -gamepad.right_stick_x * 0.5; //Might need to change for Acto
+                rx = gamepad.right_stick_x * 0.5; //Might need to change for Acto
             }
             else {
                 y = -gamepad.left_stick_y; //reversed
                 x = -gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
-                rx = -gamepad.right_stick_x; //Might need to change for Acto
+                rx = gamepad.right_stick_x; //Might need to change for Acto
             }
 
             double leftFrontPower = y + x + rx;

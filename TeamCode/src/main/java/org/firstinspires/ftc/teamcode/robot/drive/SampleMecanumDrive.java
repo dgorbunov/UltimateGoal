@@ -52,10 +52,10 @@ import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.8; //Calibrate using StrafeTest
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -140,8 +140,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
