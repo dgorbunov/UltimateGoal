@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.drive.tune;
+package org.firstinspires.ftc.teamcode.robot.drive.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Config
 @Disabled
 @Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
+public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 
     @Override
@@ -21,7 +21,7 @@ public class StraightTest extends LinearOpMode {
         org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive drive = new org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
+                .strafeRight(DISTANCE)
                 .build();
 
         waitForStart();

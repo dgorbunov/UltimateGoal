@@ -16,7 +16,6 @@ public class DrivetrainController implements Controller {
     DcMotor rightFront;
     DcMotor rightRear;
 
-    //Telemetry telemetry = MainTele.sTelemetry;
     Telemetry telemetry;
 
     boolean slowMode = false;
@@ -52,6 +51,8 @@ public class DrivetrainController implements Controller {
                 telemetry.clear();
             }
 
+            telemetry.update();
+
             if (!gamepad.right_bumper){
                 justHit = false;
             }
@@ -61,12 +62,12 @@ public class DrivetrainController implements Controller {
             double rx;
             if (slowMode) {
                 y = -gamepad.left_stick_y * 0.5; //reversed
-                x = -gamepad.left_stick_x * 0.75; // Counteract imperfect strafing
+                x = gamepad.left_stick_x * 0.75; // Counteract imperfect strafing
                 rx = gamepad.right_stick_x * 0.5; //Might need to change for Acto
             }
             else {
                 y = -gamepad.left_stick_y; //reversed
-                x = -gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
+                x = gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
                 rx = gamepad.right_stick_x; //Might need to change for Acto
             }
 
