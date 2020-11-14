@@ -21,12 +21,14 @@ public class fullAuto extends OpMode {
         controllers = new ControllerManager(vuforia);
 
         controllers.init();
-
         telemetry.addLine("Initialized");
+
+        //telemetry.addLine(vuforia.rankRings()); //Before we start game
     }
 
     @Override
     public void init_loop() {
+        telemetry.addLine(vuforia.rankRings());
     }
 
     @Override

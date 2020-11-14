@@ -18,6 +18,8 @@ package org.firstinspires.ftc.robotcore.external.tfod;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.util.Comparator;
+
 /**
  * Interface representing a detection.
  *

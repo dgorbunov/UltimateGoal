@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.drive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,12 +10,18 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.tele.MainTele;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+
 public class DrivetrainController implements Controller {
 
     DcMotor leftFront;
     DcMotor leftRear;
     DcMotor rightFront;
     DcMotor rightRear;
+    private List<DcMotor> motors;
 
     Telemetry telemetry;
 
@@ -29,6 +36,8 @@ public class DrivetrainController implements Controller {
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
 
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
         telemetry = tel;
     }
 
@@ -39,20 +48,17 @@ public class DrivetrainController implements Controller {
 
     public void drive(Gamepad gamepad){
 
-            if (!slowMode & gamepad.right_bumper & !justHit) {
+            if (!slowMode & gamepad.right_bumper && !justHit) {
                 slowMode = true;
                 justHit = true;
                 telemetry.addLine("Slow Mode");
                 //TODO: fix telemetry, or use static
             }
-            else if (slowMode & gamepad.right_bumper & !justHit){
+            else if (slowMode & gamepad.right_bumper && !justHit){
                 slowMode = false;
                 justHit = true;
                 telemetry.clear();
             }
-
-            telemetry.update();
-
             if (!gamepad.right_bumper){
                 justHit = false;
             }
@@ -96,6 +102,7 @@ public class DrivetrainController implements Controller {
             }
 
             setPower(leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
+            telemetry.addLine("driving");
     };
 
     public void setPower(double LF, double LR, double RF, double RR){
@@ -106,10 +113,11 @@ public class DrivetrainController implements Controller {
     }
 
     private void setAllPower(double power){
-        leftFront.setPower(power);
-        leftRear.setPower(power);
-        rightFront.setPower(power);
-        rightRear.setPower(power);
+        for (DcMotor motor : motors) motor.setPower(power);
+    }
+
+    public void setZeroPowerBehavior (DcMotor.ZeroPowerBehavior behavior) {
+        for (DcMotor motor : motors) motor.setZeroPowerBehavior(behavior);
     }
 
     @Override
@@ -121,6 +129,7 @@ public class DrivetrainController implements Controller {
     @Override
     public void init() {
         defGoBilda();
+        setZeroPowerBehavior(BRAKE);
     }
 
     @Override

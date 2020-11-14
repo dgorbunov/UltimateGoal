@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -16,6 +17,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -25,11 +30,14 @@ public class CameraController implements Controller {
     HardwareMap hardwareMap;
 
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/UltimateGoal.tflite"; //For OpenRC, loaded from internal storage to reduce APK size
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
+    public static final String LABEL_FIRST_ELEMENT = "Quad";
+    public static final String LABEL_SECOND_ELEMENT = "Single";
+    public static final String LABEL_NO_ELEMENT = "None";
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+
+    private Recognition topRecognition = null;
 
     public CameraController(HardwareMap hwMap, Telemetry tel) {
 
@@ -46,7 +54,7 @@ public class CameraController implements Controller {
     @Override
     public void start() { }
 
-    public void countRings() { //TODO: sort updatedRecognitions by probability, return top probability with # of rings
+    public void countRings() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -62,9 +70,31 @@ public class CameraController implements Controller {
                     telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                             recognition.getRight(), recognition.getBottom());
                 }
-                telemetry.update();
             }
         }
+    }
+
+    /*
+     Sort recognitions by confidence and return highest confidence recognition
+     */
+    public String rankRings (){
+        if (tfod != null) {
+            List<Recognition> Recognitions = tfod.getRecognitions();
+//            List<Float> confidenceList = new ArrayList<>();
+            if (Recognitions != null && Recognitions.size() != 0) {
+
+//                int i;
+//                for (i = 0; i < updatedRecognitions.size(); i++) confidenceList.add(updatedRecognitions.get(i).getConfidence());
+//                Collections.sort(confidenceList); //sort confidence
+                Collections.sort(Recognitions, Comparator.comparingDouble(Recognition::getConfidence)); //sort recognitions by confidence
+
+                topRecognition = Recognitions.get(Recognitions.size() - 1); //set top recognition to top confidence level
+                return topRecognition.getLabel();
+            }
+            else return LABEL_NO_ELEMENT;
+
+        }
+        else return "TensorFlow Not Initialized";
     }
 
     @Override
@@ -106,7 +136,7 @@ public class CameraController implements Controller {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            //tfod.setZoom(2.5, 1.78);
+            tfod.setZoom(2, 1.78);
 
     }
 }
