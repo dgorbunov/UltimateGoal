@@ -24,16 +24,19 @@ public class fullAuto extends OpMode {
         telemetry.addLine("Initialized");
 
         //telemetry.addLine(vuforia.rankRings()); //Before we start game
+
     }
 
     @Override
     public void init_loop() {
         telemetry.addLine(vuforia.rankRings());
+        vuforia.trackTargets();
+
     }
 
     @Override
     public void start() { //code to run once when play is hit
-        controllers.start();
+        controllers.start(); //stop vuforia instance
     }
 
     @Override
