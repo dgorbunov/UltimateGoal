@@ -53,7 +53,7 @@ public class CameraController implements Controller {
     private OpenGLMatrix lastLocation = null;
     private TFObjectDetector tfod;
 
-    private boolean targetVisible = false;
+    public boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
@@ -135,7 +135,7 @@ public class CameraController implements Controller {
         else return "TensorFlow Not Initialized";
     }
 
-    public void trackTargets(){
+    private void trackTargets(){
 
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
@@ -154,6 +154,9 @@ public class CameraController implements Controller {
             }
         }
 
+    }
+
+    public void printTargetLocalization() {
         // Provide feedback as to where the robot is located (if we know).
         if (targetVisible) {
             // express position (translation) of robot in inches.
@@ -168,6 +171,32 @@ public class CameraController implements Controller {
         else {
             telemetry.addData("Visible Target", "none");
         }
+    }
+
+    public double getXTranslationFromTarget(){
+        trackTargets();
+        // Provide feedback as to where the robot is located (if we know).
+        if (targetVisible) {
+            // express position (translation) of robot in inches.
+            VectorF translation = lastLocation.getTranslation();
+            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+
+            // express the rotation of the robot in degrees.
+            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        }
+        else {
+            telemetry.addData("Visible Target", "none");
+            return 0;
+        }
+    }
+
+    public String getTargetName(){
+        trackTargets();
+        // Provide feedback as to where the robot is located (if we know).
+        if (targetVisible) return trackable.getName();
+        else return "None";
     }
 
     @Override
