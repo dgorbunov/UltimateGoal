@@ -1,11 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.trajectories;
 
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 public class TrajectoryController implements Controller {
+
+    private DrivetrainController drive;
+    private Telemetry telemetry;
+    private HardwareMap hardwareMap;
 
     public enum trajectoryList {
         redLeftFull,
@@ -14,12 +21,14 @@ public class TrajectoryController implements Controller {
         blueRightFull,
     };
 
-    public TrajectoryController(Telemetry telemetry){
+    public TrajectoryController(DrivetrainController drivetrain, HardwareMap hwMap, Telemetry tel){
+        drive = drivetrain;
+        hardwareMap = hwMap;
+        telemetry = tel;
 
     }
 
     public void selectTrajectory(trajectoryList trajectory){
-
         buildTrajectory(trajectory);
     }
 

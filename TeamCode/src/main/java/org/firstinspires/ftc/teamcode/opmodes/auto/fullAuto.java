@@ -1,24 +1,28 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.trajectories.TrajectoryController;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 @Autonomous(name="fullAuto", group="Iterative Opmode")
 public class fullAuto extends OpMode {
 
     private CameraController vuforia;
     private TrajectoryController trajectory;
+    private DrivetrainController drive;
     private ControllerManager controllers;
 
     @Override
     public void init() {
         telemetry.addLine("Initializing...");
         vuforia = new CameraController(hardwareMap, telemetry);
-        trajectory = new TrajectoryController(telemetry);
+        drive = new DrivetrainController(hardwareMap, telemetry);
+        trajectory = new TrajectoryController(drive, hardwareMap, telemetry);
 
         controllers = new ControllerManager(vuforia);
 
@@ -32,11 +36,12 @@ public class fullAuto extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addLine(vuforia.rankRings());
-        if (vuforia.getTargetName() == "Red Tower Goal"){
-            //find x translational difference"
-        } else if (vuforia.getTargetName() == "Blue Tower Goal"){
-
-        } //else //nothing found, moving forward
+        vuforia.printTargetLocalization();
+//        if (vuforia.getTargetName() == "Red Tower Goal"){
+//            //find x translational difference"
+//        } else if (vuforia.getTargetName() == "Blue Tower Goal"){
+//
+//        } //else //nothing found, moving forward
     }
 
     @Override
