@@ -51,7 +51,7 @@ public class fullAuto extends OpMode {
         else if (strNumRings.equals("Quad")) numRings = 4;
         controllers.start(); //stop vuforia instance
 
-        trajectory.selectTrajectory(alliance, side); //alliance, side
+        trajectory.selectTrajectory(alliance, side, numRings);
     }
 
     @Override

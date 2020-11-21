@@ -27,8 +27,9 @@ public class TrajectoryController implements Controller {
         drive = new DrivetrainController(hardwareMap, telemetry);
     }
 
-    public void selectTrajectory(String alliance, String side){
-        //TODO: trajectory Tabel (array with columns for alliance, side, etc.)
+    public void selectTrajectory(String alliance, String side, int numRings){
+        telemetry.addData("Selecting Trajectory: " + alliance + " " + side + " Rings", numRings);
+        //TODO:  trajectory Tabel (array with columns for alliance, side, etc.)
     }
 
     private void buildTrajectory(trajectoryList trajectory){

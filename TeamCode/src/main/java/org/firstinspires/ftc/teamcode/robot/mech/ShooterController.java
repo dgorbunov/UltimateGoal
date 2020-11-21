@@ -15,11 +15,14 @@ public class ShooterController implements Controller {
 
     float wheelRadius = 0.051f; //meters
 
-    //Telemetry telemetry = MainTele.GetTelemetry();
     DcMotorEx shooter;
+    Telemetry telemetry;
 
-    public ShooterController (DcMotor shooter,
+    public ShooterController (Telemetry tel,
                               HardwareMap hardwareMap){
+
+        //shooter = hardwareMap.get(DcMotor.class, "shooter");
+        telemetry = tel;
 
     }
 
@@ -29,9 +32,8 @@ public class ShooterController implements Controller {
     }
 
     public void shoot(Gamepad gamepad, boolean button){
-        if (button){
-            shooter.setPower(1);
-        } else stop();
+        if (button) shooter.setPower(1); //shooter.setVelocity();
+         else stop();
 
         String velocity = shooter.getVelocity(AngleUnit.RADIANS) + " rad/s";
         String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
