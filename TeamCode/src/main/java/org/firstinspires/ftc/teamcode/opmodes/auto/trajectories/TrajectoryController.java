@@ -21,19 +21,17 @@ public class TrajectoryController implements Controller {
         blueRightFull,
     };
 
-    public TrajectoryController(DrivetrainController drivetrain, HardwareMap hwMap, Telemetry tel){
-        drive = drivetrain;
+    public TrajectoryController(HardwareMap hwMap, Telemetry tel){
         hardwareMap = hwMap;
         telemetry = tel;
-
+        drive = new DrivetrainController(hardwareMap, telemetry);
     }
 
-    public void selectTrajectory(trajectoryList trajectory){
-        buildTrajectory(trajectory);
+    public void selectTrajectory(String alliance, String side){
+        //TODO: trajectory Tabel (array with columns for alliance, side, etc.)
     }
 
     private void buildTrajectory(trajectoryList trajectory){
-
     }
 
     public void runTrajectory(trajectoryList trajectory) {

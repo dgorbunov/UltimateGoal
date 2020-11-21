@@ -12,41 +12,46 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 @Autonomous(name="fullAuto", group="Iterative Opmode")
 public class fullAuto extends OpMode {
 
+    //TODO: make seperate opmodes for starting positions
+    public static String alliance = "Red"; // or "Blue"
+    public String side = "Left"; //or "Right"
+
     private CameraController vuforia;
     private TrajectoryController trajectory;
-    private DrivetrainController drive;
     private ControllerManager controllers;
+
+    public int test;
+
+    public static int numRings;
+    private static String strNumRings;
 
     @Override
     public void init() {
         telemetry.addLine("Initializing...");
         vuforia = new CameraController(hardwareMap, telemetry);
-        drive = new DrivetrainController(hardwareMap, telemetry);
-        trajectory = new TrajectoryController(drive, hardwareMap, telemetry);
+        trajectory = new TrajectoryController(hardwareMap, telemetry);
 
-        controllers = new ControllerManager(vuforia);
+        controllers = new ControllerManager(vuforia, trajectory);
 
         controllers.init();
         telemetry.addLine("Initialized");
-
-        //telemetry.addLine(vuforia.rankRings()); //Before we start game
 
     }
 
     @Override
     public void init_loop() {
-        telemetry.addLine(vuforia.rankRings());
-        vuforia.printTargetLocalization();
-//        if (vuforia.getTargetName() == "Red Tower Goal"){
-//            //find x translational difference"
-//        } else if (vuforia.getTargetName() == "Blue Tower Goal"){
-//
-//        } //else //nothing found, moving forward
+        strNumRings = vuforia.rankRings();
+        telemetry.addLine(strNumRings);
     }
 
     @Override
     public void start() { //code to run once when play is hit
+        if (strNumRings.equals("None")) numRings = 0;
+        else if (strNumRings.equals("Single")) numRings = 1;
+        else if (strNumRings.equals("Quad")) numRings = 4;
         controllers.start(); //stop vuforia instance
+
+        trajectory.selectTrajectory(alliance, side); //alliance, side
     }
 
     @Override
