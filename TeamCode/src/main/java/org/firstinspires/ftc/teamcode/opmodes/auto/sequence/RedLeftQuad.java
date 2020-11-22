@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
-public class RedLeftQuadSequence extends Sequence {
+public class RedLeftQuad extends Sequence {
 
-    public RedLeftQuadSequence(HardwareMap hwMap, Telemetry tel){
+    public RedLeftQuad(HardwareMap hwMap, Telemetry tel){
         super(hwMap, tel);
     }
 
