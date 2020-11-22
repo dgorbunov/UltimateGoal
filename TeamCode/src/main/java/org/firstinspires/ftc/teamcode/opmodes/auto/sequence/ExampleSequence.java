@@ -11,31 +11,15 @@ public class ExampleSequence extends Sequence {
         super(hwMap, tel);
     }
 
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void stop() {
-    }
-
-
     public void run() {
-        Pose2d pos = new Pose2d(0,0);
-        moveToSquares(pos);
-        dropWobble(pos);
-        moveToStart(pos);
-        collectWobble(pos);
-        moveToShoot(pos);
-        shootRings(pos);
-        intakeRings(pos);
-        moveToLaunchLine(pos);
+        moveToSquares(GetCurrentPose());
+        dropWobble(GetCurrentPose());
+        moveToStart(GetCurrentPose());
+        collectWobble(GetCurrentPose());
+        moveToShoot(GetCurrentPose());
+        shootRings();
+        intakeRings(GetCurrentPose());
+        moveToLaunchLine(GetCurrentPose());
         stop();
     }
 }

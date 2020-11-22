@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.ExampleSequence;
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftQuadSequnce;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftQuadSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
@@ -32,7 +32,7 @@ public class SequenceController implements Controller {
          */
         addTrajectory(
                 new ExampleSequence(hwMap, tel),
-                new RedLeftQuadSequnce(hwMap, tel)
+                new RedLeftQuadSequence(hwMap, tel)
         );
     }
 
@@ -53,11 +53,11 @@ public class SequenceController implements Controller {
                 }
             }
         } catch (Exception e){
-            telemetry.addLine("Exception while selecting Trajectory: " + e.toString());
+            telemetry.addLine("Exception while selecting trajectory: " + e.toString());
         }
 
         if (sequence == null) {
-            telemetry.addLine("No Trajectory Found");
+            telemetry.addLine("No trajectory Found");
             return null;
         }
 
@@ -67,7 +67,11 @@ public class SequenceController implements Controller {
     }
 
     public void runTrajectory(Sequence sequence) {
-        sequence.run(); //hang on this
+        try {
+            sequence.run(); //hang on this
+        } catch (Exception e){
+            telemetry.addLine("Exception while running sequence: " + e.toString());
+        }
     }
 
     private void addTrajectory(Sequence... traj){
