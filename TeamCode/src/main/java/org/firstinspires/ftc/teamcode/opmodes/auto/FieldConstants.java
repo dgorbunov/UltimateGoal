@@ -4,8 +4,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 public class FieldConstants {
 
-    public static final double robotLength = 18;
-    public static final double robotWidth = 18;
-    public static final double startingPosY = -72 + (robotWidth/2);
+    public static final double RobotLength = 18;
+    public static final double RobotWidth = 18;
+    public static final double StartingPosX = -30 + (RobotLength/2);
+    public static final double StartingPosY = -72 + (RobotWidth/2);
 
 }

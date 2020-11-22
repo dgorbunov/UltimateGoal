@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
 
@@ -32,8 +33,9 @@ public class Sequence extends Thread {
                 this.setName("Sequence");
             }
 
-            // Set inital pose
-            Pose2d startPose = GetCurrentPose();
+            // Define our start pose
+            // This assumes we start at x: 15, y: 10, heading: 180 degrees
+            Pose2d startPose = new Pose2d(FieldConstants.StartingPosX, FieldConstants.StartingPosY, Math.toRadians(180));
             drive.setPoseEstimate(startPose);
         }
     }
