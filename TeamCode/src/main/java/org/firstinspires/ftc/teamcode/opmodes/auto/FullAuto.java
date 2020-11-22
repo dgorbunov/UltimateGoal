@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.SequenceFollower;
+
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
@@ -16,7 +17,7 @@ public class FullAuto extends OpMode {
 
     private CameraController vuforia;
     private ControllerManager controllers;
-    private SequenceFollower sequenceFollower;
+    private SequenceController sequenceController;
 
 
     public static int numRings;
@@ -26,13 +27,12 @@ public class FullAuto extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
         vuforia = new CameraController(hardwareMap, telemetry);
-        sequenceFollower = new SequenceFollower(hardwareMap, telemetry)
+        sequenceController = new SequenceController(hardwareMap, telemetry);
 
         controllers = new ControllerManager(vuforia);
 
         controllers.init();
         telemetry.addLine("Initialized");
-
     }
 
     @Override
@@ -47,7 +47,12 @@ public class FullAuto extends OpMode {
         else if (strNumRings.equals("Single")) numRings = 1;
         else if (strNumRings.equals("Quad")) numRings = 4;
         controllers.start(); //stop vuforia instance
-        sequenceFollower.selectTrajectory(alliance, side, strNumRings, numRings);
+
+        Sequence sequence = sequenceController.selectTrajectory(alliance, side, strNumRings, numRings);
+        if (sequence != null) {
+            telemetry.addLine("Running Trajectory: " + sequence.getClass().getSimpleName());
+            sequenceController.runTrajectory(sequence);
+        }
     }
 
     @Override
