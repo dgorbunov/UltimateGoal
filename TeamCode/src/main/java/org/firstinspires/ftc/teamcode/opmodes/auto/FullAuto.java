@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 @Autonomous(name="fullAuto", group="Iterative Opmode")
 public class FullAuto extends OpMode {
 
-    //TODO: make seperate opmodes for starting positions
+    //TODO: make separate opmodes for starting positions
     public static String alliance = "Red"; // or "Blue"
     public static String side = "Left"; //or "Right"
 

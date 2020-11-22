@@ -20,10 +20,18 @@ public class Sequence extends Thread {
     public Sequence(HardwareMap hwMap, Telemetry tel){
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
+
+        init();
     }
 
-    public void init() {
+    protected void init() {
         synchronized (lock1) {
+            if (!this.isAlive()) {
+                telemetry.addData("Sequence", "start thread");
+                this.start();
+                this.setName("Sequence");
+            }
+
             // Set inital pose
             Pose2d startPose = GetCurrentPose();
             drive.setPoseEstimate(startPose);
