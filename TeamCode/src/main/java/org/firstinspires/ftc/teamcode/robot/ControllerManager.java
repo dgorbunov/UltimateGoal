@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public  class ControllerManager implements Controller{
 
-    private List<Controller> controllers = new ArrayList<Controller>();
+    private List<Controller> controllers = new ArrayList<>();
 
     public ControllerManager(Controller... controllerChildren){
         addChildren(controllerChildren);

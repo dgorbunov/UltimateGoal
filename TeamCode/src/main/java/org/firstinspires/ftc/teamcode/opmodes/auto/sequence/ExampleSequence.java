@@ -1,6 +1,19 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto.trajectories;
+package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
-public class exampleTrajectory implements trajectory {
+public class ExampleSequence implements Sequence {
+    @Override
+    public void run() {
+        moveToSquares();
+        dropWobble();
+        moveToStart();
+        collectWobble();
+        moveToShoot();
+        shootRings();
+        intakeRings();
+        moveToLaunchLine();
+        stop();
+    }
+
     @Override
     public void moveToSquares() {
 
@@ -38,6 +51,11 @@ public class exampleTrajectory implements trajectory {
 
     @Override
     public void moveToLaunchLine() {
+
+    }
+
+    @Override
+    public void stop() {
 
     }
 }

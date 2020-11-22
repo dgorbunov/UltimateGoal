@@ -1,26 +1,23 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.opmodes.auto.trajectories.TrajectoryController;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.SequenceFollower;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 @Autonomous(name="fullAuto", group="Iterative Opmode")
-public class fullAuto extends OpMode {
+public class FullAuto extends OpMode {
 
     //TODO: make seperate opmodes for starting positions
     public static String alliance = "Red"; // or "Blue"
-    public String side = "Left"; //or "Right"
+    public static String side = "Left"; //or "Right"
 
     private CameraController vuforia;
-    private TrajectoryController trajectory;
     private ControllerManager controllers;
+    private SequenceFollower sequenceFollower;
 
-    public int test;
 
     public static int numRings;
     private static String strNumRings;
@@ -29,9 +26,9 @@ public class fullAuto extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
         vuforia = new CameraController(hardwareMap, telemetry);
-        trajectory = new TrajectoryController(hardwareMap, telemetry);
+        sequenceFollower = new SequenceFollower(hardwareMap, telemetry)
 
-        controllers = new ControllerManager(vuforia, trajectory);
+        controllers = new ControllerManager(vuforia);
 
         controllers.init();
         telemetry.addLine("Initialized");
@@ -50,8 +47,7 @@ public class fullAuto extends OpMode {
         else if (strNumRings.equals("Single")) numRings = 1;
         else if (strNumRings.equals("Quad")) numRings = 4;
         controllers.start(); //stop vuforia instance
-
-        trajectory.selectTrajectory(alliance, side, numRings);
+        sequenceFollower.selectTrajectory(alliance, side, strNumRings, numRings);
     }
 
     @Override

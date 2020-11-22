@@ -76,8 +76,7 @@ public class CameraController implements Controller {
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
     private Recognition topRecognition = null;
-
-    VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromFile("/sdcard/FIRST/vision/UltimateGoal");
+    private VuforiaTrackables targetsUltimateGoal;
 
     public CameraController(HardwareMap hwMap, Telemetry tel) {
 
@@ -212,7 +211,6 @@ public class CameraController implements Controller {
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        parameters.cameraName = webcam;
         parameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine
@@ -248,6 +246,7 @@ public class CameraController implements Controller {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
+        targetsUltimateGoal = vuforia.loadTrackablesFromFile("/sdcard/FIRST/vision/UltimateGoal");
         VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
         VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);

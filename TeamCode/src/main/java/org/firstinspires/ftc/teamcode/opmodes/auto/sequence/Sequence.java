@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto.trajectories;
+package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
-public interface trajectory {
+public interface Sequence {
+    void run();
     void moveToSquares();
     void dropWobble();
     void moveToStart();
@@ -9,4 +10,5 @@ public interface trajectory {
     void shootRings();
     void intakeRings();
     void moveToLaunchLine();
+    void stop();
 }
