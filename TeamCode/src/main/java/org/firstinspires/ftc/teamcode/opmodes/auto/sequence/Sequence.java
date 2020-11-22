@@ -21,11 +21,13 @@ public class Sequence extends Thread {
     public Sequence(HardwareMap hwMap, Telemetry tel){
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
-
-        init();
     }
 
-    protected void init() {
+    public void init() {
+        init(new Pose2d(0,0,0));
+    }
+
+    public void init(Pose2d startPose) {
         synchronized (lock1) {
             if (!this.isAlive()) {
                 telemetry.addData("Sequence", "start thread");
@@ -34,8 +36,6 @@ public class Sequence extends Thread {
             }
 
             // Define our start pose
-            // This assumes we start at x: 15, y: 10, heading: 180 degrees
-            Pose2d startPose = new Pose2d(FieldConstants.StartingPosX, FieldConstants.StartingPosY, Math.toRadians(180));
             drive.setPoseEstimate(startPose);
         }
     }

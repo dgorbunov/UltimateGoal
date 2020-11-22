@@ -68,6 +68,7 @@ public class SequenceController implements Controller {
 
     public void runTrajectory(Sequence sequence) {
         try {
+            sequence.init();
             // Runs async
             sequence.execute();
         } catch (Exception e){
