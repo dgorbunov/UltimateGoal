@@ -18,14 +18,14 @@ public class ExampleSequence extends Sequence {
             return false;
         }
 
-        moveToSquares(GetCurrentPose());
-        dropWobble(GetCurrentPose());
-        moveToStart(GetCurrentPose());
-        collectWobble(GetCurrentPose());
-        moveToShoot(GetCurrentPose());
+        moveToSquares();
+        dropWobble();
+        moveToStart();
+        collectWobble();
+        moveToShoot();
         shootRings();
-        intakeRings(GetCurrentPose());
-        moveToLaunchLine(GetCurrentPose());
+        intakeRings();
+        moveToLaunchLine();
 
         return true;
     }

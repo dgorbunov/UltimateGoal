@@ -30,6 +30,8 @@ public class RedLeftQuad extends Sequence {
             return false;
         }
 
+        moveToSquares();
+
         return true;
     }
 }

@@ -58,14 +58,13 @@ public class Sequence extends Thread {
         }
     }
 
-    public Pose2d GetCurrentPose()
-    {
+    public Pose2d GetCurrentPose() {
         return drive.getPoseEstimate();
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToSquares(Pose2d startPos) {
-        Trajectory mySequence = drive.trajectoryBuilder(startPos)
+    public void moveToSquares() {
+        Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                 .strafeRight(10)
                 .forward(5)
                 .build();
@@ -74,19 +73,19 @@ public class Sequence extends Thread {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void dropWobble(Pose2d startPos){
+    public void dropWobble(){
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToStart(Pose2d startPos) {
+    public void moveToStart() {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void collectWobble(Pose2d startPos) {
+    public void collectWobble() {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToShoot(Pose2d startPos){
+    public void moveToShoot(){
     }
 
     // TODO: 11/21/2020 implement the shooter
@@ -94,10 +93,10 @@ public class Sequence extends Thread {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void intakeRings(Pose2d startPos) {
+    public void intakeRings() {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToLaunchLine(Pose2d startPos) {
+    public void moveToLaunchLine() {
     }
 }
