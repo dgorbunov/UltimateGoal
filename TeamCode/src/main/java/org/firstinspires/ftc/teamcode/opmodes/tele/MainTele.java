@@ -28,7 +28,7 @@ public class MainTele extends OpMode {
             //TODO: implement mockDcMotor
         } else {
             drive = new DrivetrainController(hardwareMap, telemetry);
-            hub = new HubController(hardwareMap);
+            hub = new HubController(hardwareMap, telemetry);
         }
 
         controllers = new ControllerManager(drive, hub);

@@ -11,15 +11,25 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.mech.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.mech.ShooterController;
+import org.firstinspires.ftc.teamcode.robot.mech.WobbleController;
 
 public class Sequence extends Thread {
 
     protected Telemetry telemetry;
     protected SampleMecanumDrive drive;
+    protected ShooterController shooter;
+    protected IntakeController intake;
+    protected WobbleController wobble;
+
     protected final static Object lock1 = new Object();
 
     public Sequence(HardwareMap hwMap, Telemetry tel){
         this.drive = new SampleMecanumDrive(hwMap);
+        this.shooter = new ShooterController(hwMap, tel);
+        this.intake = new IntakeController(hwMap, tel);
+        this.wobble = new WobbleController(hwMap, tel);
         this.telemetry = tel;
     }
 

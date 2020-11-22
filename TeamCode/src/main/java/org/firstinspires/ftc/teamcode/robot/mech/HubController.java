@@ -2,15 +2,18 @@ package org.firstinspires.ftc.teamcode.robot.mech;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 public class HubController implements Controller {
 
     ExpansionHubEx controlHub;
+    Telemetry telemetry;
 
-    public HubController (HardwareMap hardwareMap){
+    public HubController (HardwareMap hardwareMap, Telemetry tel){
         controlHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
+        this.telemetry = tel;
     }
 
     public String getFormattedCurrentDraw(){

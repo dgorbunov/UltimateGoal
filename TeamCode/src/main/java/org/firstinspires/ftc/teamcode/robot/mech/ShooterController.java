@@ -18,12 +18,10 @@ public class ShooterController implements Controller {
     DcMotorEx shooter;
     Telemetry telemetry;
 
-    public ShooterController (Telemetry tel,
-                              HardwareMap hardwareMap){
+    public ShooterController (HardwareMap hardwareMap, Telemetry tel){
 
         //shooter = hardwareMap.get(DcMotor.class, "shooter");
-        telemetry = tel;
-
+        this.telemetry = tel;
     }
 
     @Override
