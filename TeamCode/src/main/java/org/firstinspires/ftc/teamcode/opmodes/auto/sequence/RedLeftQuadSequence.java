@@ -14,13 +14,6 @@ public class RedLeftQuadSequence extends Sequence {
     }
 
     @Override
-    public void init() {
-        super.init();
-
-        // do some more stuff
-    }
-
-    @Override
     public boolean execute() throws InterruptedException {
         if (!super.execute()) {
             return false;
