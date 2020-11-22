@@ -14,21 +14,18 @@ public class RedLeftQuadSequence extends Sequence {
     }
 
     @Override
-    public void start() {
-        super.start();
+    public void init() {
+        super.init();
 
         // do some more stuff
     }
 
     @Override
-    public void stop() {
-        super.stop();
+    public boolean execute() throws InterruptedException {
+        if (!super.execute()) {
+            return false;
+        }
 
-        // do some more stuff
-    }
-
-    @Override
-    public void run() {
-
+        return true;
     }
 }

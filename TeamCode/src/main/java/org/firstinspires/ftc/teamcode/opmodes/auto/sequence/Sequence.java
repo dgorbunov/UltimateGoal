@@ -11,30 +11,42 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
 
-public abstract class Sequence implements Controller {
+public class Sequence extends Thread {
 
     protected Telemetry telemetry;
     protected SampleMecanumDrive drive;
+    protected final static Object lock1 = new Object();
 
     public Sequence(HardwareMap hwMap, Telemetry tel){
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
     }
 
-    public void init () {
-
+    public void init() {
+        synchronized (lock1) {
+            // Set inital pose
+            Pose2d startPose = GetCurrentPose();
+            drive.setPoseEstimate(startPose);
+        }
     }
 
-    public void start() {
-        // Set inital pose
-        Pose2d startPose = GetCurrentPose();
-        drive.setPoseEstimate(startPose);
+    public boolean execute() throws InterruptedException {
+        if (!isAlive()) {
+            telemetry.addData("Sequence", "thread is not alive");
+            return false;
+        }
+
+        return true;
     }
 
-    public void stop() {
+    public void wait(int millisec) {
+        try {
+            Thread.sleep(millisec);
+        }
+        catch(InterruptedException e) {
+            telemetry.addData("Sequence", "Wait interrupted: %s", e.getMessage());
+        }
     }
-
-    public abstract void run() throws InterruptedException;
 
     public Pose2d GetCurrentPose()
     {

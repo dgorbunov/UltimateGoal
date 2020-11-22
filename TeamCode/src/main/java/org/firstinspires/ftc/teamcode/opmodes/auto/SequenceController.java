@@ -68,7 +68,8 @@ public class SequenceController implements Controller {
 
     public void runTrajectory(Sequence sequence) {
         try {
-            sequence.run(); //hang on this
+            // Runs async
+            sequence.execute();
         } catch (Exception e){
             telemetry.addLine("Exception while running sequence: " + e.toString());
         }

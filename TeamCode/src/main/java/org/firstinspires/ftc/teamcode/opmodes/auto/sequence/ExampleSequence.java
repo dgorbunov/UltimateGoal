@@ -11,7 +11,13 @@ public class ExampleSequence extends Sequence {
         super(hwMap, tel);
     }
 
-    public void run() {
+    @Override
+    public boolean execute() throws InterruptedException {
+
+        if (!super.execute()) {
+            return false;
+        }
+
         moveToSquares(GetCurrentPose());
         dropWobble(GetCurrentPose());
         moveToStart(GetCurrentPose());
@@ -20,6 +26,7 @@ public class ExampleSequence extends Sequence {
         shootRings();
         intakeRings(GetCurrentPose());
         moveToLaunchLine(GetCurrentPose());
-        stop();
+
+        return true;
     }
 }
