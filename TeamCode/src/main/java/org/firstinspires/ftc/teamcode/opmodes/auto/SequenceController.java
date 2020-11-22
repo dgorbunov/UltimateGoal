@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.ExampleSequence;
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftQuadSequence;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftQuad;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
@@ -32,7 +32,7 @@ public class SequenceController implements Controller {
          */
         addTrajectory(
                 new ExampleSequence(hwMap, tel),
-                new RedLeftQuadSequence(hwMap, tel)
+                new RedLeftQuad(hwMap, tel)
         );
     }
 
