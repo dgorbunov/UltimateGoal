@@ -56,13 +56,10 @@ public class FullAuto extends OpMode {
 
     @Override
     public void start() { //code to run once when play is hit
-        if (strNumRings.equals("None")) numRings = 0;
-        else if (strNumRings.equals("Single")) numRings = 1;
-        else if (strNumRings.equals("Quad")) numRings = 4;
         controllers.start(); //stop camera instance
 
-        // TODO: figure out the alliance, the side, and the number of rings. Fr now, assume this combination:
-        String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide, Constants.QuadRing);
+        // TODO: figure out the alliance, the side. For now, assume this combination:
+        String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide, strNumRings);
         Sequence sequence = getSequence(sequenceName);
 
         if (sequence == null) {
