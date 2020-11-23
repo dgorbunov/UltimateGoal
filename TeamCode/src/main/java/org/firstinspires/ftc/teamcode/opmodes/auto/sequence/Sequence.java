@@ -55,9 +55,9 @@ public abstract class Sequence {
     public void execute() throws InterruptedException {
         telemetry.addData("Sequence", "nothing to execute");
 
-        Runnable task = () -> {
-            actions.run();
-        };
+        // Do all the work on another thread to make this method not blocking
+        // the main thread
+        new Thread(() -> actions.run()).start();
     }
 
     public void stop() {
