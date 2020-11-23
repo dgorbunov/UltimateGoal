@@ -15,10 +15,7 @@ public class RedLeftSequence extends Sequence {
 
     @Override
     public void init() {
-        Pose2d startPose = new Pose2d(
-                Constants.RedLeft.StartingPosX,
-                Constants.RedLeft.StartingPosY,
-                Math.toRadians(180)); // TODO: rotate 180?
+        Pose2d startPose = Constants.RedLeft.startingPose; // TODO: rotate 180?
 
         super.init(startPose);
     }

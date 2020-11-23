@@ -7,11 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.robot.mech.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.mech.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.mech.WobbleController;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
+import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 public class Sequence extends Thread {
 

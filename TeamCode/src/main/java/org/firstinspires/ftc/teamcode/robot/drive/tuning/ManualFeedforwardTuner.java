@@ -14,12 +14,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
+
 import java.util.Objects;
 
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -59,9 +61,9 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
         MotionState goal = new MotionState(movingForward ? DISTANCE : 0, 0, 0, 0);
         return MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.BASE_CONSTRAINTS.maxVel,
-                org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.BASE_CONSTRAINTS.maxAccel,
-                org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.BASE_CONSTRAINTS.maxJerk);
+                DriveConstants.BASE_CONSTRAINTS.maxVel,
+                DriveConstants.BASE_CONSTRAINTS.maxAccel,
+                DriveConstants.BASE_CONSTRAINTS.maxJerk);
     }
 
     @Override

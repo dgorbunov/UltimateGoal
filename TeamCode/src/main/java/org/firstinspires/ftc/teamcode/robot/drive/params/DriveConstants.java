@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.drive;
+package org.firstinspires.ftc.teamcode.robot.drive.params;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
