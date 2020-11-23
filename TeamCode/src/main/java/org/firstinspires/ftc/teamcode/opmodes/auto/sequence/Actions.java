@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Actions {
-    protected Queue<Runnable> actions = new LinkedList<Runnable>();
+    protected Queue<Runnable> actions = new LinkedList<>();
     Telemetry telemetry;
     private boolean shouldRun;
     protected final Object theLock = new Object();
@@ -33,14 +33,11 @@ public class Actions {
 
     public void run() {
         synchronized (theLock) {
-            Iterator iterator = actions.iterator();
+            Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();
-                action.run();
-                try {
-                    action.wait(MaxTimeoutInMsec);
-                } catch (InterruptedException e) {
-                    telemetry.addLine("Exception while executing action: " + e.toString());
+                if (action != null) {
+                    action.run();
                 }
             }
         }
