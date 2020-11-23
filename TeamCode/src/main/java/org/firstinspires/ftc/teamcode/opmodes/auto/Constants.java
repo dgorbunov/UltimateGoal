@@ -30,7 +30,7 @@ public class Constants {
         public static final double StartingPosY = -72 + (RobotWidth / 2);
     }
 
-    public class BLueLeft {
+    public class BlueLeft {
         public static final double StartingPosX = -30 + (RobotLength / 2);
         public static final double StartingPosY = -72 + (RobotWidth / 2);
     }

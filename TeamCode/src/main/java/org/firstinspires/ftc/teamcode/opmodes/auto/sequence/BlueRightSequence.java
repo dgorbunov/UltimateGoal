@@ -7,17 +7,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
-public class RedLeftSequence extends Sequence {
+public class BlueRightSequence extends Sequence {
 
-    public RedLeftSequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+    public BlueRightSequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
         super(ringCount, controllers, hwMap, tel);
     }
 
     @Override
     public void init() {
         Pose2d startPose = new Pose2d(
-                Constants.RedLeft.StartingPosX,
-                Constants.RedLeft.StartingPosY,
+                Constants.BlueRight.StartingPosX,
+                Constants.BlueRight.StartingPosY,
                 Math.toRadians(180)); // TODO: rotate 180?
 
         super.init(startPose);

@@ -10,22 +10,16 @@ public class ExampleSequence extends Sequence {
         super(ringCount, controllers, hwMap, tel);
     }
 
-    @Override
-    public boolean execute() throws InterruptedException {
+    protected void makeActions() {
+        actions.addAction(() -> moveToSquares());
+        actions.addAction(() -> dropWobble());
+        actions.addAction(() -> moveToStart());
+        actions.addAction(() -> collectWobble());
 
-        if (!super.execute()) {
-            return false;
-        }
+        actions.addAction(() -> intakeRings());
 
-        moveToSquares();
-        dropWobble();
-        moveToStart();
-        collectWobble();
-        moveToShoot();
-        shootRings();
-        intakeRings();
-        moveToLaunchLine();
-
-        return true;
+        actions.addAction(() -> moveToShoot());
+        actions.addAction(() -> shootRings());
+        actions.addAction(() -> moveToLaunchLine());
     }
 }
