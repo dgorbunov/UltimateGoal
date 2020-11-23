@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -52,7 +53,7 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class SampleMecanumDrive extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
@@ -180,6 +181,16 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void turn(double angle) {
         turnAsync(angle);
         waitForIdle();
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void start() {
+
     }
 
     public void stop() {

@@ -32,9 +32,6 @@ public class FullAuto extends OpMode {
         telemetry.addLine("Initializing...");
 
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(Constants.Shooter, new ShooterController(hardwareMap, telemetry));
-        controllers.add(Constants.Intake, new IntakeController(hardwareMap, telemetry));
-        controllers.add(Constants.Wobble, new WobbleController(hardwareMap, telemetry));
 
         controllers.init();
 
@@ -54,7 +51,7 @@ public class FullAuto extends OpMode {
     public void start() { //code to run once when play is hit
         controllers.start(); //stop camera instance
 
-        // TODO: figure out the alliance, the side. For now, assume this combination:
+        // TODO: use different opmodes for alliance, side. For now, we are assuming Red Alliance, Left side:
         String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide, strNumRings);
         currentSequence = getSequence(sequenceName);
 

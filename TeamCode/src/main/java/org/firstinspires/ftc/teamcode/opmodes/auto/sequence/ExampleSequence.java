@@ -11,7 +11,7 @@ public class ExampleSequence extends Sequence {
     }
 
     protected void makeActions() {
-        actions.addAction(() -> moveToSquares());
+//        actions.addAction(() -> moveToZone());
         actions.addAction(() -> dropWobble());
         actions.addAction(() -> moveToStart());
         actions.addAction(() -> collectWobble());

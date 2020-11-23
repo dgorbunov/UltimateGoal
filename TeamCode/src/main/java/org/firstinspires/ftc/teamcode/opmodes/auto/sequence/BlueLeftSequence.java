@@ -16,9 +16,8 @@ public class BlueLeftSequence extends Sequence {
     @Override
     public void init() {
         Pose2d startPose = new Pose2d(
-                Constants.BlueLeft.StartingPosX,
-                Constants.BlueLeft.StartingPosY,
-                Math.toRadians(180)); // TODO: rotate 180?
+                Constants.BlueLeft.StartingPos,
+                Math.toRadians(0)); // TODO: rotate 180?
 
         super.init(startPose);
 
@@ -26,16 +25,16 @@ public class BlueLeftSequence extends Sequence {
     }
 
     protected void makeActions() {
-        switch (ringCount) {
-            case 0:
-                actions.addAction(() -> moveToSquares());
-                break;
-            case 1:
-                actions.addAction(() -> moveToSquares());
-                break;
-            case 4:
-                actions.addAction(() -> moveToSquares());
-                break;
-        }
+//        switch (ringCount) {
+//            case 0:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//            case 1:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//            case 4:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//        }
     }
 }

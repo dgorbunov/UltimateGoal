@@ -16,9 +16,8 @@ public class RedRightSequence extends Sequence {
     @Override
     public void init() {
         Pose2d startPose = new Pose2d(
-                Constants.RedRight.StartingPosX,
-                Constants.RedRight.StartingPosY,
-                Math.toRadians(180)); // TODO: rotate 180?
+                Constants.RedRight.StartingPos,
+                Math.toRadians(0));
 
         super.init(startPose);
 
@@ -26,16 +25,16 @@ public class RedRightSequence extends Sequence {
     }
 
     protected void makeActions() {
-        switch (ringCount) {
-            case 0:
-                actions.addAction(() -> moveToSquares());
-                break;
-            case 1:
-                actions.addAction(() -> moveToSquares());
-                break;
-            case 4:
-                actions.addAction(() -> moveToSquares());
-                break;
-        }
+//        switch (ringCount) {
+//            case 0:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//            case 1:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//            case 4:
+//                actions.addAction(() -> moveToZone());
+//                break;
+//        }
     }
 }

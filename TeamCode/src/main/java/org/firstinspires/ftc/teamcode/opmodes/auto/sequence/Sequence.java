@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
@@ -70,10 +73,9 @@ public abstract class Sequence {
         return drive.getPoseEstimate();
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToSquares() {
+    public void moveToZone(Vector2d targetZone, double heading) {
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
-                .forward(5)
+                .splineTo(targetZone, heading)
                 .build();
 
         drive.followTrajectory(mySequence);

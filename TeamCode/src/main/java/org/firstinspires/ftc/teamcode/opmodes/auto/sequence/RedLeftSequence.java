@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
+
 public class RedLeftSequence extends Sequence {
 
     public RedLeftSequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
@@ -15,7 +16,7 @@ public class RedLeftSequence extends Sequence {
 
     @Override
     public void init() {
-        Pose2d startPose = Constants.RedLeft.startingPose; // TODO: rotate 180?
+        Pose2d startPose = new Pose2d(Constants.RedLeft.StartingPos, Math.toRadians(0)); // TODO: rotate 180?
 
         super.init(startPose);
 
@@ -25,13 +26,13 @@ public class RedLeftSequence extends Sequence {
     protected void makeActions() {
         switch (ringCount) {
             case 0:
-                actions.addAction(() -> moveToSquares());
+                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
                 break;
             case 1:
-                actions.addAction(() -> moveToSquares());
+                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
                 break;
             case 4:
-                actions.addAction(() -> moveToSquares());
+                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
                 break;
         }
     }

@@ -32,8 +32,8 @@ public class MainTele extends OpMode {
         } else {
             drive = new DrivetrainController(hardwareMap, telemetry);
             hub = new HubController(hardwareMap, telemetry);
-            controllers.add(Constants.Drive, new DrivetrainController(hardwareMap, telemetry));
-            controllers.add(Constants.Hub, new HubController(hardwareMap, telemetry));
+            controllers.add(Constants.Drive, drive);
+            controllers.add(Constants.Hub, hub);
         }
 
         controllers.init();
