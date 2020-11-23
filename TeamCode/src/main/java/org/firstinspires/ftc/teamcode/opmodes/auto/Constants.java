@@ -42,6 +42,10 @@ public class Constants {
         public static final Vector2d StartingPos = new Vector2d(-63, -48 - TapeWidth);
     }
 
+    public static class BlueField {
+
+    }
+
     public static class BlueLeft {
         public static final Vector2d StartingPos = new Vector2d(-63, 24 + TapeWidth);
     }

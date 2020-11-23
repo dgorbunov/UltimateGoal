@@ -74,6 +74,7 @@ public abstract class Sequence {
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
+        pushTelemetry(); //TODO: This doesn't work?
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                 .splineTo(targetZone, heading)
                 .build();
@@ -117,5 +118,11 @@ public abstract class Sequence {
 
     // TODO: 11/21/2020 implement the trajectory execution
     public void moveToLaunchLine() {
+    }
+
+    private void pushTelemetry(){
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+        telemetry.addLine("Running: " + e.getMethodName());
     }
 }

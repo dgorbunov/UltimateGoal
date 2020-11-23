@@ -10,6 +10,10 @@ public class ExampleSequence extends Sequence {
         super(ringCount, controllers, hwMap, tel);
     }
 
+    public void execute(){
+        actions.run();
+    }
+
     protected void makeActions() {
 //        actions.addAction(() -> moveToZone());
         actions.addAction(() -> dropWobble());

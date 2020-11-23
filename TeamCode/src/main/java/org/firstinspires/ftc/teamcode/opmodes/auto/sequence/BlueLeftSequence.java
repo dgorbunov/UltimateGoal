@@ -24,6 +24,10 @@ public class BlueLeftSequence extends Sequence {
         makeActions();
     }
 
+    public void execute(){
+        actions.run();
+    }
+
     protected void makeActions() {
 //        switch (ringCount) {
 //            case 0:

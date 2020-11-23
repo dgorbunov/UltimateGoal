@@ -61,10 +61,10 @@ public class FullAuto extends OpMode {
         }
 
         try {
-            telemetry.addLine("Initializing sequence: " + sequenceName);
+            telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
             currentSequence.init();
 
-            telemetry.addLine("Executing sequence: " + sequenceName);
+            telemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
             // execute runs async
             currentSequence.execute();
@@ -140,5 +140,9 @@ public class FullAuto extends OpMode {
 
     private Sequence getSequence(String name) {
         return sequences.get(name.toLowerCase());
+    }
+
+    private String getSequenceName(Sequence sequence){
+        return sequence.getClass().getSimpleName();
     }
 }

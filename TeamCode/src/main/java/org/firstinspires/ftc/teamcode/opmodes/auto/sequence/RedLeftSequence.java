@@ -23,6 +23,10 @@ public class RedLeftSequence extends Sequence {
         makeActions();
     }
 
+    public void execute(){
+        actions.run();
+    }
+
     protected void makeActions() {
         switch (ringCount) {
             case 0:
@@ -35,5 +39,6 @@ public class RedLeftSequence extends Sequence {
                 actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
                 break;
         }
+
     }
 }
