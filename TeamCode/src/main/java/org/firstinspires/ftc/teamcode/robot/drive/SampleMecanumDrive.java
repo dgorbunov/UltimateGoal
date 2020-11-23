@@ -182,6 +182,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         waitForIdle();
     }
 
+    public void stop() {
+        for (DcMotorEx motor : motors) {
+            motor.setPower(0.0);
+        }
+    }
+
     public void followTrajectoryAsync(Trajectory trajectory) {
         follower.followTrajectory(trajectory);
         mode = Mode.FOLLOW_TRAJECTORY;

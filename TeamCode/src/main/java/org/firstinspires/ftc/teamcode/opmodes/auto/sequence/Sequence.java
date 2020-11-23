@@ -12,19 +12,26 @@ import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
-public class Sequence extends Thread {
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+public abstract class Sequence {
 
     protected int ringCount;
     protected Telemetry telemetry;
     protected SampleMecanumDrive drive;
     protected ControllerManager controllers;
-    protected final static Object lock1 = new Object();
+    protected final static Object theLock = new Object();
+    protected Actions actions;
 
-    public Sequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+    public Sequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
         this.ringCount = ringCount;
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
         this.controllers = controllers;
+        this.actions = new Actions(tel);
     }
 
     public void init() {
@@ -32,34 +39,31 @@ public class Sequence extends Thread {
     }
 
     public void init(Pose2d startPose) {
-        synchronized (lock1) {
-            if (!this.isAlive()) {
-                telemetry.addData("Sequence", "start thread");
-                this.start();
-                this.setName("Sequence");
-            }
+        synchronized (theLock) {
+            telemetry.addData("Sequence", "start pose: " + startPose.toString());
+
+            // Reset all actions
+            actions = new Actions(telemetry);
 
             // Define our start pose
             drive.setPoseEstimate(startPose);
         }
     }
 
-    public boolean execute() throws InterruptedException {
-        if (!isAlive()) {
-            telemetry.addData("Sequence", "thread is not alive");
-            return false;
-        }
+    protected abstract void makeActions();
 
-        return true;
+    public void execute() throws InterruptedException {
+        telemetry.addData("Sequence", "nothing to execute");
+
+        Runnable task = () -> {
+            actions.run();
+        };
     }
 
-    public void wait(int millisec) {
-        try {
-            Thread.sleep(millisec);
-        }
-        catch(InterruptedException e) {
-            telemetry.addData("Sequence", "Wait interrupted: %s", e.getMessage());
-        }
+    public void stop() {
+        telemetry.addData("Sequence", "stop");
+        drive.stop();
+        actions.stop();
     }
 
     public Pose2d GetCurrentPose() {
@@ -76,7 +80,7 @@ public class Sequence extends Thread {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void dropWobble(){
+    public void dropWobble() {
         WobbleController wobble = (WobbleController)controllers.get(Constants.Wobble);
         wobble.start();
         wobble.drop();
@@ -94,7 +98,7 @@ public class Sequence extends Thread {
     }
 
     // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToShoot(){
+    public void moveToShoot() {
     }
 
     // TODO: 11/21/2020 implement the shooter
