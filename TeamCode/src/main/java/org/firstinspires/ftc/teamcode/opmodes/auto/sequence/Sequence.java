@@ -75,7 +75,6 @@ public class Sequence extends Thread {
     // TODO: 11/21/2020 implement the trajectory execution
     public void moveToSquares() {
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
-                .strafeRight(10)
                 .forward(5)
                 .build();
 
