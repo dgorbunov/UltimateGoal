@@ -21,14 +21,8 @@ public class FullAuto extends OpMode {
 
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<String, Sequence>();
-
-    //TODO: make separate opmodes for starting positions
-    public static String alliance = "Red"; // or "Blue"
-    public static String side = "Left"; //or "Right"
-
     private ControllerManager controllers = new ControllerManager();
 
-    public static int numRings;
     private static String strNumRings;
 
     @Override
