@@ -19,7 +19,7 @@ public class MainTele extends OpMode {
     private ShooterController shooter;
     private HubController hub;
 
-    private ControllerManager controllers;
+    private ControllerManager controllers = new ControllerManager();
 
     public void init() {
         telemetry.addLine("Initializing...");
@@ -31,12 +31,10 @@ public class MainTele extends OpMode {
             hub = new HubController(hardwareMap, telemetry);
         }
 
-        controllers = new ControllerManager(drive, hub);
         controllers.init();
 
         telemetry.clear();
         telemetry.addLine("Initialized");
-
     }
 
     public void init_loop() {

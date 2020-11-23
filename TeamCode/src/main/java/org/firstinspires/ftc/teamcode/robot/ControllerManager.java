@@ -4,35 +4,44 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public  class ControllerManager implements Controller{
+public class ControllerManager implements Controller{
 
-    private List<Controller> controllers = new ArrayList<>();
+    // Maps case-insensitive name to a controller
+    private Map<String, Controller> controllers = new HashMap<String, Controller>();
 
-    public ControllerManager(Controller... controllerChildren){
-        addChildren(controllerChildren);
+    public void add(String name, Controller controller){
+        controllers.put(name.toLowerCase(), controller);
     }
 
-    public void addChildren(Controller... controllerChildren){
-        controllers.addAll(Arrays.asList(controllerChildren));
+    public Controller get(String name){
+        return controllers.get(name.toLowerCase());
     }
-
 
     @Override
     public void init() {
-        for (Controller c : controllers) c.init();
-
+        for (Map.Entry entry : controllers.entrySet()) {
+            Controller c = (Controller)entry.getValue();
+            c.init();
+        }
     }
 
     @Override
     public void start() {
-        for (Controller c : controllers) c.start();
-
+        for (Map.Entry entry : controllers.entrySet()) {
+            Controller c = (Controller)entry.getValue();
+            c.start();
+        }
     }
 
     @Override
     public void stop() {
-        for (Controller c : controllers) c.stop();
+        for (Map.Entry entry : controllers.entrySet()) {
+            Controller c = (Controller)entry.getValue();
+            c.stop();
+        }
     }
 }

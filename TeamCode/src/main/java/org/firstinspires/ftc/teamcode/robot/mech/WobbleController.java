@@ -27,4 +27,12 @@ public class WobbleController implements Controller {
     public void stop() {
 
     }
+
+    // TODO: drop wobble
+    public void drop() {
+    }
+
+    // TODO: pickup wobble
+    public void pickup() {
+    }
 }
