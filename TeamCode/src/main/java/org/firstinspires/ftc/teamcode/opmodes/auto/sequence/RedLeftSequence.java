@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
@@ -12,14 +11,9 @@ public class RedLeftSequence extends Sequence {
 
     public RedLeftSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
-    }
-
-    public void init() {
-        Pose2d startPose = new Pose2d(Constants.RedLeft.StartingPos, Math.toRadians(0));
-
-        super.init(startPose);
-
-        makeActions();
+        this.startPose = new Pose2d(
+                Constants.RedLeft.StartingPos,
+                Math.toRadians(0));
     }
 
     protected void makeActions() {

@@ -10,16 +10,9 @@ public class RedRightSequence extends Sequence {
 
     public RedRightSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
-    }
-
-    public void init() {
-        Pose2d startPose = new Pose2d(
+        this.startPose = new Pose2d(
                 Constants.RedRight.StartingPos,
                 Math.toRadians(0));
-
-        super.init(startPose);
-
-        makeActions();
     }
 
     protected void makeActions() {

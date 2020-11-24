@@ -19,6 +19,7 @@ public abstract class Sequence {
     protected ControllerManager controllers;
     protected final static Object theLock = new Object();
     protected Actions actions;
+    protected Pose2d startPose;
 
     public Sequence(ControllerManager controllers, Telemetry tel) {
         this.telemetry = tel;
@@ -27,16 +28,18 @@ public abstract class Sequence {
     }
 
     public void init(int ringCount) {
-        this.ringCount = ringCount;
-        init(new Pose2d(0,0,0));
+        init(ringCount, startPose);
     }
 
-    public void init(Pose2d startPose) {
+    public void init(int ringCount, Pose2d startPose) {
         synchronized (theLock) {
             telemetry.addData("Sequence", "start pose: " + startPose.toString());
+            this.ringCount = ringCount;
+            this.startPose = startPose;
 
             // Reset all actions
             actions = new Actions(telemetry);
+            makeActions();
 
             // Define our start pose
             DriveLocalizationController drive = (DriveLocalizationController)controllers.get(Constants.Drive);
@@ -46,7 +49,7 @@ public abstract class Sequence {
 
     protected abstract void makeActions();
 
-    public void execute() throws InterruptedException {
+    public void execute() {
         telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
 
         // Do all the work on another thread to make this method not blocking
