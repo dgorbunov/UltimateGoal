@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -39,7 +39,7 @@ public abstract class Sequence {
             actions = new Actions(telemetry);
 
             // Define our start pose
-            MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
+            DriveLocalizationController drive = (DriveLocalizationController)controllers.get(Constants.Drive);
             drive.setPoseEstimate(startPose);
         }
     }
@@ -60,17 +60,18 @@ public abstract class Sequence {
     }
 
     public Pose2d GetCurrentPose() {
-        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
+        DriveLocalizationController drive = (DriveLocalizationController)controllers.get(Constants.Drive);
         return drive.getPoseEstimate();
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
         telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
 
-        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
+        DriveLocalizationController drive = (DriveLocalizationController)controllers.get(Constants.Drive);
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                 .splineTo(targetZone, heading)
                 .build();
+        //TODO: Avoid rings
 
         drive.followTrajectory(mySequence);
     }

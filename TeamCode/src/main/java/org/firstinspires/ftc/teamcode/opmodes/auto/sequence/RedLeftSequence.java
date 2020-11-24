@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class RedLeftSequence extends Sequence {
 
-    public RedLeftSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+    public RedLeftSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
     }
 

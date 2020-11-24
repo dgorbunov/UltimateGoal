@@ -9,14 +9,14 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class BlueLeftSequence extends Sequence {
 
-    public BlueLeftSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
+    public BlueLeftSequence(ControllerManager controllers, Telemetry tel) {
         super(controllers, tel);
     }
 
     public void init() {
         Pose2d startPose = new Pose2d(
                 Constants.BlueLeft.StartingPos,
-                Math.toRadians(0)); // TODO: rotate 180?
+                Math.toRadians(0));
 
         super.init(startPose);
 

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class ExampleSequence extends Sequence {
-    public ExampleSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+    public ExampleSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
     }
 

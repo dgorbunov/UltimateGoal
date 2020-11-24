@@ -50,11 +50,9 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
 
-/*
- * Mecanum drive hardware implementation for REV hardware.
- */
+
 @Config
-public class MecanumDrivetrainController extends MecanumDrive implements Controller {
+public class DriveLocalizationController extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
@@ -95,11 +93,11 @@ public class MecanumDrivetrainController extends MecanumDrive implements Control
     private Pose2d lastPoseOnTurn;
     private Telemetry telemetry;
 
-    public MecanumDrivetrainController(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DriveLocalizationController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
     }
 
-    public MecanumDrivetrainController(HardwareMap hardwareMap) {
+    public DriveLocalizationController(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
