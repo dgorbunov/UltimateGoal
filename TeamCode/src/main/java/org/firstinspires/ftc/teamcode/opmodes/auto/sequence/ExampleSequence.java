@@ -16,14 +16,14 @@ public class ExampleSequence extends Sequence {
 
     protected void makeActions() {
 //        actions.addAction(() -> moveToZone());
-        actions.addAction(() -> dropWobble());
-        actions.addAction(() -> moveToStart());
-        actions.addAction(() -> collectWobble());
+        actions.add(() -> dropWobble());
+        actions.add(() -> moveToStart());
+        actions.add(() -> collectWobble());
 
-        actions.addAction(() -> intakeRings());
+        actions.add(() -> intakeRings());
 
-        actions.addAction(() -> moveToShoot());
-        actions.addAction(() -> shootRings());
-        actions.addAction(() -> moveToLaunchLine());
+        actions.add(() -> moveToShoot());
+        actions.add(() -> shootRings());
+        actions.add(() -> moveToLaunchLine());
     }
 }

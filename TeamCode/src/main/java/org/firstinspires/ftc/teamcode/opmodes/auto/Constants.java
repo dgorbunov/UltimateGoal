@@ -26,7 +26,6 @@ public class Constants {
 
     private static final double TapeWidth  = 1.75;
 
-
     public static class RedField {
         public static final Vector2d TargetZoneA = new Vector2d(12,-60);
         public static final Vector2d TargetZoneB = new Vector2d(36,-36);

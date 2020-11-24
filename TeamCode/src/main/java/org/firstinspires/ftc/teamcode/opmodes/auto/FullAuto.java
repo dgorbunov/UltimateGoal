@@ -33,7 +33,6 @@ public class FullAuto extends OpMode {
         telemetry.addLine("Initializing...");
 
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-
         controllers.init();
 
         makeSequences();

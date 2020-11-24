@@ -29,13 +29,13 @@ public class RedLeftSequence extends Sequence {
     protected void makeActions() {
         switch (ringCount) {
             case 0:
-                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
                 break;
             case 1:
-                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
                 break;
             case 4:
-                actions.addAction(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
                 break;
         }
 

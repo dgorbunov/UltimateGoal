@@ -56,7 +56,7 @@ public abstract class Sequence {
     protected abstract void makeActions();
 
     public void execute() throws InterruptedException {
-        telemetry.addData("Sequence", "nothing to execute");
+        telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
 
         // Do all the work on another thread to make this method not blocking
         // the main thread
@@ -74,7 +74,7 @@ public abstract class Sequence {
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
-        pushTelemetry(); //TODO: This doesn't work?
+        telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                 .splineTo(targetZone, heading)
                 .build();
@@ -82,47 +82,48 @@ public abstract class Sequence {
         drive.followTrajectory(mySequence);
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
+    // TODO: implement drop wobble
     public void dropWobble() {
+        telemetry.addData("Sequence","dropWobble" );
         WobbleController wobble = (WobbleController)controllers.get(Constants.Wobble);
         wobble.start();
         wobble.drop();
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
+    // TODO: implement moveToStart
     public void moveToStart() {
+        telemetry.addData("Sequence","moveToStart" );
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
+    // TODO: implement collect wobble
     public void collectWobble() {
+        telemetry.addData("Sequence", "collectWobble" );
         WobbleController wobble = (WobbleController)controllers.get(Constants.Wobble);
         wobble.start();
         wobble.pickup();
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
+    // TODO: implement moveToShoot
     public void moveToShoot() {
+        telemetry.addData("Sequence","moveToShoot" );
     }
 
-    // TODO: 11/21/2020 implement the shooter
+    // TODO: implement the shooter
     public void shootRings() {
+        telemetry.addData("Sequence","shootRings" );
         ShooterController shooter = (ShooterController)controllers.get(Constants.Shooter);
         shooter.start();
     }
 
-    // TODO: 11/21/2020 implement the intake
+    // TODO: implement the intake
     public void intakeRings() {
+        telemetry.addData("Sequence","intakeRings" );
         IntakeController intake = (IntakeController)controllers.get(Constants.Intake);
         intake.start();
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
+    // TODO: implement moveToLaunchLine
     public void moveToLaunchLine() {
-    }
-
-    private void pushTelemetry() {
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
-        telemetry.addLine("Running: " + e.getMethodName());
+        telemetry.addData("Sequence","moveToLaunchLine" );
     }
 }

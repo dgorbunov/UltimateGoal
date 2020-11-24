@@ -18,14 +18,14 @@ public class Actions {
         this.shouldRun = true;
     }
 
-    public Object addAction(Runnable action) {
+    public Object add(Runnable action) {
         synchronized (theLock) {
             this.actions.add(action);
             return action;
         }
     }
 
-    public boolean removeAction(Object token) {
+    public boolean remove(Object token) {
         synchronized (theLock) {
             return this.actions.remove((Runnable)token);
         }
@@ -33,6 +33,7 @@ public class Actions {
 
     public void run() {
         synchronized (theLock) {
+            telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
             Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();
