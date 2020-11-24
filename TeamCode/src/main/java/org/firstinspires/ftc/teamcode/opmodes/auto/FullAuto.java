@@ -4,17 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
-import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,19 +87,19 @@ public class FullAuto extends OpMode {
 
         sequences.put(makeSequenceName(
                 Constants.RedAlliance, Constants.LeftSide),
-                new RedRightSequence(controllers, hardwareMap, telemetry));
+                new RedRightSequence(controllers, telemetry));
 
         sequences.put(makeSequenceName(
                 Constants.RedAlliance, Constants.RightSide),
-                new RedRightSequence( controllers, hardwareMap, telemetry));
+                new RedRightSequence( controllers, telemetry));
 
         sequences.put(makeSequenceName(
                 Constants.BlueAlliance, Constants.LeftSide),
-                new RedRightSequence(controllers, hardwareMap, telemetry));
+                new RedRightSequence(controllers, telemetry));
 
         sequences.put(makeSequenceName(
                 Constants.BlueAlliance, Constants.RightSide),
-                new RedRightSequence(controllers, hardwareMap, telemetry));
+                new RedRightSequence(controllers, telemetry));
     }
 
     private String makeSequenceName(String alliance, String side) {

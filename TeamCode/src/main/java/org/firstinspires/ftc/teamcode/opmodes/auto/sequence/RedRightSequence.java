@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
@@ -9,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class RedRightSequence extends Sequence {
 
-    public RedRightSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+    public RedRightSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
     }
 
