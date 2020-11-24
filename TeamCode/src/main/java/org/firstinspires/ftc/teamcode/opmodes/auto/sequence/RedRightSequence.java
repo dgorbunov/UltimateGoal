@@ -9,11 +9,10 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class RedRightSequence extends Sequence {
 
-    public RedRightSequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
-        super(ringCount, controllers, hwMap, tel);
+    public RedRightSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
+        super(controllers, hwMap, tel);
     }
 
-    @Override
     public void init() {
         Pose2d startPose = new Pose2d(
                 Constants.RedRight.StartingPos,

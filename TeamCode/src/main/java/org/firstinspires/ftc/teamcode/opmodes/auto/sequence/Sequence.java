@@ -29,15 +29,15 @@ public abstract class Sequence {
     protected final static Object theLock = new Object();
     protected Actions actions;
 
-    public Sequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
-        this.ringCount = ringCount;
+    public Sequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
         this.controllers = controllers;
         this.actions = new Actions(tel);
     }
 
-    public void init() {
+    public void init(int ringCount) {
+        this.ringCount = ringCount;
         init(new Pose2d(0,0,0));
     }
 
@@ -120,7 +120,7 @@ public abstract class Sequence {
     public void moveToLaunchLine() {
     }
 
-    private void pushTelemetry(){
+    private void pushTelemetry() {
         StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
         StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
         telemetry.addLine("Running: " + e.getMethodName());

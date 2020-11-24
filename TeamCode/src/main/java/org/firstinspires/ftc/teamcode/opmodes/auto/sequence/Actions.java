@@ -37,11 +37,6 @@ public class Actions {
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();
                 action.run();
-                try {
-                    action.wait(MaxTimeoutInMsec);
-                } catch (InterruptedException e) {
-                    telemetry.addLine("Exception while executing action: " + e.toString());
-                }
             }
         }
     }
