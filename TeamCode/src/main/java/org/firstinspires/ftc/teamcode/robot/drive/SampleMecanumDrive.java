@@ -30,6 +30,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -38,20 +40,20 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.robot.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class SampleMecanumDrive extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
@@ -179,6 +181,16 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void turn(double angle) {
         turnAsync(angle);
         waitForIdle();
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void start() {
+
     }
 
     public void stop() {

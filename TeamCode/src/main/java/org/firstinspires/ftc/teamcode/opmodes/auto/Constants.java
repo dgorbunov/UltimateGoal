@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class Constants {
+
+    /**
+     * Auto Global Constants
+     */
 
     public static final String RedAlliance = "Red";
     public static final String BlueAlliance = "Blue";
@@ -16,27 +21,37 @@ public class Constants {
     public static final String Shooter = "shooter";
     public static final String Intake = "intake";
     public static final String Wobble = "wobble";
+    public static final String Drive = "drive";
+    public static final String Hub = "hub";
 
-    public static final double RobotLength = 18;
-    public static final double RobotWidth = 18;
+    private static final double TapeWidth  = 1.75;
 
-    public class RedLeft {
-        public static final double StartingPosX = -30 + (RobotLength / 2);
-        public static final double StartingPosY = -72 + (RobotWidth / 2);
+
+    public static class RedField {
+        public static final Vector2d TargetZoneA = new Vector2d(12,-60);
+        public static final Vector2d TargetZoneB = new Vector2d(36,-36);
+        public static final Vector2d TargetZoneC = new Vector2d(60,-60);
     }
 
-    public class RedRight {
-        public static final double StartingPosX = -30 + (RobotLength / 2);
-        public static final double StartingPosY = -72 + (RobotWidth / 2);
+    public static class RedLeft {
+        public static final Vector2d StartingPos = new Vector2d(-63, -24 - TapeWidth);
+
     }
 
-    public class BlueLeft {
-        public static final double StartingPosX = -30 + (RobotLength / 2);
-        public static final double StartingPosY = -72 + (RobotWidth / 2);
+    public static class RedRight {
+        public static final Vector2d StartingPos = new Vector2d(-63, -48 - TapeWidth);
     }
 
-    public class BlueRight {
-        public static final double StartingPosX = -30 + (RobotLength / 2);
-        public static final double StartingPosY = -72 + (RobotWidth / 2);
+    public static class BlueField {
+
     }
+
+    public static class BlueLeft {
+        public static final Vector2d StartingPos = new Vector2d(-63, 24 + TapeWidth);
+    }
+
+    public static class BlueRight {
+        public static final Vector2d StartingPos = new Vector2d(-63, 48 + TapeWidth);
+    }
+
 }

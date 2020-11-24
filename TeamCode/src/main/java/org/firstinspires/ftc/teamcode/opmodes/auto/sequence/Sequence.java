@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.robot.mech.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.mech.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.mech.WobbleController;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
+import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,15 +29,15 @@ public abstract class Sequence {
     protected final static Object theLock = new Object();
     protected Actions actions;
 
-    public Sequence(int ringCount, ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
-        this.ringCount = ringCount;
+    public Sequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
         this.drive = new SampleMecanumDrive(hwMap);
         this.telemetry = tel;
         this.controllers = controllers;
         this.actions = new Actions(tel);
     }
 
-    public void init() {
+    public void init(int ringCount) {
+        this.ringCount = ringCount;
         init(new Pose2d(0,0,0));
     }
 
@@ -70,10 +73,10 @@ public abstract class Sequence {
         return drive.getPoseEstimate();
     }
 
-    // TODO: 11/21/2020 implement the trajectory execution
-    public void moveToSquares() {
+    public void moveToZone(Vector2d targetZone, double heading) {
+        pushTelemetry(); //TODO: This doesn't work?
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
-                .forward(5)
+                .splineTo(targetZone, heading)
                 .build();
 
         drive.followTrajectory(mySequence);
@@ -115,5 +118,11 @@ public abstract class Sequence {
 
     // TODO: 11/21/2020 implement the trajectory execution
     public void moveToLaunchLine() {
+    }
+
+    private void pushTelemetry() {
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+        telemetry.addLine("Running: " + e.getMethodName());
     }
 }

@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.mech.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.mech.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.mech.WobbleController;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
+import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ public class FullAuto extends OpMode {
     private Map<String, Sequence> sequences = new HashMap<String, Sequence>();
     private ControllerManager controllers = new ControllerManager();
     private String strNumRings;
+    private int ringCount;
     private Sequence currentSequence;
 
     @Override
@@ -32,9 +33,6 @@ public class FullAuto extends OpMode {
         telemetry.addLine("Initializing...");
 
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(Constants.Shooter, new ShooterController(hardwareMap, telemetry));
-        controllers.add(Constants.Intake, new IntakeController(hardwareMap, telemetry));
-        controllers.add(Constants.Wobble, new WobbleController(hardwareMap, telemetry));
 
         controllers.init();
 
@@ -52,10 +50,14 @@ public class FullAuto extends OpMode {
 
     @Override
     public void start() { //code to run once when play is hit
+        CameraController camera = (CameraController)controllers.get(Constants.Camera);
+        ringCount = camera.ringsToInt(strNumRings);
+        telemetry.addData("Rings",ringCount);
+
         controllers.start(); //stop camera instance
 
-        // TODO: figure out the alliance, the side. For now, assume this combination:
-        String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide, strNumRings);
+        // TODO: use different opmodes for alliance, side. For now, we are assuming Red Alliance, Left side:
+        String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide);
         currentSequence = getSequence(sequenceName);
 
         if (currentSequence == null) {
@@ -64,10 +66,10 @@ public class FullAuto extends OpMode {
         }
 
         try {
-            telemetry.addLine("Initializing sequence: " + sequenceName);
-            currentSequence.init();
+            telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
+            currentSequence.init(ringCount);
 
-            telemetry.addLine("Executing sequence: " + sequenceName);
+            telemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
             // execute runs async
             currentSequence.execute();
@@ -89,59 +91,31 @@ public class FullAuto extends OpMode {
     private void makeSequences() {
 
         sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.LeftSide, Constants.NoRings),
-                new BlueLeftSequence(0, controllers, hardwareMap, telemetry));
+                Constants.RedAlliance, Constants.LeftSide),
+                new RedRightSequence(controllers, hardwareMap, telemetry));
 
         sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.RightSide, Constants.NoRings),
-                new BlueRightSequence(0, controllers, hardwareMap, telemetry));
+                Constants.RedAlliance, Constants.RightSide),
+                new RedRightSequence( controllers, hardwareMap, telemetry));
 
         sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.LeftSide, Constants.SingleRing),
-                new BlueLeftSequence(1, controllers, hardwareMap, telemetry));
+                Constants.BlueAlliance, Constants.LeftSide),
+                new RedRightSequence(controllers, hardwareMap, telemetry));
 
         sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.RightSide, Constants.SingleRing),
-                new BlueRightSequence(1, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.LeftSide, Constants.QuadRing),
-                new BlueLeftSequence(4, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.BlueAlliance, Constants.RightSide, Constants.QuadRing),
-                new BlueRightSequence(4, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.LeftSide, Constants.NoRings),
-                new RedLeftSequence(0, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.RightSide, Constants.NoRings),
-                new RedRightSequence(0, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.LeftSide, Constants.SingleRing),
-                new RedLeftSequence(1, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.RightSide, Constants.SingleRing),
-                new RedRightSequence(1, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.LeftSide, Constants.QuadRing),
-                new RedLeftSequence(4, controllers, hardwareMap, telemetry));
-
-        sequences.put(makeSequenceName(
-                Constants.RedAlliance, Constants.RightSide, Constants.QuadRing),
-                new RedRightSequence(4, controllers, hardwareMap, telemetry));
+                Constants.BlueAlliance, Constants.RightSide),
+                new RedRightSequence(controllers, hardwareMap, telemetry));
     }
 
-    private String makeSequenceName(String alliance, String side, String rings) {
+    private String makeSequenceName(String alliance, String side) {
         return (alliance + side).toLowerCase();
     }
 
     private Sequence getSequence(String name) {
         return sequences.get(name.toLowerCase());
+    }
+
+    private String getSequenceName(Sequence sequence){
+        return sequence.getClass().getSimpleName();
     }
 }

@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.camera;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -17,17 +15,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EmptyStackException;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -47,6 +39,9 @@ public class CameraController implements Controller {
     public static final String LABEL_FIRST_ELEMENT = "Quad";
     public static final String LABEL_SECOND_ELEMENT = "Single";
     public static final String LABEL_NO_ELEMENT = "None";
+    public static final int INT_FIRST_ELEMENT = 4;
+    public static final int INT_SECOND_ELEMENT = 1;
+    public static final int INT_NO_ELEMENT = 0;
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
 
     private VuforiaLocalizer vuforia = null;
@@ -132,6 +127,16 @@ public class CameraController implements Controller {
 
         }
         else return "TensorFlow Not Initialized";
+    }
+
+    public Integer ringsToInt(String element){
+        if (element.equals(CameraController.LABEL_NO_ELEMENT)) return INT_NO_ELEMENT;
+        else if (element.equals(CameraController.LABEL_FIRST_ELEMENT)) return INT_FIRST_ELEMENT;
+        else if (element.equals(CameraController.LABEL_SECOND_ELEMENT)) return INT_SECOND_ELEMENT;
+        else {
+            telemetry.addLine("ringsToInt returned no match");
+            return null;
+        }
     }
 
     private void trackTargets(){
