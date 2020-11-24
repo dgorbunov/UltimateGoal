@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 public class RedLeftSequence extends Sequence {
 
     public RedLeftSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
-        super(controllers, hwMap, tel);
+        super(controllers, tel);
     }
 
     public void init() {
@@ -20,10 +20,6 @@ public class RedLeftSequence extends Sequence {
         super.init(startPose);
 
         makeActions();
-    }
-
-    public void execute(){
-        actions.run();
     }
 
     protected void makeActions() {

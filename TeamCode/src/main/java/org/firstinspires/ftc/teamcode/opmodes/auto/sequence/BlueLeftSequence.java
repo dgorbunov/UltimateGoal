@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 public class BlueLeftSequence extends Sequence {
 
     public BlueLeftSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
-        super(controllers, hwMap, tel);
+        super(controllers, tel);
     }
 
     public void init() {
@@ -21,10 +21,6 @@ public class BlueLeftSequence extends Sequence {
         super.init(startPose);
 
         makeActions();
-    }
-
-    public void execute(){
-        actions.run();
     }
 
     protected void makeActions() {

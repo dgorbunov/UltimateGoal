@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
+
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
  * classes). The robot drives in a DISTANCE-by-DISTANCE square indefinitely. Utilization of the
@@ -26,7 +28,7 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive drive = new org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive(hardwareMap);
+        MecanumDrivetrainController drive = new MecanumDrivetrainController(hardwareMap);
 
         Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 

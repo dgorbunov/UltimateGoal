@@ -3,34 +3,24 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 public abstract class Sequence {
 
     protected int ringCount;
     protected Telemetry telemetry;
-    protected SampleMecanumDrive drive;
     protected ControllerManager controllers;
     protected final static Object theLock = new Object();
     protected Actions actions;
 
-    public Sequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel) {
-        this.drive = new SampleMecanumDrive(hwMap);
+    public Sequence(ControllerManager controllers, Telemetry tel) {
         this.telemetry = tel;
         this.controllers = controllers;
         this.actions = new Actions(tel);
@@ -49,6 +39,7 @@ public abstract class Sequence {
             actions = new Actions(telemetry);
 
             // Define our start pose
+            MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
             drive.setPoseEstimate(startPose);
         }
     }
@@ -65,16 +56,18 @@ public abstract class Sequence {
 
     public void stop() {
         telemetry.addData("Sequence", "stop");
-        drive.stop();
         actions.stop();
     }
 
     public Pose2d GetCurrentPose() {
+        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
         return drive.getPoseEstimate();
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
         telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
+
+        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
         Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                 .splineTo(targetZone, heading)
                 .build();

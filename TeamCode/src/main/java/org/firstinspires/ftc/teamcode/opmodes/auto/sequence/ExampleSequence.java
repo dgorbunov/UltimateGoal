@@ -7,11 +7,7 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class ExampleSequence extends Sequence {
     public ExampleSequence(ControllerManager controllers, HardwareMap hwMap, Telemetry tel){
-        super(controllers, hwMap, tel);
-    }
-
-    public void execute(){
-        actions.run();
+        super(controllers, tel);
     }
 
     protected void makeActions() {

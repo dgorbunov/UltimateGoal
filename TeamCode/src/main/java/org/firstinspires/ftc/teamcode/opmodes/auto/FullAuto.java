@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -33,6 +34,7 @@ public class FullAuto extends OpMode {
         telemetry.addLine("Initializing...");
 
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
+        controllers.add(Constants.Drive, new MecanumDrivetrainController(hardwareMap, telemetry));
         controllers.init();
 
         makeSequences();

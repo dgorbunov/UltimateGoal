@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
@@ -50,10 +51,10 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
 
 /*
- * Simple mecanum drive hardware implementation for REV hardware.
+ * Mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive implements Controller {
+public class MecanumDrivetrainController extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
@@ -92,8 +93,13 @@ public class SampleMecanumDrive extends MecanumDrive implements Controller {
     private VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
+    private Telemetry telemetry;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public MecanumDrivetrainController(HardwareMap hardwareMap, Telemetry telemetry) {
+        this(hardwareMap);
+    }
+
+    public MecanumDrivetrainController(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -162,6 +168,10 @@ public class SampleMecanumDrive extends MecanumDrive implements Controller {
     }
 
     public void turnAsync(double angle) {
+        if (telemetry != null) {
+            telemetry.addData("MecanumDrivetrainController", "turnAsync: " + angle);
+        }
+
         double heading = getPoseEstimate().getHeading();
 
         lastPoseOnTurn = getPoseEstimate();
@@ -185,15 +195,23 @@ public class SampleMecanumDrive extends MecanumDrive implements Controller {
 
     @Override
     public void init() {
-
+        if (telemetry != null) {
+            telemetry.addData("MecanumDrivetrainController", "init");
+        }
     }
 
     @Override
     public void start() {
-
+        if (telemetry != null) {
+            telemetry.addData("MecanumDrivetrainController", "start");
+        }
     }
 
     public void stop() {
+        if (telemetry != null) {
+            telemetry.addData("MecanumDrivetrainController", "stop");
+        }
+
         for (DcMotorEx motor : motors) {
             motor.setPower(0.0);
         }
@@ -261,11 +279,11 @@ public class SampleMecanumDrive extends MecanumDrive implements Controller {
 
                 double targetOmega = targetState.getV();
                 double targetAlpha = targetState.getA();
-                setDriveSignal(new DriveSignal(new Pose2d(
-                        0, 0, targetOmega + correction
-                ), new Pose2d(
-                        0, 0, targetAlpha
-                )));
+
+                setDriveSignal(
+                        new DriveSignal(
+                                new Pose2d(0, 0, targetOmega + correction),
+                                new Pose2d(0, 0, targetAlpha)));
 
                 Pose2d newPose = lastPoseOnTurn.copy(lastPoseOnTurn.getX(), lastPoseOnTurn.getY(), targetState.getX());
 
