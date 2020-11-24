@@ -8,18 +8,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class ShooterController implements Controller {
+    Telemetry telemetry;
+
+    MockDcMotorEx shooter;
 
     float wheelRadius = 0.051f; //meters
 
-    DcMotorEx shooter;
-    Telemetry telemetry;
-
-    public ShooterController (HardwareMap hardwareMap, Telemetry tel){
-
-        //shooter = hardwareMap.get(DcMotor.class, "shooter");
-        this.telemetry = tel;
+    public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+        shooter = new MockDcMotorEx("shooter", telemetry);
     }
 
     @Override

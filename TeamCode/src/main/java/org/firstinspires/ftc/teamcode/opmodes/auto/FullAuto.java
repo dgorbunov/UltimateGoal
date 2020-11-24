@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class FullAuto extends OpMode {
 
         controllers = new ControllerManager(telemetry);
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(Constants.Drive, new MecanumDrivetrainController(hardwareMap, telemetry));
+        controllers.add(Constants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
         controllers.init();
 
         makeSequences();
@@ -92,7 +92,7 @@ public class FullAuto extends OpMode {
 
         sequences.put(makeSequenceName(
                 Constants.RedAlliance, Constants.RightSide),
-                new RedRightSequence( controllers, telemetry));
+                new RedRightSequence(controllers, telemetry));
 
         sequences.put(makeSequenceName(
                 Constants.BlueAlliance, Constants.LeftSide),
