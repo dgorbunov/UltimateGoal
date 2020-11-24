@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.drive.MecanumDrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -42,7 +42,7 @@ public abstract class Sequence {
             makeActions();
 
             // Define our start pose
-            MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+            DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
             if (drive != null) {
                 drive.setPoseEstimate(startPose);
             }
@@ -65,7 +65,7 @@ public abstract class Sequence {
     }
 
     public Pose2d GetCurrentPose() {
-        MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
         if (drive != null) {
             return drive.getPoseEstimate();
         }
@@ -76,7 +76,7 @@ public abstract class Sequence {
     public void moveToZone(Vector2d targetZone, double heading) {
         telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
 
-        MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
         if (drive != null) {
             Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
                     .splineTo(targetZone, heading)
