@@ -17,7 +17,7 @@ public abstract class Sequence {
     protected int ringCount;
     protected Telemetry telemetry;
     protected ControllerManager controllers;
-    protected final static Object theLock = new Object();
+    protected final static Object lock = new Object();
     protected Actions actions;
     protected Pose2d startPose;
 
@@ -32,7 +32,7 @@ public abstract class Sequence {
     }
 
     public void init(int ringCount, Pose2d startPose) {
-        synchronized (theLock) {
+        synchronized (lock) {
             telemetry.addData("Sequence", "start pose: " + startPose.toString());
             this.ringCount = ringCount;
             this.startPose = startPose;
@@ -42,8 +42,10 @@ public abstract class Sequence {
             makeActions();
 
             // Define our start pose
-            MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
-            drive.setPoseEstimate(startPose);
+            MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+            if (drive != null) {
+                drive.setPoseEstimate(startPose);
+            }
         }
     }
 
@@ -63,27 +65,35 @@ public abstract class Sequence {
     }
 
     public Pose2d GetCurrentPose() {
-        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
-        return drive.getPoseEstimate();
+        MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+        if (drive != null) {
+            return drive.getPoseEstimate();
+        }
+
+        return startPose;
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
         telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
 
-        MecanumDrivetrainController drive = (MecanumDrivetrainController)controllers.get(Constants.Drive);
-        Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
-                .splineTo(targetZone, heading)
-                .build();
+        MecanumDrivetrainController drive = controllers.get(MecanumDrivetrainController.class, Constants.Drive);
+        if (drive != null) {
+            Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
+                    .splineTo(targetZone, heading)
+                    .build();
 
-        drive.followTrajectory(mySequence);
+            drive.followTrajectory(mySequence);
+        }
     }
 
     // TODO: implement drop wobble
     public void dropWobble() {
         telemetry.addData("Sequence","dropWobble" );
-        WobbleController wobble = (WobbleController)controllers.get(Constants.Wobble);
-        wobble.start();
-        wobble.drop();
+        WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
+        if (wobble != null) {
+            wobble.start();
+            wobble.drop();
+        }
     }
 
     // TODO: implement moveToStart
@@ -94,9 +104,11 @@ public abstract class Sequence {
     // TODO: implement collect wobble
     public void collectWobble() {
         telemetry.addData("Sequence", "collectWobble" );
-        WobbleController wobble = (WobbleController)controllers.get(Constants.Wobble);
-        wobble.start();
-        wobble.pickup();
+        WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
+        if (wobble != null) {
+            wobble.start();
+            wobble.pickup();
+        }
     }
 
     // TODO: implement moveToShoot
@@ -107,15 +119,19 @@ public abstract class Sequence {
     // TODO: implement the shooter
     public void shootRings() {
         telemetry.addData("Sequence","shootRings" );
-        ShooterController shooter = (ShooterController)controllers.get(Constants.Shooter);
-        shooter.start();
+        ShooterController shooter = controllers.get(ShooterController.class, Constants.Shooter);
+        if (shooter != null) {
+            shooter.start();
+        }
     }
 
     // TODO: implement the intake
     public void intakeRings() {
         telemetry.addData("Sequence","intakeRings" );
-        IntakeController intake = (IntakeController)controllers.get(Constants.Intake);
-        intake.start();
+        IntakeController intake = controllers.get(IntakeController.class, Constants.Intake);
+        if (intake != null) {
+            intake.start();
+        }
     }
 
     // TODO: implement moveToLaunchLine

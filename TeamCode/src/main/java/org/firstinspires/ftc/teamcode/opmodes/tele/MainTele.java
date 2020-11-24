@@ -22,10 +22,12 @@ public class MainTele extends OpMode {
     private ShooterController shooter;
     private HubController hub;
 
-    private ControllerManager controllers = new ControllerManager();
+    private ControllerManager controllers;
 
     public void init() {
         telemetry.addLine("Initializing...");
+
+        controllers = new ControllerManager(telemetry);
 
         if (noChassis) {
             //TODO: implement mockDcMotor

@@ -9,9 +9,8 @@ import java.util.Queue;
 public class Actions {
     protected Queue<Runnable> actions = new LinkedList<>();
     Telemetry telemetry;
-    private boolean shouldRun;
+    private volatile boolean shouldRun;
     protected final Object theLock = new Object();
-    public final int MaxTimeoutInMsec = 300000;
 
     public Actions(Telemetry tel) {
         this.telemetry  = tel;

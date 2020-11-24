@@ -17,8 +17,8 @@ import java.util.Map;
 public class FullAuto extends OpMode {
 
     // Maps case-insensitive name to a sequence
-    private Map<String, Sequence> sequences = new HashMap<String, Sequence>();
-    private ControllerManager controllers = new ControllerManager();
+    private Map<String, Sequence> sequences = new HashMap<>();
+    private ControllerManager controllers;
     private String strNumRings;
     private int ringCount;
     private Sequence currentSequence;
@@ -27,6 +27,7 @@ public class FullAuto extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
 
+        controllers = new ControllerManager(telemetry);
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
         controllers.add(Constants.Drive, new MecanumDrivetrainController(hardwareMap, telemetry));
         controllers.init();
@@ -38,14 +39,14 @@ public class FullAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        CameraController camera = (CameraController)controllers.get(Constants.Camera);
+        CameraController camera = controllers.get(CameraController.class, Constants.Camera);
         strNumRings = camera.rankRings();
         telemetry.addLine(strNumRings);
     }
 
     @Override
     public void start() { //code to run once when play is hit
-        CameraController camera = (CameraController)controllers.get(Constants.Camera);
+        CameraController camera = controllers.get(CameraController.class, Constants.Camera);
         ringCount = camera.ringsToInt(strNumRings);
         telemetry.addData("Rings",ringCount);
 
