@@ -52,16 +52,19 @@ public abstract class Sequence {
     protected abstract void makeActions();
 
     public void execute() {
-        telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
+        synchronized (lock) {
+            telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
 
-        // Do all the work on another thread to make this method not blocking
-        // the main thread
-        new Thread(() -> actions.run()).start();
+            // Do all the work on another thread to avoid blocking the invoking thread
+            new Thread(() -> actions.run()).start();
+        }
     }
 
     public void stop() {
-        telemetry.addData("Sequence", "stop");
-        actions.stop();
+        synchronized (lock) {
+            telemetry.addData("Sequence", "stop");
+            actions.stop();
+        }
     }
 
     public Pose2d GetCurrentPose() {
@@ -82,6 +85,7 @@ public abstract class Sequence {
                     .splineTo(targetZone, heading)
                     .build();
 
+            //TODO: Avoid rings
             drive.followTrajectory(mySequence);
         }
     }
