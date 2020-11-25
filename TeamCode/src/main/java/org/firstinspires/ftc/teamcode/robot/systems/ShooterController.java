@@ -12,9 +12,7 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class ShooterController implements Controller {
     Telemetry telemetry;
-
     MockDcMotorEx shooter;
-
     float wheelRadius = 0.051f; //meters
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
@@ -39,7 +37,6 @@ public class ShooterController implements Controller {
 
     @Override
     public void start() {
-
     }
 
     @Override

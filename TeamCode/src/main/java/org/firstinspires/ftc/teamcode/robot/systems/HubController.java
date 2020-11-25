@@ -11,9 +11,9 @@ public class HubController implements Controller {
     ExpansionHubEx controlHub;
     Telemetry telemetry;
 
-    public HubController (HardwareMap hardwareMap, Telemetry tel){
+    public HubController (HardwareMap hardwareMap, Telemetry telemetry){
         controlHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        this.telemetry = tel;
+        this.telemetry = telemetry;
     }
 
     public String getFormattedCurrentDraw(){

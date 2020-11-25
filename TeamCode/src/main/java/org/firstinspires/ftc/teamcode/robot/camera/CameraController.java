@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.camera;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -128,6 +130,7 @@ public class CameraController implements Controller {
         else return "TensorFlow Not Initialized";
     }
 
+    @Nullable
     public Integer ringsToInt(String element){
         if (element.equals(CameraController.LABEL_NO_ELEMENT)) return INT_NO_ELEMENT;
         else if (element.equals(CameraController.LABEL_FIRST_ELEMENT)) return INT_FIRST_ELEMENT;

@@ -33,7 +33,7 @@ public abstract class Sequence {
 
     public void init(int ringCount, Pose2d startPose) {
         synchronized (lock) {
-            telemetry.addData("Sequence", "start pose: " + startPose.toString());
+            telemetry.addData("Sequence", "ringCount: " +ringCount + " start pose: " + startPose.toString());
             this.ringCount = ringCount;
             this.startPose = startPose;
 

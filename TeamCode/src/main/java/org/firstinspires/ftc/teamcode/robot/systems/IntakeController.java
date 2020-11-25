@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class IntakeController implements Controller {
     Telemetry telemetry;
-
     MockDcMotorEx intake;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -29,6 +28,6 @@ public class IntakeController implements Controller {
 
     @Override
     public void stop() {
-
+        intake.setPower(0);
     }
 }
