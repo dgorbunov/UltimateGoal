@@ -24,6 +24,7 @@ public abstract class Sequence {
     protected final static Object lock = new Object();
     protected Actions actions;
     protected Pose2d startPose;
+    protected Vector2d targetZone;
 
     public Sequence(ControllerManager controllers, Telemetry tel) {
         this.telemetry = tel;
@@ -80,50 +81,41 @@ public abstract class Sequence {
         return startPose;
     }
 
-    public void moveToZone(Vector2d targetZone, double heading) {
+    public void moveToZone(Vector2d targetZone, double initialHeading, double targetHeading) {
         telemetry.addData("Sequence", "moveToZone");
-
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
-
-        followTrajectoryAsync(buildSplineTrajectory(targetZone, heading));
+        turn(targetHeading);
+        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
     }
 
-    // TODO: implement drop wobble
     public void dropWobble() {
         telemetry.addData("Sequence","dropWobble");
         WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
         wobble.drop();
     }
 
-    // TODO: implement moveToStart
-    public void moveToStart(Vector2d targetZone, double heading) {
+    public void moveToStart(Vector2d targetZone, double initialHeading, double targetHeading) {
         telemetry.addData("Sequence","moveToStart");
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
-        followTrajectoryAsync(buildSplineTrajectory(targetZone, heading));
+        turn(targetHeading);
+        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
     }
 
-    // TODO: implement collect wobble
-    public void collectWobble() {
+    public void pickupWobble() {
         telemetry.addData("Sequence", "collectWobble");
         WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
-        if (wobble != null) {
-            wobble.start();
-            wobble.pickup();
-        }
+        wobble.pickup();
     }
 
     // TODO: implement moveToShoot
-    public void moveToShoot() {
+    public void moveToShoot(Vector2d position, double heading) {
         telemetry.addData("Sequence","moveToShoot" );
+        followTrajectoryAsync(buildConstantSplineTrajectory(position, heading));
     }
 
     // TODO: implement the shooter
     public void shootRings() {
         telemetry.addData("Sequence","shootRings" );
         ShooterController shooter = controllers.get(ShooterController.class, Constants.Shooter);
-        if (shooter != null) {
-            shooter.start();
-        }
+        shooter.shoot(4000);
     }
 
     // TODO: implement the intake
@@ -140,12 +132,21 @@ public abstract class Sequence {
         telemetry.addData("Sequence","moveToLaunchLine" );
     }
 
-    private Trajectory buildSplineTrajectory(Vector2d position, double heading){
+    private Trajectory buildSplineTrajectory(Vector2d position, double initialHeading, double targetHeading){
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .splineTo(position, heading)
+//                .splineToLinearHeading(new Pose2d(position, Math.toRadians(targetHeading)), Math.toRadians(initialHeading))
+                .splineTo(position, Math.toRadians(targetHeading))
                 .build();
 
+        return trajectory;
+    }
+
+    private Trajectory buildConstantSplineTrajectory(Vector2d position, double heading){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .splineToConstantHeading(position, Math.toRadians(heading))
+                .build();
         return trajectory;
     }
 
@@ -155,5 +156,11 @@ public abstract class Sequence {
         drive.waitForIdle();
         //although this may look equivalent to followTrajectory it is non-blocking
         //because sequences run on a separate thread, drive methods do not
+    }
+
+    private void turn(double heading){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        drive.turnAsync(Math.toRadians(heading));
+        drive.waitForIdle();
     }
 }

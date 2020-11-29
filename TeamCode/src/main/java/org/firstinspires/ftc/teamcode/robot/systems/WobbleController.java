@@ -7,6 +7,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.MockServo;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+
 public class WobbleController implements Controller {
     private Telemetry telemetry;
     private MockServo wobbleGrip;
@@ -39,10 +43,14 @@ public class WobbleController implements Controller {
     // TODO: drop wobble
     public void drop() {
         telemetry.addData(ControllerName, "Dropping Wobble");
+        sleep(1000);
     }
 
     // TODO: pickup wobble
     public void pickup() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
+        sleep(1000);
     }
-}
+
+
+    }

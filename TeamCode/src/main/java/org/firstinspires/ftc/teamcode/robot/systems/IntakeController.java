@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.MockDcMotor;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+
 public class IntakeController implements Controller {
     private Telemetry telemetry;
     private MockDcMotorEx intake;
@@ -36,5 +38,7 @@ public class IntakeController implements Controller {
     public void run(double motorPower){
         telemetry.addData(ControllerName, "Intaking");
         intake.setPower(motorPower);
+        sleep(1000);
+        intake.setPower(0);
     }
 }

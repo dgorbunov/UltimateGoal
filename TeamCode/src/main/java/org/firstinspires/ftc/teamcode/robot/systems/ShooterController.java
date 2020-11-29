@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+
 public class ShooterController implements Controller {
     private Telemetry telemetry;
     private MockDcMotorEx shooter;
@@ -29,7 +31,7 @@ public class ShooterController implements Controller {
 
     public void shoot(Gamepad gamepad, boolean button){
         if (button) shooter.setPower(1); //shooter.setVelocity();
-         else stop();
+        else stop();
 
          telemetry.addData(ControllerName, "Shooting");
 
@@ -37,6 +39,12 @@ public class ShooterController implements Controller {
         String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
         telemetry.addData(ControllerName,"velocity:" + velocity);
         telemetry.addData(ControllerName, "velocityTangential: " + velocityTangential); //v = r*w
+    }
+
+    public void shoot(int ms) {
+        shooter.setPower(1); //shooter.setVelocity();
+        sleep(ms);
+        shooter.setPower(0);
     }
 
     @Override

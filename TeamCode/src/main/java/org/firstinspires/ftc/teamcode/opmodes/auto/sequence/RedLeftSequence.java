@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
@@ -20,17 +21,22 @@ public class RedLeftSequence extends Sequence {
     protected void makeActions() {
         switch (ringCount) {
             case 0:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
+                targetZone = Constants.RedField.TargetZoneA;
                 break;
             case 1:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
+                targetZone = Constants.RedField.TargetZoneB;
                 break;
             case 4:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
+                targetZone = Constants.RedField.TargetZoneC;
                 break;
         }
-
+        actions.add(() -> moveToZone(targetZone, 0, 0));
         actions.add(() -> dropWobble());
-        actions.add(() -> moveToStart(Constants.RedLeft.StartingPos, Math.toRadians(180)));
+        actions.add(() -> moveToStart(Constants.RedRight.WobblePos, 0,180));
+        actions.add(() -> pickupWobble());
+        actions.add(() -> moveToZone(targetZone, 180, 0));
+        actions.add(() -> moveToShoot(Constants.RedLeft.ShootingPos, Math.toRadians(0)));
+        actions.add(() -> shootRings());
+
     }
 }

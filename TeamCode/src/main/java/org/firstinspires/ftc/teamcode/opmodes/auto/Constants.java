@@ -36,11 +36,15 @@ public class Constants {
 
     public static class RedLeft {
         public static final Vector2d StartingPos = new Vector2d(-63, -24 - TapeWidth);
+        public static final Vector2d ShootingPos = new Vector2d(-6, StartingPos.getY());
+        public static final Vector2d WobblePos = new Vector2d(-39, StartingPos.getY());
 
     }
 
     public static class RedRight {
         public static final Vector2d StartingPos = new Vector2d(-63, -48 - TapeWidth);
+        public static final Vector2d ShootingPos = new Vector2d(-6, StartingPos.getY());
+        public static final Vector2d WobblePos = new Vector2d(-39, StartingPos.getY());
     }
 
     public static class BlueField {
