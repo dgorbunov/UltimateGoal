@@ -28,7 +28,6 @@ public class DrivetrainController implements Controller {
     boolean slowMode = false;
     boolean justHit = false;
 
-
     public DrivetrainController(HardwareMap hardwareMap, Telemetry tel) {
 
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
@@ -41,7 +40,7 @@ public class DrivetrainController implements Controller {
         telemetry = tel;
     }
 
-    private void defGoBilda(){ //GoBilda has motor mounts flipped
+    private void defGoBilda() { //GoBilda has motor mounts flipped
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
     }
@@ -103,7 +102,7 @@ public class DrivetrainController implements Controller {
 
             setPower(leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
             telemetry.addLine("driving");
-    };
+    }
 
     public void setPower(double LF, double LR, double RF, double RR){
         leftFront.setPower(LF);
@@ -125,7 +124,6 @@ public class DrivetrainController implements Controller {
         setAllPower(0);
     }
 
-
     @Override
     public void init() {
         defGoBilda();
@@ -136,5 +134,4 @@ public class DrivetrainController implements Controller {
     public void start() {
 
     }
-
 }

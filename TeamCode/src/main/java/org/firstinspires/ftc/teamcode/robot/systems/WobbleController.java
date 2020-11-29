@@ -36,7 +36,6 @@ public class WobbleController implements Controller {
 
     @Override
     public void stop() {
-
     }
 
     // TODO: drop wobble

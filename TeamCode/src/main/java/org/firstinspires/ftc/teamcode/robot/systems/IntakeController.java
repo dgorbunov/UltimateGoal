@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class IntakeController implements Controller {
     Telemetry telemetry;
-
     MockDcMotorEx intake;
 
     public static String ClassName;
@@ -32,7 +31,7 @@ public class IntakeController implements Controller {
 
     @Override
     public void stop() {
-
+        intake.setPower(0);
     }
 
     public void run(double motorPower){
