@@ -64,6 +64,8 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     public static int POSE_HISTORY_LIMIT = 100;
 
+    public static String ControllerName;
+
     public enum Mode {
         IDLE,
         TURN,

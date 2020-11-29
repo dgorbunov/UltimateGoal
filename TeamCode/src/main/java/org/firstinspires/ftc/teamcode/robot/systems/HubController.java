@@ -7,13 +7,14 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 public class HubController implements Controller {
-
-    ExpansionHubEx controlHub;
-    Telemetry telemetry;
+    private ExpansionHubEx controlHub;
+    private Telemetry telemetry;
+    public static String ControllerName;
 
     public HubController (HardwareMap hardwareMap, Telemetry telemetry){
         controlHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
         this.telemetry = telemetry;
+        ControllerName = getClass().getSimpleName();
     }
 
     public String getFormattedCurrentDraw(){

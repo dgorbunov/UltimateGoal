@@ -8,15 +8,14 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotor;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class IntakeController implements Controller {
-    Telemetry telemetry;
-    MockDcMotorEx intake;
-
-    public static String ClassName;
+    private Telemetry telemetry;
+    private MockDcMotorEx intake;
+    public static String ControllerName;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         intake = new MockDcMotorEx("intake", telemetry);
-        ClassName = getClass().getSimpleName();
+        ControllerName = getClass().getSimpleName();
     }
 
     @Override
@@ -35,7 +34,7 @@ public class IntakeController implements Controller {
     }
 
     public void run(double motorPower){
-        telemetry.addData(ClassName, "Intaking");
+        telemetry.addData(ControllerName, "Intaking");
         intake.setPower(motorPower);
     }
 }

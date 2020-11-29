@@ -11,16 +11,15 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 public class ShooterController implements Controller {
-    Telemetry telemetry;
-    MockDcMotorEx shooter;
-    float wheelRadius = 0.051f; //meters
-    public static String ClassName;
-
+    private Telemetry telemetry;
+    private MockDcMotorEx shooter;
+    private float wheelRadius = 0.051f; //meters
+    public static String ControllerName;
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         shooter = new MockDcMotorEx("shooter", telemetry);
-        ClassName = getClass().getSimpleName();
+        ControllerName = getClass().getSimpleName();
     }
 
     @Override
@@ -32,12 +31,12 @@ public class ShooterController implements Controller {
         if (button) shooter.setPower(1); //shooter.setVelocity();
          else stop();
 
-         telemetry.addData(ClassName, "Shooting");
+         telemetry.addData(ControllerName, "Shooting");
 
         String velocity = shooter.getVelocity(AngleUnit.RADIANS) + " rad/s";
         String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
-        telemetry.addData("Shooter Velocity:", velocity);
-        telemetry.addData("Shooter Velocity:", velocityTangential); //v = r*w
+        telemetry.addData(ControllerName,"velocity:" + velocity);
+        telemetry.addData(ControllerName, "velocityTangential: " + velocityTangential); //v = r*w
     }
 
     @Override
