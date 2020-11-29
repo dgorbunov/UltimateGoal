@@ -13,10 +13,13 @@ public class WobbleController implements Controller {
     MockServo wobbleGrip;
     MockServo wobbleLift;
 
+    public static String ClassName;
+
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         wobbleGrip = new MockServo("wobbleGrip", telemetry);
         wobbleLift = new MockServo("wbbbleLift", telemetry);
+        ClassName = getClass().getSimpleName();
     }
 
     @Override
@@ -38,10 +41,11 @@ public class WobbleController implements Controller {
 
     // TODO: drop wobble
     public void drop() {
-
+        telemetry.addData(ClassName, "Dropping Wobble");
     }
 
     // TODO: pickup wobble
     public void pickup() {
+        telemetry.addData(ClassName, "Picking Up Wobble");
     }
 }

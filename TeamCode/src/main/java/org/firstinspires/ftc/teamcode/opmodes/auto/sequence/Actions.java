@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FullAuto;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,9 +32,13 @@ public class Actions {
         }
     }
 
-    public void run() {
+    public void run(String inputAction) {
         synchronized (theLock) {
             //telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
+            if (!inputAction.equals(Constants.AllTrajectories)) {
+                isolateAction(inputAction);
+            }
+
             Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();
@@ -40,7 +46,22 @@ public class Actions {
                     action.run();
                 }
             }
+
         }
+    }
+
+    private void isolateAction(String inputAction){
+        int foundActions = 0;
+        Iterator<Runnable> iterator = actions.iterator();
+        while (iterator.hasNext() && shouldRun) {
+            Runnable action = actions.poll();
+            if (action != null) {
+                if (!action.toString().equalsIgnoreCase(inputAction)){
+                    actions.remove(action);
+                } else foundActions++;
+            }
+        }
+        if (foundActions == 0) telemetry.addLine(FullAuto.TrajectorySelect + " sequence not found");
     }
 
     public void stop() {

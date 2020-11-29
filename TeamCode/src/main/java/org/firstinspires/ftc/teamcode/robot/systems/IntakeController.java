@@ -12,9 +12,12 @@ public class IntakeController implements Controller {
 
     MockDcMotorEx intake;
 
+    public static String ClassName;
+
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         intake = new MockDcMotorEx("intake", telemetry);
+        ClassName = getClass().getSimpleName();
     }
 
     @Override
@@ -30,5 +33,10 @@ public class IntakeController implements Controller {
     @Override
     public void stop() {
 
+    }
+
+    public void run(double motorPower){
+        telemetry.addData(ClassName, "Intaking");
+        intake.setPower(motorPower);
     }
 }

@@ -6,11 +6,15 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FullAuto;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class Sequence {
 
@@ -56,7 +60,7 @@ public abstract class Sequence {
             telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
 
             // Do all the work on another thread to avoid blocking the invoking thread
-            new Thread(() -> actions.run()).start();
+            new Thread(() -> actions.run(FullAuto.TrajectorySelect)).start();
         }
     }
 
@@ -80,30 +84,21 @@ public abstract class Sequence {
         telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
 
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
-        if (drive != null) {
-            Trajectory mySequence = drive.trajectoryBuilder(GetCurrentPose())
-                    .splineTo(targetZone, heading)
-                    .build();
 
-            //TODO: Avoid rings
-            drive.followTrajectoryAsync(mySequence);
-            drive.waitForIdle();
-        }
+        followTrajectoryAsync(buildSplineTrajectory(targetZone, heading));
     }
 
     // TODO: implement drop wobble
     public void dropWobble() {
         telemetry.addData("Sequence","dropWobble" );
         WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
-        if (wobble != null) {
-            wobble.start();
-            wobble.drop();
-        }
+        wobble.drop();
     }
 
     // TODO: implement moveToStart
     public void moveToStart() {
         telemetry.addData("Sequence","moveToStart" );
+
     }
 
     // TODO: implement collect wobble
@@ -142,5 +137,22 @@ public abstract class Sequence {
     // TODO: implement moveToLaunchLine
     public void moveToLaunchLine() {
         telemetry.addData("Sequence","moveToLaunchLine" );
+    }
+
+    private Trajectory buildSplineTrajectory(Vector2d position, double heading){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .splineTo(position, heading)
+                .build();
+
+        return trajectory;
+    }
+
+    private void followTrajectoryAsync(Trajectory trajectory){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        drive.followTrajectoryAsync(trajectory);
+        drive.waitForIdle();
+        //although this may look equivalent to followTrajectory it is non-blocking
+        //because sequences run on a separate thread, drive methods do not
     }
 }

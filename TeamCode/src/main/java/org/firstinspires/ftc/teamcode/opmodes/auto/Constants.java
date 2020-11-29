@@ -14,6 +14,8 @@ public class Constants {
     public static final String LeftSide = "Left";
     public static final String RightSide = "Right";
 
+    public static final String AllTrajectories = "all";
+
     public static final String NoRings = "None";
     public static final String SingleRing = "Single";
     public static final String QuadRing = "Quad";

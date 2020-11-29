@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -17,7 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Autonomous(name="fullAuto", group="Iterative Opmode")
+@Config //for FTCDash
 public class FullAuto extends OpMode {
+
+    public static volatile String TrajectorySelect = Constants.AllTrajectories; //"all"
 
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<>();

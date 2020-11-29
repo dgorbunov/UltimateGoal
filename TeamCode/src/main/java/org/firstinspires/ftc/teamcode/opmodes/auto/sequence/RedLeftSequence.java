@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FullAuto;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 
@@ -17,16 +18,19 @@ public class RedLeftSequence extends Sequence {
     }
 
     protected void makeActions() {
-        switch (ringCount) {
-            case 0:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
-                break;
-            case 1:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
-                break;
-            case 4:
-                actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
-                break;
+        if (FullAuto.TrajectorySelect == Constants.AllTrajectories) {
+            switch (ringCount) {
+                case 0:
+                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
+                    break;
+                case 1:
+                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
+                    break;
+                case 4:
+                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
+                    break;
+            }
+            actions.add(this::dropWobble);
         }
 
     }

@@ -16,10 +16,13 @@ public class ShooterController implements Controller {
     MockDcMotorEx shooter;
 
     float wheelRadius = 0.051f; //meters
+    public static String ClassName;
+
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         shooter = new MockDcMotorEx("shooter", telemetry);
+        ClassName = getClass().getSimpleName();
     }
 
     @Override
@@ -31,10 +34,12 @@ public class ShooterController implements Controller {
         if (button) shooter.setPower(1); //shooter.setVelocity();
          else stop();
 
+         telemetry.addData(ClassName, "Shooting");
+
         String velocity = shooter.getVelocity(AngleUnit.RADIANS) + " rad/s";
         String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
-//        telemetry.addData("Shooter Velocity:", velocity);
-//        telemetry.addData("Shooter Velocity:", velocityTangential); //v = r*w
+        telemetry.addData("Shooter Velocity:", velocity);
+        telemetry.addData("Shooter Velocity:", velocityTangential); //v = r*w
     }
 
     @Override
