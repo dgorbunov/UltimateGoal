@@ -213,6 +213,7 @@ public class DriveLocalizationController extends MecanumDrive implements Control
         for (DcMotorEx motor : motors) {
             motor.setPower(0.0);
         }
+        mode = Mode.IDLE; //return out of the current thread
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
