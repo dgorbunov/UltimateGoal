@@ -25,7 +25,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -87,17 +86,14 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     private LinkedList<Pose2d> poseHistory;
 
-    protected DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    protected List<DcMotorEx> motors;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
     private Telemetry telemetry;
-
-    private boolean slowMode = false;
-    private boolean justHit = false;
 
     public DriveLocalizationController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
@@ -157,75 +153,6 @@ public class DriveLocalizationController extends MecanumDrive implements Control
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-    }
-
-    public void drive(Gamepad gamepad) {
-        if (!slowMode & gamepad.right_bumper && !justHit) {
-            slowMode = true;
-            justHit = true;
-            telemetry.addLine("Slow Mode");
-            //TODO: fix telemetry, or use static
-        }
-        else if (slowMode & gamepad.right_bumper && !justHit){
-            slowMode = false;
-            justHit = true;
-            telemetry.clear();
-        }
-        if (!gamepad.right_bumper){
-            justHit = false;
-        }
-
-        double y;
-        double x;
-        double rx;
-        if (slowMode) {
-            y = -gamepad.left_stick_y * 0.5; //reversed
-            x = gamepad.left_stick_x * 0.75; // Counteract imperfect strafing
-            rx = gamepad.right_stick_x * 0.5; //Might need to change for Acto
-        }
-        else {
-            y = -gamepad.left_stick_y; //reversed
-            x = gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
-            rx = gamepad.right_stick_x; //Might need to change for Acto
-        }
-
-        double leftFrontPower = y + x + rx;
-        double leftRearPower = y - x + rx;
-        double rightFrontPower = y - x - rx;
-        double rightRearPower = y + x - rx;
-
-        // Put powers in the range of -1 to 1 only if they aren't already (not
-        // checking would cause us to always drive at full speed)
-
-        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 ||
-                Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-            // Find the largest power
-            double max = 0;
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-            max = Math.max(Math.abs(rightFrontPower), max);
-            max = Math.max(Math.abs(rightRearPower), max);
-
-            // Divide everything by max (it's positive so we don't need to worry
-            // about signs)
-            leftFrontPower /= max;
-            leftRearPower /= max;
-            rightFrontPower /= max;
-            rightRearPower /= max;
-        }
-
-        setPower(leftFrontPower, leftRearPower, rightFrontPower, rightRearPower);
-        telemetry.addLine("driving");
-    }
-
-    public void setPower(double LF, double LR, double RF, double RR){
-        leftFront.setPower(LF);
-        leftRear.setPower(LR);
-        rightFront.setPower(RF);
-        rightRear.setPower(RR);
-    }
-
-    private void setAllPower(double power){
-        for (DcMotor motor : motors) motor.setPower(power);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
