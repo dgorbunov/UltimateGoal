@@ -32,12 +32,15 @@ public class RedLeftSequence extends Sequence {
         }
         actions.add(() -> moveToZone(targetZone, 0, 0));
         actions.add(() -> dropWobble());
-        actions.add(() -> moveToStart(Constants.RedRight.WobblePos, 0,180));
+        actions.add(() -> moveToStart(Constants.RedRight.RightWobblePos, 0,180));
         actions.add(() -> pickupWobble());
         actions.add(() -> moveToZone(targetZone, 180, 0));
-        actions.add(() -> moveToShoot(Constants.RedLeft.ShootingPos, Math.toRadians(0)));
-        actions.add(() -> shootRings()); //TODO: add # of rings to shoot (time delay) to shoot method
-        actions.add(() -> intakeRings(ringCount));
+        actions.add(() -> moveToShoot(Constants.RedLeft.ShootingPos, 0));
+        actions.add(() -> shootRings());
+        actions.add(() -> intakeRings(ringCount, Constants.RedField.RingPos, 0));
+        actions.add(() -> shootRings());
+        actions.add(() -> moveToLaunchLine(Constants.RedLeft.LaunchLine));
+        actions.add(() -> stop());
 
     }
 }
