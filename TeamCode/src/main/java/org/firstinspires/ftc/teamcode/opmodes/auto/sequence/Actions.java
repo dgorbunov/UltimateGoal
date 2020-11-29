@@ -32,13 +32,9 @@ public class Actions {
         }
     }
 
-    public void run(String inputAction) {
+    public void run() {
         synchronized (theLock) {
             //telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
-            if (!inputAction.equals(Constants.AllTrajectories)) {
-                isolateAction(inputAction);
-            }
-
             Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();
@@ -46,23 +42,7 @@ public class Actions {
                     action.run();
                 }
             }
-
         }
-    }
-
-    private void isolateAction(String inputAction){
-        int foundActions = 0;
-        Iterator<Runnable> iterator = actions.iterator();
-        while (iterator.hasNext() && shouldRun) {
-            Runnable action = actions.poll();
-            if (action != null) {
-                telemetry.addData("Action Name:", action.toString());
-                if (!action.toString().equalsIgnoreCase(inputAction)){
-                    actions.remove(action);
-                } else foundActions++;
-            }
-        }
-        if (foundActions == 0) telemetry.addLine(FullAuto.TrajectorySelect + " sequence not found");
     }
 
     public void stop() {

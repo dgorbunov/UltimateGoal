@@ -60,7 +60,7 @@ public abstract class Sequence {
             telemetry.addData("Sequence", "Executing sequence on thread: " + Thread.currentThread().getId());
 
             // Do all the work on another thread to avoid blocking the invoking thread
-            new Thread(() -> actions.run(FullAuto.TrajectorySelect)).start();
+            new Thread(() -> actions.run()).start();
         }
     }
 

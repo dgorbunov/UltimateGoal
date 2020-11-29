@@ -18,21 +18,19 @@ public class RedLeftSequence extends Sequence {
     }
 
     protected void makeActions() {
-        if (FullAuto.TrajectorySelect == Constants.AllTrajectories) {
-            switch (ringCount) {
-                case 0:
-                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
-                    break;
-                case 1:
-                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
-                    break;
-                case 4:
-                    actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
-                    break;
-            }
-            actions.add(this::dropWobble);
-            actions.add(() -> moveToStart(Constants.RedLeft.StartingPos, Math.toRadians(180)));
+        switch (ringCount) {
+            case 0:
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneA, Math.toRadians(0)));
+                break;
+            case 1:
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneB, Math.toRadians(0)));
+                break;
+            case 4:
+                actions.add(() -> moveToZone(Constants.RedField.TargetZoneC, Math.toRadians(0)));
+                break;
         }
 
+        actions.add(() -> dropWobble());
+        actions.add(() -> moveToStart(Constants.RedLeft.StartingPos, Math.toRadians(180)));
     }
 }

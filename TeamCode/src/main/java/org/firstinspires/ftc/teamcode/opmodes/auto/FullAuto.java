@@ -26,8 +26,6 @@ import java.util.Optional;
 @Config //for FTCDash
 public class FullAuto extends OpMode {
 
-    public static volatile String TrajectorySelect = Constants.AllTrajectories; //"all"
-
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<>();
     private ControllerManager controllers;
@@ -63,6 +61,7 @@ public class FullAuto extends OpMode {
         // TODO: use different opmodes for alliance, side. For now, we are assuming Red Alliance, Left side:
         String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide);
         synchronized (lock) {
+            // TODO: check eventually
             if (ringCount == -1) {
                 telemetry.addLine("Camera found 0 rings!");
             }
