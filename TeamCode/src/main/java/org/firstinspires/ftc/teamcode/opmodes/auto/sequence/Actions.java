@@ -8,12 +8,12 @@ import java.util.Queue;
 
 public class Actions {
     protected Queue<Runnable> actions = new LinkedList<>();
-    Telemetry telemetry;
+    private Telemetry telemetry;
     private volatile boolean shouldRun;
     protected final Object theLock = new Object();
 
     public Actions(Telemetry tel) {
-        this.telemetry  = tel;
+        this.telemetry = tel;
         this.shouldRun = true;
     }
 

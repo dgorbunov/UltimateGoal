@@ -59,6 +59,10 @@ public class FullAuto extends OpMode {
         // TODO: use different opmodes for alliance, side. For now, we are assuming Red Alliance, Left side:
         String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide);
         synchronized (lock) {
+            if (ringCount == -1) {
+                telemetry.addLine("Camera has not found any rings! ");
+            }
+
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
                 telemetry.addLine("No sequence found!");
