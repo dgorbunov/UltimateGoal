@@ -31,6 +31,7 @@ public class RedLeftSequence extends Sequence {
                     break;
             }
             actions.add(this::dropWobble);
+            actions.add(() -> moveToStart(Constants.RedLeft.StartingPos, Math.toRadians(180)));
         }
 
     }

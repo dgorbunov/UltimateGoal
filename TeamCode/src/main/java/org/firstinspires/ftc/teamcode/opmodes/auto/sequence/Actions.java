@@ -56,6 +56,7 @@ public class Actions {
         while (iterator.hasNext() && shouldRun) {
             Runnable action = actions.poll();
             if (action != null) {
+                telemetry.addData("Action Name:", action.toString());
                 if (!action.toString().equalsIgnoreCase(inputAction)){
                     actions.remove(action);
                 } else foundActions++;

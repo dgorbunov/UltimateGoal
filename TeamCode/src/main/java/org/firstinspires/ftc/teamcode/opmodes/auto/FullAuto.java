@@ -64,7 +64,7 @@ public class FullAuto extends OpMode {
         String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide);
         synchronized (lock) {
             if (ringCount == -1) {
-                telemetry.addLine("Camera has not found any rings! ");
+                telemetry.addLine("Camera found 0 rings!");
             }
 
             currentSequence = getSequence(sequenceName);

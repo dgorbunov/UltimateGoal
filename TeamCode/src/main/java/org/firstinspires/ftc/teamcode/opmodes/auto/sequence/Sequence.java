@@ -81,7 +81,7 @@ public abstract class Sequence {
     }
 
     public void moveToZone(Vector2d targetZone, double heading) {
-        telemetry.addData("Sequence", "moveToZone: " + targetZone.toString() + "," + heading);
+        telemetry.addData("Sequence", "moveToZone");
 
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
 
@@ -90,20 +90,21 @@ public abstract class Sequence {
 
     // TODO: implement drop wobble
     public void dropWobble() {
-        telemetry.addData("Sequence","dropWobble" );
+        telemetry.addData("Sequence","dropWobble");
         WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
         wobble.drop();
     }
 
     // TODO: implement moveToStart
-    public void moveToStart() {
-        telemetry.addData("Sequence","moveToStart" );
-
+    public void moveToStart(Vector2d targetZone, double heading) {
+        telemetry.addData("Sequence","moveToStart");
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        followTrajectoryAsync(buildSplineTrajectory(targetZone, heading));
     }
 
     // TODO: implement collect wobble
     public void collectWobble() {
-        telemetry.addData("Sequence", "collectWobble" );
+        telemetry.addData("Sequence", "collectWobble");
         WobbleController wobble = controllers.get(WobbleController.class, Constants.Wobble);
         if (wobble != null) {
             wobble.start();
