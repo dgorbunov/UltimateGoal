@@ -35,10 +35,8 @@ public class IntakeController implements Controller {
         intake.setPower(0);
     }
 
-    public void run(double motorPower, int numRings) {
+    public void run(double motorPower) {
         telemetry.addData(ControllerName, "Intaking");
         intake.setPower(motorPower);
-        sleep(1000);
-        intake.setPower(0); //TODO: add sleep dependent on numRings
     }
 }

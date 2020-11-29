@@ -12,9 +12,12 @@ import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
+import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 public abstract class Sequence {
 
@@ -105,29 +108,44 @@ public abstract class Sequence {
         wobble.pickup();
     }
 
-    // TODO: implement moveToShoot
     public void moveToShoot(Vector2d position, double heading) {
         telemetry.addData("Sequence","moveToShoot" );
         followTrajectoryAsync(buildConstantSplineTrajectory(position, heading));
     }
 
-    // TODO: implement the shooter
     public void shootRings() {
         telemetry.addData("Sequence","shootRings" );
         ShooterController shooter = controllers.get(ShooterController.class, Constants.Shooter);
-        shooter.shoot(4000);
+        shooter.shoot(3000);
     }
 
-    // TODO: implement the intake
-    public void intakeRings(int numRings) {
-        telemetry.addData("Sequence","intakeRings" );
+    public void intakeRings(int numRings, Vector2d position, double heading) {
         IntakeController intake = controllers.get(IntakeController.class, Constants.Intake);
-        intake.run(1, numRings); //TODO: add numRings time delay to intake method
+        switch (numRings) {
+            case (0):
+                telemetry.addData("Sequence", "no rings to intake");
+                break;
+
+            case (1):
+                telemetry.addData("Sequence", "intake 1 ring");
+                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.5));
+                sleep(1000);
+                intake.stop();
+                break;
+
+            case (4):
+                telemetry.addData("Sequence", "intake 4 rings");
+                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.5));
+                sleep(3000);
+                intake.stop();
+                break;
+
+        }
     }
 
-    // TODO: implement moveToLaunchLine
-    public void moveToLaunchLine() {
+    public void moveToLaunchLine(Vector2d position) {
         telemetry.addData("Sequence","moveToLaunchLine" );
+        followTrajectoryAsync(buildLineTrajectory(position));
     }
 
     private Trajectory buildSplineTrajectory(Vector2d position, double initialHeading, double targetHeading){
@@ -148,12 +166,42 @@ public abstract class Sequence {
         return trajectory;
     }
 
+    private Trajectory buildLineTrajectory(Vector2d position){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .lineTo(position)
+                .build();
+        return trajectory;
+    }
+
+    private Trajectory buildStrafeTrajectory(Vector2d position){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .strafeTo(position)
+                .build();
+        return trajectory;
+    }
+
+
     private void followTrajectoryAsync(Trajectory trajectory){
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
         drive.followTrajectoryAsync(trajectory);
         drive.waitForIdle();
         //although this may look equivalent to followTrajectory it is non-blocking
         //because sequences run on a separate thread, drive methods do not
+    }
+
+    private Trajectory buildIntakeTrajectory(Vector2d position, double heading, double timeDelay){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, Constants.Drive);
+        IntakeController intake = controllers.get(IntakeController.class, Constants.Intake);
+        turn(heading);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .lineTo(position)
+                .addTemporalMarker(timeDelay, () -> { // This marker runs x # of seconds into the trajectory
+                    intake.run(1);
+                })
+                .build();
+        return trajectory;
     }
 
     private void turn(double heading){
