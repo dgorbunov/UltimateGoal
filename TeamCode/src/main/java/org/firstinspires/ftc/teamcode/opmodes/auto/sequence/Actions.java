@@ -32,7 +32,7 @@ public class Actions {
 
     public void run() {
         synchronized (theLock) {
-            telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
+            //telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
             Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {
                 Runnable action = actions.poll();

@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
@@ -101,7 +104,7 @@ public class FullAuto extends OpMode {
         synchronized (lock) {
             sequences.put(makeSequenceName(
                     Constants.RedAlliance, Constants.LeftSide),
-                    new RedRightSequence(controllers, telemetry));
+                    new RedLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(
                     Constants.RedAlliance, Constants.RightSide),
@@ -109,11 +112,11 @@ public class FullAuto extends OpMode {
 
             sequences.put(makeSequenceName(
                     Constants.BlueAlliance, Constants.LeftSide),
-                    new RedRightSequence(controllers, telemetry));
+                    new BlueLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(
                     Constants.BlueAlliance, Constants.RightSide),
-                    new RedRightSequence(controllers, telemetry));
+                    new BlueRightSequence(controllers, telemetry));
         }
     }
 

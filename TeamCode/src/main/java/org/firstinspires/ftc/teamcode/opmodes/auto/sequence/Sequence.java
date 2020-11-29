@@ -86,7 +86,8 @@ public abstract class Sequence {
                     .build();
 
             //TODO: Avoid rings
-            drive.followTrajectory(mySequence);
+            drive.followTrajectoryAsync(mySequence);
+            drive.waitForIdle();
         }
     }
 
