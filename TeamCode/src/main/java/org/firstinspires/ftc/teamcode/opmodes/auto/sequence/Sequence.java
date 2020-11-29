@@ -119,12 +119,10 @@ public abstract class Sequence {
     }
 
     // TODO: implement the intake
-    public void intakeRings() {
+    public void intakeRings(int numRings) {
         telemetry.addData("Sequence","intakeRings" );
         IntakeController intake = controllers.get(IntakeController.class, Constants.Intake);
-        if (intake != null) {
-            intake.start();
-        }
+        intake.run(1, numRings); //TODO: add numRings time delay to intake method
     }
 
     // TODO: implement moveToLaunchLine
