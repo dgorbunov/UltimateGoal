@@ -8,12 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
 
 /*
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Disabled
+//@Disabled
 @Autonomous(group = "drive")
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
@@ -21,6 +22,7 @@ public class StraightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DriveLocalizationController drive = new DriveLocalizationController(hardwareMap);
+        StandardTrackingWheelLocalizer odometry = new StandardTrackingWheelLocalizer(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)
@@ -36,6 +38,9 @@ public class StraightTest extends LinearOpMode {
         telemetry.addData("finalX", poseEstimate.getX());
         telemetry.addData("finalY", poseEstimate.getY());
         telemetry.addData("finalHeading", poseEstimate.getHeading());
+        telemetry.addData("left encoder:", odometry.getWheelPositions().get(0));
+        telemetry.addData("right encoder:", odometry.getWheelPositions().get(1));
+        telemetry.addData("front encoder:", odometry.getWheelPositions().get(2));
         telemetry.update();
 
         while (!isStopRequested() && opModeIsActive()) ;

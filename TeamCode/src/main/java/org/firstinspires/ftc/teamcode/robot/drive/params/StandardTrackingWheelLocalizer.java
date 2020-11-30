@@ -32,13 +32,25 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.6889764; // in (35mm/2 = 17.5mm)
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 16.4172; // in; distance between the left and right wheels (calibrated)
+    public static double LATERAL_DISTANCE = 16.561849817; // in; distance between the left and right wheels (calibrated)
+
     public static double FORWARD_OFFSET = 0.39; // in; offset of the lateral wheel (about 1cm forward)
 
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 1; // Multiplier in the X direction (forward)
+    public static double LEFT_MULTIPLIER = 1.012350539; //left encoder multiplier
+    public static double RIGHT_MULTIPLIER = 1.011038261; //right encoder multiplier
+    public static double LATERAL_MULTIPLIER = 1; // Multiplier in the Y direction (strafe)
     //TODO: Tune X/Y Multiplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
 
+    /**
+     * Options for inaccurate heading
+     * Tune LEFT_MULTIPLIER
+     * Use splines that turn instead of direct turns
+     * Tune HEADING_PID, more aggresive
+     * Use Hub IMU to correct for heading error
+     * Use vision targets to correct
+     * Try two wheel odometry with IMU
+     */
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
@@ -62,9 +74,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER,
-                encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER,
-                encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER
+                encoderTicksToInches(leftEncoder.getCurrentPosition()) * LEFT_MULTIPLIER,
+                encoderTicksToInches(rightEncoder.getCurrentPosition()) * RIGHT_MULTIPLIER,
+                encoderTicksToInches(frontEncoder.getCurrentPosition()) * LATERAL_MULTIPLIER
         );
     }
 

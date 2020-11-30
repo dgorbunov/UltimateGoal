@@ -26,7 +26,7 @@ public class Constants {
     public static final String Drive = "drive";
     public static final String Hub = "hub";
 
-    private static final double TapeWidth  = 1.75;
+    private static final double TapeWidth  = 2;
 
     public static class RedField {
         public static final Vector2d TargetZoneA = new Vector2d(12,-60);

@@ -90,9 +90,17 @@ public class DriveConstants {
 
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            52.48180821614297, 52.48180821614297, 0.0,
+            45, 45, 0.0,
             Math.toRadians(360), Math.toRadians(360), 0.0
     );
+
+    /** ORIGINAL
+     *
+     * public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+     *             52.48180821614297, 52.48180821614297, 0.0,
+     *             Math.toRadians(360), Math.toRadians(360), 0.0
+     *     );
+     */
 
 
     public static double encoderTicksToInches(double ticks) {
