@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
-import org.firstinspires.ftc.teamcode.opmodes.auto.FullAuto;
 
 import java.util.Iterator;
 import java.util.LinkedList;

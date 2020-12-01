@@ -61,7 +61,6 @@ public class FullAuto extends OpMode {
         controllers.start(); //stop camera instance
 
         synchronized (lock) {
-
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
                 telemetry.addLine("No sequence found!");
@@ -122,19 +121,19 @@ public class FullAuto extends OpMode {
     private void makeSequences() {
         synchronized (lock) {
             sequences.put(makeSequenceName(
-                    Constants.RedAlliance, Constants.LeftSide),
+                    FieldConstants.RedAlliance, FieldConstants.LeftSide),
                     new RedLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(
-                    Constants.RedAlliance, Constants.RightSide),
+                    FieldConstants.RedAlliance, FieldConstants.RightSide),
                     new RedRightSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(
-                    Constants.BlueAlliance, Constants.LeftSide),
+                    FieldConstants.BlueAlliance, FieldConstants.LeftSide),
                     new BlueLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(
-                    Constants.BlueAlliance, Constants.RightSide),
+                    FieldConstants.BlueAlliance, FieldConstants.RightSide),
                     new BlueRightSequence(controllers, telemetry));
         }
     }
@@ -148,7 +147,7 @@ public class FullAuto extends OpMode {
     }
 
     private void computeRingCount() {
-        CameraController camera = controllers.get(CameraController.class, Constants.Camera);
+        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
         if (camera == null) {
             telemetry.addLine("No camera!");
             return;
