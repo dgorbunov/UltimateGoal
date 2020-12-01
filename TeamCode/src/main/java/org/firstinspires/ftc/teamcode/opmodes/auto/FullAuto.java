@@ -34,7 +34,6 @@ public class FullAuto extends OpMode {
     private Sequence currentSequence;
     protected final static Object lock = new Object();
     private String sequenceName;
-    DriveLocalizationController drive;
 
     @Override
     public void init() {
@@ -113,7 +112,7 @@ public class FullAuto extends OpMode {
 
     private void makeControllers() {
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(Constants.Drive, drive = new DriveLocalizationController(hardwareMap, telemetry));
+        controllers.add(Constants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
         controllers.add(Constants.Intake, new IntakeController(hardwareMap, telemetry));
         controllers.add(Constants.Shooter, new ShooterController(hardwareMap, telemetry));
         controllers.add(Constants.Wobble, new WobbleController(hardwareMap, telemetry));
