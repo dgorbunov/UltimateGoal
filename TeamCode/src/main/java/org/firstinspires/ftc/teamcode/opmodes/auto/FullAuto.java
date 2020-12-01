@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Autonomous(name="fullAuto", group="Iterative Opmode")
+@Disabled() // will not show up on FTC driver station.
 @Config //for FTCDash
 public class FullAuto extends OpMode {
 
@@ -32,7 +33,7 @@ public class FullAuto extends OpMode {
     private int ringCount = -1;
     private Sequence currentSequence;
     protected final static Object lock = new Object();
-
+    private String sequenceName;
     DriveLocalizationController drive;
 
     @Override
@@ -60,8 +61,6 @@ public class FullAuto extends OpMode {
     public void start() { //code to run once when play is hit
         controllers.start(); //stop camera instance
 
-        // TODO: use different opmodes for alliance, side. For now, we are assuming Red Alliance, Left side:
-        String sequenceName = makeSequenceName(Constants.RedAlliance, Constants.LeftSide);
         synchronized (lock) {
 
             currentSequence = getSequence(sequenceName);
@@ -96,6 +95,22 @@ public class FullAuto extends OpMode {
         }
     }
 
+    public String getSequence() {
+        synchronized (lock) {
+            return this.sequenceName;
+        }
+    }
+
+    public void SetSequenceName(String sequenceName) {
+        synchronized (lock) {
+            this.sequenceName = sequenceName;
+        }
+    }
+
+    protected String makeSequenceName(String alliance, String side) {
+        return (alliance + side).toLowerCase();
+    }
+
     private void makeControllers() {
         controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
         controllers.add(Constants.Drive, drive = new DriveLocalizationController(hardwareMap, telemetry));
@@ -123,10 +138,6 @@ public class FullAuto extends OpMode {
                     Constants.BlueAlliance, Constants.RightSide),
                     new BlueRightSequence(controllers, telemetry));
         }
-    }
-
-    private String makeSequenceName(String alliance, String side) {
-        return (alliance + side).toLowerCase();
     }
 
     private Sequence getSequence(String name) {
