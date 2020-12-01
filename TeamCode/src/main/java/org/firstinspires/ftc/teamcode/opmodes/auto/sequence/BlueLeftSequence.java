@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class BlueLeftSequence extends Sequence {
@@ -11,7 +11,7 @@ public class BlueLeftSequence extends Sequence {
     public BlueLeftSequence(ControllerManager controllers, Telemetry tel) {
         super(controllers, tel);
         this.startPose = new Pose2d(
-                Constants.BlueLeft.StartingPos,
+                FieldConstants.BlueLeft.StartingPos,
                 Math.toRadians(0)); // TODO: rotate 180?
     }
 

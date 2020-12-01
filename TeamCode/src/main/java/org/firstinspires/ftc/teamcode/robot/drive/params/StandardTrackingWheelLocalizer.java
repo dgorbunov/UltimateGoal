@@ -37,13 +37,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double FORWARD_OFFSET = 0.39; // in; offset of the lateral wheel (about 1cm forward)
 
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction (forward)
-    public static double LEFT_MULTIPLIER = 1.012350539; //left encoder multiplier
+    public static double LEFT_MULTIPLIER = 1.011038261; //left encoder multiplier
     public static double RIGHT_MULTIPLIER = 1.011038261; //right encoder multiplier
-    public static double LATERAL_MULTIPLIER = 1; // Multiplier in the Y direction (strafe)
+    public static double LATERAL_MULTIPLIER = 1.011038261; // Multiplier in the Y direction (strafe)
     //TODO: Tune X/Y Multiplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
 
     /**
      * Options for inaccurate heading
+     * Retune everyhing
+     * Lower speed
      * Tune LEFT_MULTIPLIER
      * Use splines that turn instead of direct turns
      * Tune HEADING_PID, more aggresive

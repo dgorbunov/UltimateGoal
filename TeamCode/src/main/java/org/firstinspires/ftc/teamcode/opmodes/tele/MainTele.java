@@ -3,14 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.opmodes.auto.Constants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 @TeleOp(name="mainTele", group="Iterative Opmode")
 public class MainTele extends OpMode {
@@ -34,8 +32,8 @@ public class MainTele extends OpMode {
         } else {
             drive = new DrivetrainController(hardwareMap, telemetry);
             hub = new HubController(hardwareMap, telemetry);
-            controllers.add(Constants.Drive, drive);
-            controllers.add(Constants.Hub, hub);
+            controllers.add(FieldConstants.Drive, drive);
+            controllers.add(FieldConstants.Hub, hub);
         }
 
         controllers.init();
