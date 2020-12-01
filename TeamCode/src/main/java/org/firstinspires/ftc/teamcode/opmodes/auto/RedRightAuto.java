@@ -7,6 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Config //for FTCDash
 public class RedRightAuto extends FullAuto {
     RedRightAuto() {
-        SetSequenceName(makeSequenceName(Constants.RedAlliance, Constants.RightSide));
+        SetSequenceName(makeSequenceName(FieldConstants.RedAlliance, FieldConstants.RightSide));
     }
 }
