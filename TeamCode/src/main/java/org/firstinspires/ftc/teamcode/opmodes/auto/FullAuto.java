@@ -110,12 +110,12 @@ public class FullAuto extends OpMode {
     }
 
     private void makeControllers() {
-        controllers.add(Constants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(Constants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
-        controllers.add(Constants.Intake, new IntakeController(hardwareMap, telemetry));
-        controllers.add(Constants.Shooter, new ShooterController(hardwareMap, telemetry));
-        controllers.add(Constants.Wobble, new WobbleController(hardwareMap, telemetry));
-        controllers.add(Constants.Hub, new HubController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
     }
 
     private void makeSequences() {
