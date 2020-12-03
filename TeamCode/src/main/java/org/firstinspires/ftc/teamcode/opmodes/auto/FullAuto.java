@@ -151,14 +151,17 @@ public class FullAuto extends OpMode {
     private void computeRingCount() {
         CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
         if (camera == null) {
-            telemetry.addLine("No camera!");
+            telemetry.addLine("Camera not initialized");
             return;
         }
 
         String strNumRings = camera.rankRings();
         telemetry.addLine("Camera rankRings returned: " + strNumRings);
 
-        Integer rings = camera.ringsToInt(strNumRings);
+        int ringCountOpenCV = camera.countRingsOpenCV();
+        telemetry.addData("OpenCV returned rings", ringCountOpenCV);
+
+        int rings = camera.ringsToInt(strNumRings);
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1);
             telemetry.addData("Camera ringsToInt returned: ", ringCount);

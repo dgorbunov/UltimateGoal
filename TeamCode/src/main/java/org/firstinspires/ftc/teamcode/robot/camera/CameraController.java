@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.camera;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,11 +19,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EmptyStackException;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -33,9 +37,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public class CameraController implements Controller {
 
-    Telemetry telemetry;
-    HardwareMap hardwareMap;
-
+    private static final String WebcamName = "Webcam 1";
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/UltimateGoal.tflite"; //For OpenRC, loaded from internal storage to reduce APK size
     public static final String LABEL_FIRST_ELEMENT = "Quad";
     public static final String LABEL_SECOND_ELEMENT = "Single";
@@ -45,9 +47,12 @@ public class CameraController implements Controller {
     public static final int INT_NO_ELEMENT = 0;
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
 
-    private VuforiaLocalizer vuforia = null;
-    private OpenGLMatrix lastLocation = null;
-    private TFObjectDetector tfod;
+    VuforiaLocalizer vuforia = null;
+    OpenGLMatrix lastLocation = null;
+    TFObjectDetector tfod;
+    OpenCvCamera webcam;
+    Telemetry telemetry;
+    HardwareMap hardwareMap;
 
     public boolean targetVisible = false;
     private float phoneXRotate    = 0;
@@ -83,6 +88,7 @@ public class CameraController implements Controller {
     @Override
     public void init() {
         initVuforia();
+        initOpenCV();
         initTfod();
     }
 
@@ -90,6 +96,10 @@ public class CameraController implements Controller {
     public void start() {
         if (tfod != null) tfod.shutdown();
         targetsUltimateGoal.deactivate();
+    }
+
+    public int countRingsOpenCV(){
+        return RingDetector.ringCount;
     }
 
     public void countRings() {
@@ -208,6 +218,22 @@ public class CameraController implements Controller {
     @Override
     public void stop() { }
 
+    private void initOpenCV(){
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        /**
+         * This is the only thing you need to do differently when using multiple cameras.
+         * Instead of obtaining the camera monitor view and directly passing that to the
+         * camera constructor, we invoke {@link OpenCvCameraFactory#splitLayoutForMultipleViewports(int, int)}
+         * on that view in order to split that view into multiple equal-sized child views,
+         * and then pass those child views to the constructor.
+         */
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.HORIZONTALLY);
+
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, WebcamName), cameraMonitorViewId);
+        webcam.setPipeline(new RingDetector(webcam, telemetry));
+        webcam.openCameraDeviceAsync(() -> webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT));
+    }
+
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -217,7 +243,7 @@ public class CameraController implements Controller {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = hardwareMap.get(WebcamName.class, WebcamName);
         parameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine
