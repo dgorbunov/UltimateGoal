@@ -34,7 +34,6 @@ public class FullAuto extends OpMode {
     private Sequence currentSequence;
     protected final static Object lock = new Object();
     private String sequenceName;
-    DriveLocalizationController drive;
 
     @Override
     public void init() {
@@ -62,7 +61,6 @@ public class FullAuto extends OpMode {
         controllers.start(); //stop camera instance
 
         synchronized (lock) {
-
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
                 telemetry.addLine("No sequence found!");
@@ -113,7 +111,7 @@ public class FullAuto extends OpMode {
 
     private void makeControllers() {
         controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Drive, drive = new DriveLocalizationController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
