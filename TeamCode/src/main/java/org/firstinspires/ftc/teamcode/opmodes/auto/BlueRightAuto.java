@@ -6,7 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name="BlueRightAuto", group="Iterative Opmode")
 @Config //for FTCDash
 public class BlueRightAuto extends FullAuto {
-    BlueRightAuto() {
-        SetSequenceName(makeSequenceName(FieldConstants.BlueAlliance, FieldConstants.RightSide));
+
+    @Override
+    public void init(){
+        sequenceName = makeSequenceName(FieldConstants.BlueAlliance, FieldConstants.RightSide);
+        super.init();
     }
+
 }

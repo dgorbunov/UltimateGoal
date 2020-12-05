@@ -85,7 +85,9 @@ public abstract class Sequence {
     public void moveToZone(Vector2d targetZone, Vector2d intermediatePos, double initialHeading, double targetHeading) {
         telemetry.addData("Sequence", "moveToZone");
         turn(targetHeading);
-        followTrajectoryAsync(buildMultiSplineTrajectory(initialHeading, targetHeading, intermediatePos, targetZone));
+        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
+        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
+        //TODO: Arbitrary # of splines trajectory method
     }
 
     public void dropWobble() {
@@ -97,7 +99,8 @@ public abstract class Sequence {
     public void moveToStart(Vector2d wobblePos, Vector2d intermediatePos, double initialHeading, double targetHeading) {
         telemetry.addData("Sequence","moveToStart");
         turn(targetHeading);
-        followTrajectoryAsync(buildMultiSplineTrajectory(initialHeading, targetHeading, intermediatePos, wobblePos));
+        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
+        followTrajectoryAsync(buildSplineTrajectory(wobblePos, initialHeading, targetHeading));
     }
 
     public void pickupWobble() {
@@ -152,16 +155,6 @@ public abstract class Sequence {
                 .splineTo(position, Math.toRadians(targetHeading))
                 .build();
 
-        return trajectory;
-    }
-
-    private Trajectory buildMultiSplineTrajectory(double initialHeading, double targetHeading, Vector2d... position){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
-        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .splineTo(position[0], Math.toRadians(targetHeading))
-                .splineTo(position[1], Math.toRadians(targetHeading))
-                .build();
-        //TODO: arbitrary number of .splineTo
         return trajectory;
     }
 

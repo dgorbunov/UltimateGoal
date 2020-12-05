@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Disabled() // will not show up on FTC driver station.
+@Disabled // will not show up on FTC driver station.
+@Autonomous(name="FullAuto", group="Iterative Opmode")
 @Config //for FTCDash
 public class FullAuto extends OpMode {
 
@@ -33,7 +34,7 @@ public class FullAuto extends OpMode {
     private int ringCount = -1;
     private Sequence currentSequence;
     protected final static Object lock = new Object();
-    private String sequenceName;
+    protected String sequenceName;
 
     @Override
     public void init() {
@@ -48,7 +49,16 @@ public class FullAuto extends OpMode {
         // Initialize all controllers
         controllers.init();
 
+        synchronized (lock) {
+            currentSequence = getSequence(sequenceName);
+            if (currentSequence == null) {
+                telemetry.addLine("No sequence found!");
+                return;
+            }
+        }
+
         telemetry.addLine("Initialized");
+
     }
 
     @Override
@@ -59,13 +69,6 @@ public class FullAuto extends OpMode {
     @Override
     public void start() { //code to run once when play is hit
         controllers.start(); //stop camera instance
-
-        synchronized (lock) {
-            currentSequence = getSequence(sequenceName);
-            if (currentSequence == null) {
-                telemetry.addLine("No sequence found!");
-                return;
-            }
 
             try {
                 telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
@@ -78,7 +81,6 @@ public class FullAuto extends OpMode {
             } catch (Exception e) {
                 telemetry.addLine("Exception while executing sequence: " + e.toString());
             }
-        }
     }
 
     @Override
@@ -88,8 +90,8 @@ public class FullAuto extends OpMode {
     @Override
     public void stop() {
         synchronized (lock) {
-            currentSequence.stop();
-            controllers.stop();
+            if (currentSequence != null) currentSequence.stop();
+            controllers.stop(); //TODO: stop drivetrain with mode = idle
         }
     }
 
@@ -156,8 +158,8 @@ public class FullAuto extends OpMode {
         String strNumRings = camera.rankRings();
         telemetry.addLine("Camera rankRings returned: " + strNumRings);
 
-        int ringCountOpenCV = camera.countRingsOpenCV();
-        telemetry.addData("OpenCV returned rings", ringCountOpenCV);
+//        int ringCountOpenCV = camera.countRingsOpenCV();
+//        telemetry.addData("OpenCV returned rings", ringCountOpenCV);
 
         int rings = camera.ringsToInt(strNumRings);
         synchronized (lock) {

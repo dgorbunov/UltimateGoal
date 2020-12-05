@@ -212,9 +212,6 @@ public class DriveLocalizationController extends MecanumDrive implements Control
             telemetry.addData("MecanumDrivetrainController", "stop");
         }
 
-        for (DcMotorEx motor : motors) {
-            motor.setPower(0.0);
-        }
         mode = Mode.IDLE; //return out of the current thread
     }
 
