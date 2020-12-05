@@ -58,7 +58,6 @@ public class FullAuto extends OpMode {
         }
 
         telemetry.addLine("Initialized");
-
     }
 
     @Override

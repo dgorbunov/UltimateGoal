@@ -75,7 +75,6 @@ public class CameraController implements Controller {
     private VuforiaTrackables targetsUltimateGoal;
 
     public CameraController(HardwareMap hwMap, Telemetry tel) {
-
         hardwareMap = hwMap;
         telemetry = tel;
     }

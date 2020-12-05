@@ -13,5 +13,4 @@ public class RedLeftAuto extends FullAuto {
         sequenceName = makeSequenceName(FieldConstants.RedAlliance, FieldConstants.LeftSide);
         super.init();
     }
-
 }

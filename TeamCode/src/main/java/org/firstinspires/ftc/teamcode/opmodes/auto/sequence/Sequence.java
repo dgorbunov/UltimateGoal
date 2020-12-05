@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
@@ -24,6 +25,19 @@ public abstract class Sequence {
     protected Actions actions;
     protected Pose2d startPose;
     protected Vector2d targetZone;
+
+    /*
+    Wraps spline pairs.
+     */
+    public class Spline {
+        public Vector2d Position;
+        public double Heading;
+
+        public Spline(Vector2d position, double heading) {
+            Position = position;
+            Heading = heading;
+        }
+    }
 
     //TODO: Build all trajectories before running?
 
@@ -87,7 +101,20 @@ public abstract class Sequence {
         turn(targetHeading);
         followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
         followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
-        //TODO: Arbitrary # of splines trajectory method
+
+        // TODO: try the new arbitrary # of splines trajectory method
+        Spline splines[] = new Spline[] {
+                new Spline(intermediatePos, targetHeading),
+                new Spline(targetZone, targetHeading),
+        };
+
+        Trajectory trajectory = buildSplineTrajectory(splines);
+        if (trajectory == null) {
+            telemetry.addData("Sequence","moveToZone: invalid trajectory");
+            return;
+        }
+
+        // followTrajectoryAsync(trajectory);
     }
 
     public void dropWobble() {
@@ -155,6 +182,17 @@ public abstract class Sequence {
                 .splineTo(position, Math.toRadians(targetHeading))
                 .build();
 
+        return trajectory;
+    }
+
+    private Trajectory buildSplineTrajectory(Spline[] splines){
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose());
+        for (Spline spline : splines) {
+            trajectoryBuilder.splineTo(spline.Position, Math.toRadians(spline.Heading));
+        }
+
+        Trajectory trajectory = trajectoryBuilder.build();
         return trajectory;
     }
 

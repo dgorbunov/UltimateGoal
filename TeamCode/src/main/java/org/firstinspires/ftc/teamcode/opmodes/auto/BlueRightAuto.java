@@ -12,5 +12,4 @@ public class BlueRightAuto extends FullAuto {
         sequenceName = makeSequenceName(FieldConstants.BlueAlliance, FieldConstants.RightSide);
         super.init();
     }
-
 }
