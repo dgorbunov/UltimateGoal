@@ -96,7 +96,8 @@ public abstract class Sequence {
         return startPose;
     }
 
-    public void moveToZone(Vector2d targetZone, Vector2d intermediatePos, double initialHeading, double targetHeading) {
+    public void moveToZone(Vector2d targetZone, Vector2d intermediatePos,
+                           double initialHeading, double targetHeading) throws IllegalArgumentException {
         telemetry.addData("Sequence", "moveToZone");
         turn(targetHeading);
         followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
@@ -111,7 +112,7 @@ public abstract class Sequence {
         Trajectory trajectory = buildSplineTrajectory(splines);
         if (trajectory == null) {
             telemetry.addData("Sequence","moveToZone: invalid trajectory");
-            return;
+            throw new IllegalArgumentException("Invalid trajectory");
         }
 
         // followTrajectoryAsync(trajectory);
