@@ -14,18 +14,21 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 public class ShooterController implements Controller {
     private Telemetry telemetry;
-    private MockDcMotorEx shooter;
+    private HardwareMap hardwareMap;
+    private DcMotorEx shooter;
     private float wheelRadius = 0.051f; //meters
     public static String ControllerName;
 
+
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        shooter = new MockDcMotorEx("shooter", telemetry);
+        this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
     }
 
     @Override
     public void init() {
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -45,6 +48,14 @@ public class ShooterController implements Controller {
         shooter.setPower(1); //shooter.setVelocity();
         sleep(ms);
         shooter.setPower(0);
+    }
+
+    public void shootWithVelocity(double velocity){
+        shooter.setVelocity(velocity);
+    }
+
+    public double getVelocity(){
+        return shooter.getVelocity();
     }
 
     @Override
