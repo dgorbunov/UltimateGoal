@@ -26,19 +26,6 @@ public abstract class Sequence {
     protected Pose2d startPose;
     protected Vector2d targetZone;
 
-    /*
-    Wraps spline pairs.
-     */
-    public class Spline {
-        public Vector2d Position;
-        public double Heading;
-
-        public Spline(Vector2d position, double heading) {
-            Position = position;
-            Heading = heading;
-        }
-    }
-
     //TODO: Build all trajectories before running?
 
     public Sequence(ControllerManager controllers, Telemetry tel) {
@@ -100,22 +87,17 @@ public abstract class Sequence {
                            double initialHeading, double targetHeading) throws IllegalArgumentException {
         telemetry.addData("Sequence", "moveToZone");
         turn(targetHeading);
-        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
-        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
+//        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
+//        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
 
         // TODO: try the new arbitrary # of splines trajectory method
-        Spline splines[] = new Spline[] {
-                new Spline(intermediatePos, targetHeading),
-                new Spline(targetZone, targetHeading),
+
+        Pose2d positions[] = new Pose2d[] {
+                new Pose2d(intermediatePos, targetHeading),
+                new Pose2d(targetZone, targetHeading),
         };
 
-        Trajectory trajectory = buildSplineTrajectory(splines);
-        if (trajectory == null) {
-            telemetry.addData("Sequence","moveToZone: invalid trajectory");
-            throw new IllegalArgumentException("Invalid trajectory");
-        }
-
-        // followTrajectoryAsync(trajectory);
+        followTrajectoryAsync(buildSplineTrajectory(positions));
     }
 
     public void dropWobble() {
@@ -186,11 +168,11 @@ public abstract class Sequence {
         return trajectory;
     }
 
-    private Trajectory buildSplineTrajectory(Spline[] splines){
+    private Trajectory buildSplineTrajectory(Pose2d[] positions){
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose());
-        for (Spline spline : splines) {
-            trajectoryBuilder.splineTo(spline.Position, Math.toRadians(spline.Heading));
+        for (Pose2d position : positions) {
+            trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
         }
 
         Trajectory trajectory = trajectoryBuilder.build();
@@ -199,10 +181,10 @@ public abstract class Sequence {
 
     private Trajectory buildConstantSplineTrajectory(Vector2d position, double heading){
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
-        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .splineToConstantHeading(position, Math.toRadians(heading))
-                .build();
-        return trajectory;
+        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .splineToConstantHeading(position, Math.toRadians(heading));
+
+        return trajectory.build();
     }
 
     private Trajectory buildLineTrajectory(Vector2d position){
@@ -221,8 +203,12 @@ public abstract class Sequence {
         return trajectory;
     }
 
-
     private void followTrajectoryAsync(Trajectory trajectory){
+        if (trajectory == null) {
+            telemetry.addData("Sequence", "moveToZone: invalid trajectory");
+            throw new IllegalArgumentException("Invalid trajectory");
+        }
+
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
         drive.followTrajectoryAsync(trajectory);
         drive.waitForIdle();
