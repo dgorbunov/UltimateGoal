@@ -15,20 +15,19 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 public class ShooterController implements Controller {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
-    private DcMotorEx shooter;
+    private MockDcMotorEx shooter;
     private float wheelRadius = 0.051f; //meters
     public static String ControllerName;
-
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
+        shooter = new MockDcMotorEx("shooter", this.telemetry);
     }
 
     @Override
     public void init() {
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 

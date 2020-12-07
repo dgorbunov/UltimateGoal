@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
@@ -16,9 +20,9 @@ public class ShooterTesting extends OpMode {
 
     public static volatile double velocity;
 
-    ShooterController shooter;
+    DcMotorEx shooter = hardwareMap.get(DcMotorEx .class, "shooter");
+    Servo bumper = hardwareMap.get(Servo.class, "arm");
     ControllerManager controllers;
-    BumperController bumper;
     HubController hub;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -26,14 +30,12 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void init() {
-        shooter = new ShooterController(hardwareMap, telemetry);
         controllers = new ControllerManager(telemetry);
         hub = new HubController(hardwareMap, telemetry);
-        bumper = new BumperController(hardwareMap, telemetry);
 
-        controllers.add(FieldConstants.Shooter, shooter);
         controllers.add(FieldConstants.Hub, hub);
-        controllers.add("bumper", bumper);
+
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         controllers.init();
 
@@ -50,18 +52,19 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void loop() {
-        shooter.shootWithVelocity(velocity);
+        shooter.setVelocity(velocity);
         telemetry.addData("velocity", shooter.getVelocity());
         dashboardTelemetry.addData("velocity", shooter.getVelocity());
         telemetry.addLine(hub.getFormattedCurrentDraw());
         dashboardTelemetry.addLine(hub.getFormattedCurrentDraw());
 
-        if (gamepad1.a) bumper.bump();
-        if (gamepad1.b) bumper.retract();
+        if (gamepad1.a) bumper.setPosition(0.6);
+        if (gamepad1.b) bumper.setPosition(0.4);
     }
 
     @Override
     public void stop() {
+        shooter.setVelocity(0);
         controllers.stop();
     }
 }
