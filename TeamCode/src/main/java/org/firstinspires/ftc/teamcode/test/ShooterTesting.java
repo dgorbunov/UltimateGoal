@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
@@ -18,7 +19,9 @@ import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 @TeleOp(name="ShooterTesting", group="Iterative Opmode")
 public class ShooterTesting extends OpMode {
 
-    public static volatile double velocity;
+    public static volatile double MotorRPM = 5280;
+    private static final AngleUnit unit = AngleUnit.RADIANS;
+    private static final double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec
 
     DcMotorEx shooter = hardwareMap.get(DcMotorEx .class, "shooter");
     Servo bumper = hardwareMap.get(Servo.class, "arm");
@@ -52,11 +55,17 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void loop() {
-        shooter.setVelocity(velocity);
-        telemetry.addData("velocity", shooter.getVelocity());
-        dashboardTelemetry.addData("velocity", shooter.getVelocity());
-        telemetry.addLine(hub.getFormattedCurrentDraw());
-        dashboardTelemetry.addLine(hub.getFormattedCurrentDraw());
+        shooter.setVelocity(MotorVelocity, unit);
+
+        double velocity = shooter.getVelocity();
+        telemetry.addData("target velocity (rad/s)", MotorVelocity);
+        telemetry.addData("velocity (rad/s)", velocity);
+        dashboardTelemetry.addData("target velocity (rad/s)", MotorVelocity);
+        dashboardTelemetry.addData("velocity (rad/s)", velocity);
+
+        String currentDraw = hub.getFormattedCurrentDraw();
+        telemetry.addLine(currentDraw);
+        dashboardTelemetry.addLine(currentDraw);
 
         if (gamepad1.a) bumper.setPosition(0.6);
         if (gamepad1.b) bumper.setPosition(0.4);
