@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -16,6 +18,11 @@ public class TelemetryQueuer{
 
     public TelemetryQueuer(Telemetry telemetry){
         this.telemetry = telemetry;
+    }
+
+    public void queue(String info){
+        Log.i("Telemetry: ", info);
+        telemetry.addLine(info);
     }
 
 }
