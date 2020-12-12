@@ -127,7 +127,7 @@ public class FullAuto extends OpMode {
         controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
         DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
-        drive.setLocalizer(new ThreeWhelLocalizer(hardwareMap));
+        drive.setLocalizer(new ThreeWheelLocalizer(hardwareMap));
         controllers.add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
