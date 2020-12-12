@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.robot.drive.params.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -123,6 +126,8 @@ public class FullAuto extends OpMode {
     private void makeControllers() {
         controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        drive.setLocalizer(new ThreeWhelLocalizer(hardwareMap));
         controllers.add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));

@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
@@ -31,8 +32,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.robot.drive.params.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -94,13 +98,20 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     private Pose2d lastPoseOnTurn;
     private Telemetry telemetry;
+    private HardwareMap hardwareMap;
+    private DriveLocalizationController drive;
+
 
     public DriveLocalizationController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
+        this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
     }
 
     public DriveLocalizationController(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+        this.hardwareMap = hardwareMap;
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -125,6 +136,11 @@ public class DriveLocalizationController extends MecanumDrive implements Control
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
         leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
@@ -152,7 +168,6 @@ public class DriveLocalizationController extends MecanumDrive implements Control
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

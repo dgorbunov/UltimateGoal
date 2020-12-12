@@ -35,9 +35,9 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> pickupWobble());
         actions.add(() -> moveToZone(targetZone, FieldConstants.RedRight.IntermediatePos,  180, 0));
         actions.add(() -> moveToShoot(FieldConstants.RedField.ShootingPos, 0));
-        actions.add(() -> shootRings());
+        actions.add(() -> shootRings(3));
         actions.add(() -> intakeRings(ringCount, FieldConstants.RedField.IntakePos, 0));
-        actions.add(() -> shootRings());
+        actions.add(() -> shootRings(ringCount));
         actions.add(() -> moveToLaunchLine(FieldConstants.RedLeft.LaunchLine));
         actions.add(() -> stop());
 

@@ -4,11 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
-import org.firstinspires.ftc.teamcode.robot.drive.params.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 
 /*
  * This is a simple routine to test translational drive capabilities.
@@ -22,7 +21,7 @@ public class StraightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DriveLocalizationController drive = new DriveLocalizationController(hardwareMap);
-        StandardTrackingWheelLocalizer odometry = new StandardTrackingWheelLocalizer(hardwareMap);
+        ThreeWheelLocalizer odometry = new ThreeWheelLocalizer(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)

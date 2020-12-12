@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.drive.params.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -124,10 +125,10 @@ public abstract class Sequence {
         followTrajectoryAsync(buildLineTrajectory(position));
     }
 
-    public void shootRings() {
-        telemetry.addData("Sequence","shootRings" );
+    public void shootRings(int numRings) {
+        telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.shoot(ringCount);
+        shooter.shoot(numRings);
         shooter.stop();
     }
 
