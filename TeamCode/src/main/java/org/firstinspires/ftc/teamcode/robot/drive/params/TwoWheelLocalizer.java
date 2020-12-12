@@ -52,15 +52,11 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
     // Perpendicular is perpendicular to the forward axis
     private Encoder parallelEncoder, perpendicularEncoder;
 
-    private DriveLocalizationController drive;
-
-    public TwoWheelLocalizer(HardwareMap hardwareMap, DriveLocalizationController drive) {
+    public TwoWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
                 new Pose2d(PARALLEL_X, PARALLEL_Y, 0),
                 new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
         ));
-
-        this.drive = drive;
 
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_rear"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_front"));
@@ -72,7 +68,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
     @Override
     public double getHeading() {
-        return drive.getRawExternalHeading();
+        return DriveLocalizationController.imu.getAngularOrientation().firstAngle;
     }
 
     @NonNull

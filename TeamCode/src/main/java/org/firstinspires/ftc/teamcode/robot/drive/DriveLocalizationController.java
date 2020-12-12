@@ -92,7 +92,7 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    public static BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -167,6 +167,10 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
+
+        setLocalizer(new TwoWheelLocalizer(hardwareMap));
+        /** TODO: Change back to three wheel
+         *  See also {@link #getRawExternalHeading()}. */
 
     }
 
@@ -420,6 +424,7 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     @Override
     public double getRawExternalHeading() {
-        return 0;
-    }
+        return imu.getAngularOrientation().firstAngle;
+    } //TODO: Change back to 0 if using 3 wheel
+
 }
