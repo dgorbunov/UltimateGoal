@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FullAuto;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class CameraController implements Controller {
     public static final int INT_SECOND_ELEMENT = 1;
     public static final int INT_NO_ELEMENT = 0;
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
+
+    public static final String WEBCAM_LEFT = "Webcam Left";
+    public static final String WEBCAM_RIGHT = "Webcam Right";
+    public static String WebcamName;
+    //TODO: Remove once using one centered camera on final robot
 
     private VuforiaLocalizer vuforia = null;
     private OpenGLMatrix lastLocation = null;
@@ -79,7 +85,6 @@ public class CameraController implements Controller {
         telemetry = tel;
     }
 
-    @Override
     public void init() {
         initVuforia();
         initTfod();
@@ -216,7 +221,11 @@ public class CameraController implements Controller {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        try {
+            parameters.cameraName = hardwareMap.get(WebcamName.class, WebcamName);
+        } catch(Exception e){
+            telemetry.addLine("Could not initialize webcam, name not set. " + e.toString());
+        }
         parameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine

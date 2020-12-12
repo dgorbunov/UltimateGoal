@@ -16,16 +16,28 @@ public class RedRightSequence extends Sequence {
     }
 
     protected void makeActions() {
-//        switch (ringCount) {
-//            case 0:
-//                actions.addAction(() -> moveToZone());
-//                break;
-//            case 1:
-//                actions.addAction(() -> moveToZone());
-//                break;
-//            case 4:
-//                actions.addAction(() -> moveToZone());
-//                break;
-//        }
+        switch (ringCount) {
+            case 0:
+                targetZone = FieldConstants.RedField.TargetZoneA;
+                break;
+            case 1:
+                targetZone = FieldConstants.RedField.TargetZoneB;
+                break;
+            case 4:
+                targetZone = FieldConstants.RedField.TargetZoneC;
+                break;
+        }
+        actions.add(() -> moveToZone(targetZone, FieldConstants.RedRight.IntermediatePos, 0, 0));
+        actions.add(() -> dropWobble());
+        actions.add(() -> moveToStart(FieldConstants.RedLeft.LeftWobblePos, FieldConstants.RedLeft.IntermediatePos, 0,180));
+        actions.add(() -> pickupWobble());
+        actions.add(() -> moveToZone(targetZone, FieldConstants.RedLeft.IntermediatePos,  180, 0));
+        actions.add(() -> moveToShoot(FieldConstants.RedField.ShootingPos, 0));
+        actions.add(() -> shootRings());
+        actions.add(() -> intakeRings(ringCount, FieldConstants.RedField.IntakePos, 0));
+        actions.add(() -> shootRings());
+        actions.add(() -> moveToLaunchLine(FieldConstants.RedRight.LaunchLine));
+        actions.add(() -> stop());
+
     }
 }

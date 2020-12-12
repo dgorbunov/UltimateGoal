@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Disabled // will not show up on FTC driver station.
+@Disabled // will not show up on driver station
 @Autonomous(name="FullAuto", group="Iterative Opmode")
 @Config //for FTCDash
 public class FullAuto extends OpMode {
@@ -34,11 +35,19 @@ public class FullAuto extends OpMode {
     private int ringCount = -1;
     private Sequence currentSequence;
     protected final static Object lock = new Object();
+    private String startingSide;
     protected String sequenceName;
 
     @Override
     public void init() {
         telemetry.addLine("Initializing...");
+
+        if (startingSide.equals(FieldConstants.LeftSide)) {
+            CameraController.WebcamName = CameraController.WEBCAM_LEFT;
+        }
+        else if (startingSide.equals(FieldConstants.RightSide)) {
+            CameraController.WebcamName = CameraController.WEBCAM_RIGHT;
+        } else telemetry.addLine("Could not find sequence side");
 
         controllers = new ControllerManager(telemetry);
         makeControllers();
@@ -107,6 +116,7 @@ public class FullAuto extends OpMode {
     }
 
     protected String makeSequenceName(String alliance, String side) {
+        startingSide = side;
         return (alliance + side).toLowerCase();
     }
 
@@ -117,6 +127,7 @@ public class FullAuto extends OpMode {
         controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
         controllers.add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
+        controllers.add(FieldConstants.Bumper, new BumperController(hardwareMap, telemetry));
     }
 
     private void makeSequences() {

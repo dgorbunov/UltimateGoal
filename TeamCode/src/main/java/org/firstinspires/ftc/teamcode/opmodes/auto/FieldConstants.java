@@ -29,6 +29,7 @@ public class FieldConstants {
     public static final String Wobble = "wobble";
     public static final String Drive = "drive";
     public static final String Hub = "hub";
+    public static final String Bumper = "bumper";
 
     private static final double TapeWidth  = 1.75;
 
