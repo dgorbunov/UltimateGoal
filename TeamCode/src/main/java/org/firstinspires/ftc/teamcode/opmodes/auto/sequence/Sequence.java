@@ -127,7 +127,8 @@ public abstract class Sequence {
     public void shootRings() {
         telemetry.addData("Sequence","shootRings" );
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.shoot(3000);
+        shooter.shoot(ringCount);
+        shooter.stop();
     }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {

@@ -16,8 +16,17 @@ public class ShooterController implements Controller {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private MockDcMotorEx shooter;
-    private float wheelRadius = 0.051f; //meters
     public static String ControllerName;
+    private BumperController bumper;
+
+    public static volatile double MotorRPM = 5280;
+    private static final AngleUnit unit = AngleUnit.RADIANS;
+    private static final double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec
+
+    private final float wheelRadius = 0.051f; //meters
+    private final int spinUpTime = 750; //ms
+    private final int shootingDelay = 800; //ms
+    private final int bumpDelay = 75; //ms
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -43,14 +52,19 @@ public class ShooterController implements Controller {
         telemetry.addData(ControllerName, "velocityTangential: " + velocityTangential); //v = r*w
     }
 
-    public void shoot(int ms) {
-        shooter.setPower(1); //shooter.setVelocity();
-        sleep(ms);
-        shooter.setPower(0);
+    public void shoot(int ringCount) {
+        setVelocity(MotorRPM);
+        sleep(spinUpTime);
+        for(int i = 0; i < ringCount; i++) {
+            bumper.bump();
+            sleep(bumpDelay);
+            bumper.retract();
+            sleep(shootingDelay - bumpDelay);
+        }
     }
 
-    public void shootWithVelocity(double velocity){
-        shooter.setVelocity(velocity);
+    public void setVelocity(double velocity){
+        shooter.setVelocity(MotorVelocity, unit);
     }
 
     public double getVelocity(){
