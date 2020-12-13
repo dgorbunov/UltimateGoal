@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,12 +17,22 @@ import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+
+@Config
 @TeleOp(name="ShooterTesting", group="Iterative Opmode")
 public class ShooterTesting extends OpMode {
 
+    /** Accessible via FTC Dashboard */
     public static volatile double MotorRPM = 5280;
+    public static volatile double ShootingDelay = 750;
+    public static volatile double RetractDelay = 450;
+    public static volatile double BumpPosition = 0.6;
+    public static volatile double RetractPosition = 0.4;
+
     private static final AngleUnit unit = AngleUnit.RADIANS;
     private static final double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec
+    float wheelRadius = 0.051f; //meters
 
     DcMotorEx shooter = hardwareMap.get(DcMotorEx .class, "shooter");
     Servo bumper = hardwareMap.get(Servo.class, "arm");
@@ -30,6 +41,10 @@ public class ShooterTesting extends OpMode {
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
+    Thread shootThread = new Thread(this::shoot);
+    Thread telemetryThread = new Thread(this::telemetry);
+    Thread motorThread = new Thread(this::runMotor);
 
     @Override
     public void init() {
@@ -55,20 +70,45 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void loop() {
-        shooter.setVelocity(MotorVelocity, unit);
+        /**
+         * This is multithreaded so the motor can maintain a constant velocity with setVelocity()
+         * as the rings go by, lowering it's speed
+         */
 
-        double velocity = shooter.getVelocity();
+        motorThread.start();
+        telemetryThread.start();
+
+        if (gamepad1.a) {
+            shootThread.start();
+        }
+    }
+
+    private void shoot(){
+        for (int i = 0; i < 3; i++) {
+            bumper.setPosition(BumpPosition);
+            sleep(RetractDelay);
+            bumper.setPosition(RetractPosition);
+            sleep(ShootingDelay - RetractDelay);
+        }
+    }
+
+    private void runMotor() {
+        shooter.setVelocity(MotorVelocity, unit);
+    }
+
+    private void telemetry(){
+        double velocity = shooter.getVelocity(unit);
         telemetry.addData("target velocity (rad/s)", MotorVelocity);
         telemetry.addData("velocity (rad/s)", velocity);
+        telemetry.addData("tangential velocity (m/s):", velocity * wheelRadius);
+
         dashboardTelemetry.addData("target velocity (rad/s)", MotorVelocity);
         dashboardTelemetry.addData("velocity (rad/s)", velocity);
+        dashboardTelemetry.addData("tangential velocity (m/s):", velocity * wheelRadius);
 
         String currentDraw = hub.getFormattedCurrentDraw();
         telemetry.addLine(currentDraw);
         dashboardTelemetry.addLine(currentDraw);
-
-        if (gamepad1.a) bumper.setPosition(0.6);
-        if (gamepad1.b) bumper.setPosition(0.4);
     }
 
     @Override

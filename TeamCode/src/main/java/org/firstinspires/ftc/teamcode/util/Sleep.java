@@ -10,4 +10,11 @@ public class Sleep {
             Thread.currentThread().interrupt();
         }
     }
+    public static void sleep(double ms) {
+        try {
+            Thread.sleep((int)ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
