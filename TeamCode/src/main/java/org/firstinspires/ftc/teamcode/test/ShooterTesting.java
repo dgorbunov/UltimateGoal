@@ -35,9 +35,10 @@ public class ShooterTesting extends OpMode {
     public static volatile double ShootingDelay = 750;
     public static volatile double BumpPosition = 0.6;
     public static volatile double RetractPosition = 0.4;
-
-    public static final AngleUnit unit = AngleUnit.RADIANS;
-    public static volatile double TargetVelocity; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
+    
+    public final double TicksPerRev = 28;
+    
+    public static volatile double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
     float wheelRadius = 0.051f; //meters
 
     DcMotorEx shooter;
@@ -54,7 +55,6 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void init(){
-        TargetVelocity = (MotorRPM * 2 * Math.PI) / 60;
         dashboardTelemetry = new MultipleTelemetry(telemetry, dashboardTelemetry);
 
         dashboardTelemetry.addLine("Initializing...");
@@ -81,10 +81,11 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void start(){
+        TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
+
         dashboardTelemetry.addLine("Starting");
         controllers.start();
         dashboardTelemetry.addLine("Started");
-        shooter.setVelocity(TargetVelocity, unit);
     }
 
     @Override
@@ -94,14 +95,12 @@ public class ShooterTesting extends OpMode {
          * as the rings go by, lowering it's speed
          */
 
-
-
-//        motorThread.run();
+        motorThread.run();
         telemetryThread.run();
-//
-//        if (gamepad1.a) {
-//            shootThread.run();
-//        }
+
+        if (gamepad1.a) {
+            shootThread.run();
+        }
     }
 
     private synchronized void shoot(){
@@ -114,15 +113,19 @@ public class ShooterTesting extends OpMode {
 
     private synchronized void runMotor() {
         dashboardTelemetry.addLine("Motor is running");
-
+        shooter.setVelocity(TargetTicksPerSecond);
     }
 
     private synchronized void telemetry(){
-        double velocity = shooter.getVelocity(unit);
-        dashboardTelemetry.addData("target velocity (rad/s)", TargetVelocity);
-        dashboardTelemetry.addData("current velocity (rad/s)", velocity);
-        dashboardTelemetry.addData("tangential velocity (m/s)", velocity * wheelRadius);
-        dashboardTelemetry.addData("shooter power",shooter.getPower());
+        double velocity = shooter.getVelocity();
+        double RPM = velocity / TicksPerRev * 60;
+        double velocityRad = RPM * 2 * Math.PI / 60;
+        dashboardTelemetry.addData("target RPM", MotorRPM);
+        dashboardTelemetry.addData("current RPM", RPM);
+        dashboardTelemetry.addData("target velocity (ticks/s)", TargetTicksPerSecond);
+        dashboardTelemetry.addData("current velocity (ticks/s)", velocity);
+        dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
+        dashboardTelemetry.addData("shooter power", shooter.getPower());
 
         String currentDraw = hub.getFormattedCurrentDraw();
         dashboardTelemetry.addLine(currentDraw);
