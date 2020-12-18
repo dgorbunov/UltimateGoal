@@ -46,9 +46,7 @@ public class CameraController implements Controller {
     public static final int INT_NO_ELEMENT = 0;
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
 
-    public static final String WEBCAM_LEFT = "Webcam Left";
-    public static final String WEBCAM_RIGHT = "Webcam Right";
-    public static String WebcamName;
+    public static String WebcamName = "Webcam 1";
     //TODO: Remove once using one centered camera on final robot
 
     private VuforiaLocalizer vuforia = null;

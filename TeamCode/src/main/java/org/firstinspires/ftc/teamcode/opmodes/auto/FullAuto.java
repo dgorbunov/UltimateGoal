@@ -45,13 +45,6 @@ public class FullAuto extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
 
-        if (startingSide.equals(FieldConstants.LeftSide)) {
-            CameraController.WebcamName = CameraController.WEBCAM_LEFT;
-        }
-        else if (startingSide.equals(FieldConstants.RightSide)) {
-            CameraController.WebcamName = CameraController.WEBCAM_RIGHT;
-        } else telemetry.addLine("Could not find sequence side");
-
         controllers = new ControllerManager(telemetry);
         makeControllers();
 

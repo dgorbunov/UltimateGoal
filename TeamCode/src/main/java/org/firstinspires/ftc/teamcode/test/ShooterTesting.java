@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.robocol.TelemetryMessage;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,18 +27,18 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 public class ShooterTesting extends OpMode {
 
     /** Accessible via FTC Dashboard */
-    public static volatile double MotorRPM = 5280;
+    public static volatile double MotorRPM = 200;
     public static volatile double ShootingDelay = 750;
     public static volatile double RetractDelay = 450;
     public static volatile double BumpPosition = 0.6;
     public static volatile double RetractPosition = 0.4;
 
-    private static final AngleUnit unit = AngleUnit.RADIANS;
-    private static final double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec
+    public static final AngleUnit unit = AngleUnit.RADIANS;
+    public static double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
     float wheelRadius = 0.051f; //meters
 
-    DcMotorEx shooter = hardwareMap.get(DcMotorEx .class, "shooter");
-    Servo bumper = hardwareMap.get(Servo.class, "arm");
+    DcMotorEx shooter;
+    Servo bumper;
     ControllerManager controllers;
     HubController hub;
 
@@ -47,16 +50,25 @@ public class ShooterTesting extends OpMode {
     Thread motorThread = new Thread(this::runMotor);
 
     @Override
-    public void init() {
-        controllers = new ControllerManager(telemetry);
-        hub = new HubController(hardwareMap, telemetry);
+    public void init(){
+        dashboardTelemetry = new MultipleTelemetry(telemetry, dashboardTelemetry);
+
+        dashboardTelemetry.addLine("Initializing...");
+        bumper = hardwareMap.get(Servo.class, "bumper");
+        shooter = hardwareMap.get(DcMotorEx .class, "shooter");
+
+        controllers = new ControllerManager(dashboardTelemetry);
+        hub = new HubController(hardwareMap, dashboardTelemetry);
 
         controllers.add(FieldConstants.Hub, hub);
 
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bumper.setPosition(RetractPosition);
+
+        dashboardTelemetry.setMsTransmissionInterval(400);
 
         controllers.init();
-
+        dashboardTelemetry.addLine("Initialized");
     }
 
     @Override
@@ -65,7 +77,9 @@ public class ShooterTesting extends OpMode {
 
     @Override
     public void start(){
+        dashboardTelemetry.addLine("Starting");
         controllers.start();
+        dashboardTelemetry.addLine("Started");
     }
 
     @Override
@@ -75,15 +89,15 @@ public class ShooterTesting extends OpMode {
          * as the rings go by, lowering it's speed
          */
 
-        motorThread.start();
-        telemetryThread.start();
+        motorThread.run();
+        telemetryThread.run();
 
         if (gamepad1.a) {
-            shootThread.start();
+            shootThread.run();
         }
     }
 
-    private void shoot(){
+    private synchronized void shoot(){
         for (int i = 0; i < 3; i++) {
             bumper.setPosition(BumpPosition);
             sleep(RetractDelay);
@@ -92,28 +106,26 @@ public class ShooterTesting extends OpMode {
         }
     }
 
-    private void runMotor() {
+    private synchronized void runMotor() {
+        dashboardTelemetry.addLine("Motor is running");
         shooter.setVelocity(MotorVelocity, unit);
     }
 
-    private void telemetry(){
+    private synchronized void telemetry(){
         double velocity = shooter.getVelocity(unit);
-        telemetry.addData("target velocity (rad/s)", MotorVelocity);
-        telemetry.addData("velocity (rad/s)", velocity);
-        telemetry.addData("tangential velocity (m/s):", velocity * wheelRadius);
-
         dashboardTelemetry.addData("target velocity (rad/s)", MotorVelocity);
         dashboardTelemetry.addData("velocity (rad/s)", velocity);
         dashboardTelemetry.addData("tangential velocity (m/s):", velocity * wheelRadius);
 
         String currentDraw = hub.getFormattedCurrentDraw();
-        telemetry.addLine(currentDraw);
         dashboardTelemetry.addLine(currentDraw);
+
+        dashboardTelemetry.update();
     }
 
     @Override
     public void stop() {
-        shooter.setVelocity(0);
+        shooter.setPower(0);
         controllers.stop();
     }
 }
