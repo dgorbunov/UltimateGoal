@@ -15,6 +15,9 @@ public class BumperController implements Controller {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
+    public static double bumpPosition = 0.6;
+    public static double retractPosition = 0.35;
+
     public BumperController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -23,7 +26,7 @@ public class BumperController implements Controller {
 
     @Override
     public void init() {
-
+        retract();
     }
 
     @Override
@@ -34,7 +37,6 @@ public class BumperController implements Controller {
     public void bump() {
         bumper.setPosition(0.6);
     }
-    //TODO make async and retract after x time
 
     public void retract() {
         bumper.setPosition(0.35);

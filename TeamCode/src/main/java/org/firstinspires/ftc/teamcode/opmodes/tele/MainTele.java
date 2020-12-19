@@ -52,7 +52,7 @@ public class MainTele extends OpMode {
     public void loop() {
 
         drive.drive(gamepad1);
-        //shooter.shoot(gamepad1, gamepad1.a);
+        if (gamepad1.a) shooter.shoot(4800, 3);
 
         telemetry.addLine(hub.getFormattedCurrentDraw());
     }

@@ -31,7 +31,7 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 public class ShooterTesting extends OpMode {
 
     /** Accessible via FTC Dashboard */
-    public static volatile double MotorRPM = 5280;
+    public static volatile double MotorRPM = 4800;
     public static volatile double ShootingDelay = 750;
     public static volatile double BumpPosition = 0.6;
     public static volatile double RetractPosition = 0.4;

@@ -1,82 +1,127 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.opmodes.auto.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 public class ShooterController implements Controller {
-    private Telemetry telemetry;
-    private HardwareMap hardwareMap;
-    private MockDcMotorEx shooter;
+
+    public static volatile double MotorRPM = 4800;
+    public static volatile double ShootingDelay = 750;
+    public static volatile double SpinUpDelay = 750;
+    public static volatile double BumpPosition = 0.6;
+    public static volatile double RetractPosition = 0.4;
+
+    private final double TicksPerRev = 28; //Do not modify
+
     public static String ControllerName;
+    public boolean shootingState = false;
+
+    public static volatile double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
+    float wheelRadius = 0.051f; //meters
+
+    private DcMotorEx shooter;
     private BumperController bumper;
+    private ControllerManager controllers;
+    private HardwareMap hardwareMap;
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    public static volatile double MotorRPM = 5280;
-    private static final AngleUnit unit = AngleUnit.RADIANS;
-    private static final double MotorVelocity = (MotorRPM * 2 * Math.PI) / 60; //x rev/min * 2pi = x rad/min / 60 = x rad/sec
-
-    private final float wheelRadius = 0.051f; //meters
-    private final int spinUpTime = 750; //ms
-    private final int shootingDelay = 800; //ms
-    private final int bumpDelay = 75; //ms
+    public Thread telemetryThread = new Thread(this::telemetry);
+    public Thread motorThread = new Thread(this::setVelocity);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
+        this.dashboardTelemetry = telemetry;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
-        shooter = new MockDcMotorEx("shooter", this.telemetry);
+        shooter = new MockDcMotorEx("shooter", this.dashboardTelemetry);
     }
 
     @Override
     public void init() {
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        dashboardTelemetry = new MultipleTelemetry(dashboardTelemetry, dashboardTelemetry);
+
+        controllers = new ControllerManager(dashboardTelemetry);
+        bumper = new BumperController(hardwareMap, dashboardTelemetry);
+
+        controllers.add(FieldConstants.Bumper, bumper);
+
+        shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
+
+        controllers.init();
     }
 
-    public void shoot(Gamepad gamepad, boolean button){
-        if (button) shooter.setPower(1); //shooter.setVelocity();
-        else stop();
-
-         telemetry.addData(ControllerName, "Shooting");
-
-        String velocity = shooter.getVelocity(AngleUnit.RADIANS) + " rad/s";
-        String velocityTangential = shooter.getVelocity(AngleUnit.RADIANS) * wheelRadius + " m/s";
-        telemetry.addData(ControllerName,"velocity:" + velocity);
-        telemetry.addData(ControllerName, "velocityTangential: " + velocityTangential); //v = r*w
+    @Override
+    public void start() {
+        controllers.start();
     }
 
-    public void shoot(int ringCount) {
-        setVelocity(MotorRPM);
-        sleep(spinUpTime);
-        for(int i = 0; i < ringCount; i++) {
+    @Override
+    public void stop() {
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setPower(0);
+    }
+
+    public void shoot(double RPM, int ringCount){
+        shootingState = true;
+        MotorRPM = RPM;
+
+        motorThread.start();
+        telemetryThread.start();
+        sleep(SpinUpDelay);
+        shootImpl(ringCount);
+
+        shootingState = false;
+    }
+
+    private void shootImpl(int ringCount){
+        for (int i = 0; i < ringCount; i++) {
             bumper.bump();
-            sleep(bumpDelay);
             bumper.retract();
-            sleep(shootingDelay - bumpDelay);
+            sleep(ShootingDelay);
         }
     }
 
-    public void setVelocity(double velocity){
-        shooter.setVelocity(MotorVelocity, unit);
+    public synchronized void telemetry(){
+        while (shootingState) {
+            double velocity = shooter.getVelocity();
+            double RPM = velocity / TicksPerRev * 60;
+            double velocityRad = RPM * 2 * Math.PI / 60;
+            dashboardTelemetry.addData("target RPM", MotorRPM);
+            dashboardTelemetry.addData("current RPM", RPM);
+            dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
+            dashboardTelemetry.addData("shooter power", shooter.getPower());
+
+            dashboardTelemetry.update();
+        }
+    }
+
+    public synchronized void setVelocity() {
+        while (shootingState) {
+            dashboardTelemetry.addData(ControllerName, "shooter is running");
+            TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
+            shooter.setVelocity(TargetTicksPerSecond);
+        }
     }
 
     public double getVelocity(){
         return shooter.getVelocity();
     }
 
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-        shooter.setPower(0);
-    }
 }
