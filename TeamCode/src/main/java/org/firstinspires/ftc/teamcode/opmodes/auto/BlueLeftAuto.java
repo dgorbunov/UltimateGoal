@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="BlueLeftAuto", group="Iterative Opmode")
+@Autonomous(name="BlueLeftAuto", group="Iterative Opmode", preselectTeleOp="BlueAllianceTeleOp")
 @Config //for FTCDash
 public class BlueLeftAuto extends FullAuto {
 
