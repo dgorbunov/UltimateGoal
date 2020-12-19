@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto.params;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
-import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.robot.drive.params.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -28,9 +26,9 @@ import java.util.Map;
 import java.util.Optional;
 
 @Disabled // will not show up on driver station
-@Autonomous(name="FullAuto", group="Iterative Opmode")
+@Autonomous(name="Auto", group="Iterative Opmode")
 @Config //for FTCDash
-public class FullAuto extends OpMode {
+public class Auto extends OpMode {
 
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<>();
