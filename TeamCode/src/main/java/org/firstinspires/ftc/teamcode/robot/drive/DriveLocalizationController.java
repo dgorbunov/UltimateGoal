@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.params.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -133,10 +134,10 @@ public class DriveLocalizationController extends MecanumDrive implements Control
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
         leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
@@ -164,8 +165,8 @@ public class DriveLocalizationController extends MecanumDrive implements Control
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
-        setLocalizer(new TwoWheelLocalizer(hardwareMap));
-        /** TODO: Change back to three wheel
+        setLocalizer(new ThreeWheelLocalizer(hardwareMap));
+        /** If using two wheel,
          *  See also {@link #getRawExternalHeading()}. */
 
     }
@@ -420,7 +421,11 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 
     @Override
     public double getRawExternalHeading() {
+        return 0;
+        /*
+        If using two wheel:
         return imu.getAngularOrientation().firstAngle;
-    } //TODO: Change back to 0 if using 3 wheel
+         */
+    }
 
 }

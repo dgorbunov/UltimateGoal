@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
-@TeleOp(name="mainTele", group="Iterative Opmode")
+@TeleOp(name="MainTele", group="Iterative Opmode")
 public class MainTele extends OpMode {
 
     boolean noChassis = false;

@@ -21,16 +21,21 @@ public class ShooterTesting extends OpMode {
 
     /** Accessible via FTC Dashboard */
     public static volatile double MotorRPM = 4800;
+    //public static volatile double IntakeRPM = 1400;
+    public static volatile double IntakePower = 0.8;
     public static volatile double ShootingDelay = 750;
     public static volatile double BumpPosition = 0.6;
     public static volatile double RetractPosition = 0.4;
     
-    public final double TicksPerRev = 28;
+    public final double TicksPerRev = 28; //1:1 5202
+    public final double IntakeTicksPerRev = 25.9; //3.7 NeveRest
     
     public static volatile double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
+    public static volatile double TargetTicksPerSecondIntake; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
     float wheelRadius = 0.051f; //meters
 
     DcMotorEx shooter;
+    DcMotorEx intake;
     Servo bumper;
     ControllerManager controllers;
     HubController hub;
@@ -41,6 +46,7 @@ public class ShooterTesting extends OpMode {
     Thread shootThread = new Thread(this::shoot);
     Thread telemetryThread = new Thread(this::telemetry);
     Thread motorThread = new Thread(this::runMotor);
+    Thread intakeThread = new Thread(this::runIntake);
 
     @Override
     public void init(){
@@ -49,6 +55,7 @@ public class ShooterTesting extends OpMode {
         dashboardTelemetry.addLine("Initializing...");
         bumper = hardwareMap.get(Servo.class, "bumper");
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         controllers = new ControllerManager(dashboardTelemetry);
         hub = new HubController(hardwareMap, dashboardTelemetry);
@@ -71,6 +78,7 @@ public class ShooterTesting extends OpMode {
     @Override
     public void start(){
         TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
+//        TargetTicksPerSecondIntake = IntakeRPM * IntakeTicksPerRev / 60;
 
         dashboardTelemetry.addLine("Starting");
         controllers.start();
@@ -90,6 +98,8 @@ public class ShooterTesting extends OpMode {
         if (gamepad1.a) {
             shootThread.run();
         }
+
+        intakeThread.run();
     }
 
     private synchronized void shoot(){
@@ -101,20 +111,31 @@ public class ShooterTesting extends OpMode {
     }
 
     private synchronized void runMotor() {
-        dashboardTelemetry.addLine("Motor is running");
+        dashboardTelemetry.addLine("Shooter is running");
         shooter.setVelocity(TargetTicksPerSecond);
+    }
+
+    private synchronized void runIntake(){
+        dashboardTelemetry.addLine("Intake is running");
+//        intake.setVelocity(TargetTicksPerSecondIntake);
+        intake.setPower(IntakePower);
     }
 
     private synchronized void telemetry(){
         double velocity = shooter.getVelocity();
         double RPM = velocity / TicksPerRev * 60;
         double velocityRad = RPM * 2 * Math.PI / 60;
-        dashboardTelemetry.addData("target RPM", MotorRPM);
-        dashboardTelemetry.addData("current RPM", RPM);
-        dashboardTelemetry.addData("target velocity (ticks/s)", TargetTicksPerSecond);
-        dashboardTelemetry.addData("current velocity (ticks/s)", velocity);
-        dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
+        dashboardTelemetry.addData("shooter target RPM", MotorRPM);
+        dashboardTelemetry.addData("shooter current RPM", RPM);
+        dashboardTelemetry.addData("shooter target velocity (ticks/s)", TargetTicksPerSecond);
+        dashboardTelemetry.addData("shooter current velocity (ticks/s)", velocity);
+        dashboardTelemetry.addData("shooter tangential velocity (m/s)", velocityRad * wheelRadius);
         dashboardTelemetry.addData("shooter power", shooter.getPower());
+
+//        double intakeVelocity = intake.getVelocity();
+//        double intakeRPM = intakeVelocity / IntakeTicksPerRev * 60;
+//        dashboardTelemetry.addData("intake target RPM", IntakeRPM);
+//        dashboardTelemetry.addData("intake current RPM", intakeRPM);
 
         String currentDraw = hub.getFormattedCurrentDraw();
         dashboardTelemetry.addLine(currentDraw);
@@ -125,6 +146,7 @@ public class ShooterTesting extends OpMode {
     @Override
     public void stop() {
         shooter.setPower(0);
+        intake.setPower(0);
         controllers.stop();
     }
 }
