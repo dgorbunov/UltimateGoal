@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,14 +25,17 @@ public class ShooterTesting extends OpMode {
     //public static volatile double IntakeRPM = 1400;
     public static volatile double IntakePower = 0.8;
     public static volatile double ShootingDelay = 750;
-    public static volatile double BumpPosition = 0.6;
-    public static volatile double RetractPosition = 0.4;
+    public static volatile double RetractDelay = 750;
+    public static volatile double BumpPosition = 0.5;
+    public static volatile double RetractPosition = 0.35;
+
+    public static volatile DcMotorSimple.Direction ShooterDirection = DcMotorSimple.Direction.REVERSE;
+    public static volatile DcMotorSimple.Direction IntakeDirection = DcMotorSimple.Direction.FORWARD;
     
     public final double TicksPerRev = 28; //1:1 5202
     public final double IntakeTicksPerRev = 25.9; //3.7 NeveRest
     
-    public static volatile double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
-    public static volatile double TargetTicksPerSecondIntake; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
+    public double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
     float wheelRadius = 0.051f; //meters
 
     DcMotorEx shooter;
@@ -63,6 +67,8 @@ public class ShooterTesting extends OpMode {
         controllers.add(FieldConstants.Hub, hub);
 
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooter.setDirection(ShooterDirection);
+        intake.setDirection(IntakeDirection);
         bumper.setPosition(RetractPosition);
 
         dashboardTelemetry.setMsTransmissionInterval(400);
@@ -105,18 +111,17 @@ public class ShooterTesting extends OpMode {
     private synchronized void shoot(){
         for (int i = 0; i < 3; i++) {
             bumper.setPosition(BumpPosition);
+            sleep(RetractDelay);
             bumper.setPosition(RetractPosition);
             sleep(ShootingDelay);
         }
     }
 
     private synchronized void runMotor() {
-        dashboardTelemetry.addLine("Shooter is running");
         shooter.setVelocity(TargetTicksPerSecond);
     }
 
     private synchronized void runIntake(){
-        dashboardTelemetry.addLine("Intake is running");
 //        intake.setVelocity(TargetTicksPerSecondIntake);
         intake.setPower(IntakePower);
     }
@@ -131,6 +136,7 @@ public class ShooterTesting extends OpMode {
         dashboardTelemetry.addData("shooter current velocity (ticks/s)", velocity);
         dashboardTelemetry.addData("shooter tangential velocity (m/s)", velocityRad * wheelRadius);
         dashboardTelemetry.addData("shooter power", shooter.getPower());
+        dashboardTelemetry.addData("bumper position", bumper.getPosition());
 
 //        double intakeVelocity = intake.getVelocity();
 //        double intakeRPM = intakeVelocity / IntakeTicksPerRev * 60;
