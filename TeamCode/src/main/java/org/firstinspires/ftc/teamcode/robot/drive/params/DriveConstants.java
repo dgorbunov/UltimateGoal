@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.drive.params;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
@@ -55,7 +54,7 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.018245;//1.0 / rpmToVelocity(MAX_RPM)
+    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
     public static double kA = 0.0045;
     public static double kStatic = 0.0085;
 
@@ -89,19 +88,11 @@ public class DriveConstants {
      * Maximum Angular Velocity is calculated as: maximum velocity / (trackWidth / 2) * (180 / Math.PI)
 
      */
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            45, 35, 0.0,
-            Math.toRadians(360), Math.toRadians(360), 0.0
-    );
 
-    /** ORIGINAL
-     *
-     * public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-     *             52.48180821614297, 52.48180821614297, 0.0,
-     *             Math.toRadians(360), Math.toRadians(360), 0.0
-     *     );
-     */
-
+    public static double MAX_VEL = 52.48180821614297;
+    public static double MAX_ACCEL = 52.48180821614297; //TODO: decrease if following degrades
+    public static double MAX_ANG_VEL = Math.toRadians(360);
+    public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

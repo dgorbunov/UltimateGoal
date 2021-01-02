@@ -45,7 +45,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     /**
      * Options for inaccurate heading
      * Retune everyhing
-     * Lower speed
+     * Lower speed/acceleration
      * Tune LEFT_MULTIPLIER
      * Use splines that turn instead of direct turns
      * Tune HEADING_PID, more aggresive
