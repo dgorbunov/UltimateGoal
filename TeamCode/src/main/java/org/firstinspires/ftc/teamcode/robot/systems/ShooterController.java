@@ -19,8 +19,7 @@ public class ShooterController implements Controller {
     public static volatile double MotorRPM = 4800;
     public static volatile double ShootingDelay = 750;
     public static volatile double SpinUpDelay = 750;
-    public static volatile double BumpPosition = 0.6;
-    public static volatile double RetractPosition = 0.4;
+    public static volatile double RetractDelay = 750;
 
     private final double TicksPerRev = 28; //Do not modify
 
@@ -71,25 +70,40 @@ public class ShooterController implements Controller {
 
     @Override
     public void stop() {
+        shootingState = false;
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setPower(0);
     }
 
-    public void shoot(double RPM, int ringCount){
+    public void shoot(int ringCount){
         shootingState = true;
-        MotorRPM = RPM;
-
-        motorThread.start();
         telemetryThread.start();
-        sleep(SpinUpDelay);
+
+        if (!motorThread.isAlive()) {
+            motorThread.start();
+            sleep(SpinUpDelay);
+        }
         shootImpl(ringCount);
 
         shootingState = false;
     }
 
+    public void spinUp(double MotorRPM){
+        this.MotorRPM = MotorRPM;
+        shootingState = true;
+
+        if (!motorThread.isAlive()) motorThread.start();
+        else {
+            dashboardTelemetry.addLine("Shooter thread already alive");
+            dashboardTelemetry.update();
+        }
+
+    }
+
     private void shootImpl(int ringCount){
         for (int i = 0; i < ringCount; i++) {
             bumper.bump();
+            sleep(RetractDelay);
             bumper.retract();
             sleep(ShootingDelay);
         }
@@ -107,9 +121,12 @@ public class ShooterController implements Controller {
 
             dashboardTelemetry.update();
         }
+
+        dashboardTelemetry.addData("shooter stopped", shooter.getPower());
+        dashboardTelemetry.update();
     }
 
-    public synchronized void setVelocity() {
+    private synchronized void setVelocity() {
         while (shootingState) {
             dashboardTelemetry.addData(ControllerName, "shooter is running");
             TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;

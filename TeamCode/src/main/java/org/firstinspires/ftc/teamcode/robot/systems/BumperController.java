@@ -15,8 +15,8 @@ public class BumperController implements Controller {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
-    public static double bumpPosition = 0.6;
-    public static double retractPosition = 0.35;
+    public static double BumpPosition = 0.6;
+    public static double RetractPosition = 0.35;
 
     public BumperController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
@@ -35,15 +35,15 @@ public class BumperController implements Controller {
     }
 
     public void bump() {
-        bumper.setPosition(0.6);
+        bumper.setPosition(BumpPosition);
     }
 
     public void retract() {
-        bumper.setPosition(0.35);
+        bumper.setPosition(RetractPosition);
     }
 
     @Override
     public void stop() {
-
+        bumper.setPosition(RetractPosition);
     }
 }

@@ -82,14 +82,16 @@ public abstract class Sequence {
         return startPose;
     }
 
-    public void moveToZone(Vector2d targetZone, Vector2d intermediatePos,
-                           double initialHeading, double targetHeading) throws IllegalArgumentException {
+    public void moveLinear(Vector2d posititon, double targetHeading){
+        turn(targetHeading);
+        followTrajectoryAsync(buildLineTrajectory(posititon));
+    }
+
+    public void moveToZone(Vector2d targetZone, Vector2d intermediatePos, double targetHeading) throws IllegalArgumentException {
         telemetry.addData("Sequence", "moveToZone");
         turn(targetHeading);
 //        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
 //        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
-
-        // TODO: try the new arbitrary # of splines trajectory method
 
         Pose2d positions[] = new Pose2d[] {
                 new Pose2d(intermediatePos, targetHeading),
@@ -105,10 +107,9 @@ public abstract class Sequence {
         wobble.drop();
     }
 
-    public void moveToStart(Vector2d wobblePos, Vector2d intermediatePos, double initialHeading, double targetHeading) {
+    public void moveToStart(Vector2d wobblePos, double initialHeading, double targetHeading) {
         telemetry.addData("Sequence","moveToStart");
         turn(targetHeading);
-        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
         followTrajectoryAsync(buildSplineTrajectory(wobblePos, initialHeading, targetHeading));
     }
 
@@ -123,11 +124,20 @@ public abstract class Sequence {
         followTrajectoryAsync(buildLineTrajectory(position));
     }
 
+    public void startShooter(double RPM){
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        shooter.spinUp(RPM);
+    }
+
+    public void stopShooter(){
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        shooter.stop();
+    }
+
     public void shootRings(int numRings) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.shoot( 4800, numRings);
-        shooter.stop();
+        shooter.shoot(numRings);
     }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {

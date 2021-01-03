@@ -37,9 +37,9 @@ public class FieldConstants {
     //Robot Length: 17 in (432mm)
 
     public static class RedField {
-        public static final Vector2d TargetZoneA = new Vector2d(12,-60);
-        public static final Vector2d TargetZoneB = new Vector2d(36,-36);
-        public static final Vector2d TargetZoneC = new Vector2d(60,-60);
+        public static final Vector2d TargetZoneA = new Vector2d(12,-48);
+        public static final Vector2d TargetZoneB = new Vector2d(36,-24);
+        public static final Vector2d TargetZoneC = new Vector2d(60,-48);
         public static final Vector2d RingPos = new Vector2d(-24.5 + TapeWidth, -36);
         public static final Vector2d ShootingPos = new Vector2d(-4, -36);
         public static final Vector2d IntakePos = new Vector2d(RingPos.getX() + 9, RingPos.getY());

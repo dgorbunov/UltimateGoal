@@ -62,10 +62,10 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.M
 
 @Config
 public class DriveLocalizationController extends MecanumDrive implements Controller {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(15, 0.3, 0.75);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.1, 0.75);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, 0.2, 1);
 
-    public static double LATERAL_MULTIPLIER = 1.8; //Calibrate using StrafeTest
+    public static double LATERAL_MULTIPLIER = 1; //Calibrate using StrafeTest
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -103,10 +103,8 @@ public class DriveLocalizationController extends MecanumDrive implements Control
     private VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
-    private Telemetry telemetry;
-    private HardwareMap hardwareMap;
-    private DriveLocalizationController drive;
-
+    Telemetry telemetry;
+    HardwareMap hardwareMap;
 
     public DriveLocalizationController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
@@ -134,6 +132,9 @@ public class DriveLocalizationController extends MecanumDrive implements Control
                 new MecanumVelocityConstraint(MAX_VEL, TRACK_WIDTH)
         ));
         accelConstraint = new ProfileAccelerationConstraint(MAX_ACCEL);
+
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         poseHistory = new LinkedList<>();
 

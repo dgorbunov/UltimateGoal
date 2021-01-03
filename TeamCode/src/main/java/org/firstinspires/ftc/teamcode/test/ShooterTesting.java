@@ -24,7 +24,7 @@ public class ShooterTesting extends OpMode {
     public static volatile double MotorRPM = 4800;
     //public static volatile double IntakeRPM = 1400;
     public static volatile double IntakePower = 0.8;
-    public static volatile double ShootingDelay = 750;
+    public static volatile double Delay[] = {150,150,300};
     public static volatile double RetractDelay = 750;
     public static volatile double BumpPosition = 0.5;
     public static volatile double RetractPosition = 0.35;
@@ -113,7 +113,7 @@ public class ShooterTesting extends OpMode {
             bumper.setPosition(BumpPosition);
             sleep(RetractDelay);
             bumper.setPosition(RetractPosition);
-            sleep(ShootingDelay);
+            sleep(Delay[i]);
         }
     }
 
