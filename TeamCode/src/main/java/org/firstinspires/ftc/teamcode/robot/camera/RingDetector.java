@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class RingDetector extends OpenCvPipeline {
 
+    //TODO: Make vision alogirithms into seperate classes
+
     OpenCvCamera webcam;
     Telemetry telemetry;
 
