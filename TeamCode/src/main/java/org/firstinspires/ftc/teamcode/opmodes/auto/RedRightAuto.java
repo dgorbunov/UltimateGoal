@@ -4,9 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.opmodes.auto.params.Auto;
 
-@Autonomous(name="RedRightAuto", group="Iterative Opmode", preselectTeleOp="MainTele")
+@Autonomous(name="RedRightAuto", group="Iterative Opmode", preselectTeleOp="RedTele")
 @Config //for FTCDash
 public class RedRightAuto extends Auto {
 

@@ -11,7 +11,7 @@ public class RedLeftSequence extends Sequence {
 
     public RedLeftSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
-        this.startPose = new Pose2d(
+        startPose = new Pose2d(
                 FieldConstants.RedLeft.StartingPos,
                 Math.toRadians(0));
     }

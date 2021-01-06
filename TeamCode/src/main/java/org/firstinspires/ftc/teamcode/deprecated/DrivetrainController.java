@@ -1,13 +1,10 @@
-package org.firstinspires.ftc.teamcode.robot.drive;
+package org.firstinspires.ftc.teamcode.deprecated;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.tele.MainTele;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
 import java.util.Arrays;
@@ -15,6 +12,7 @@ import java.util.List;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+@Deprecated
 public class DrivetrainController implements Controller {
 
     DcMotor leftFront;
@@ -115,10 +113,6 @@ public class DrivetrainController implements Controller {
         for (DcMotor motor : motors) motor.setPower(power);
     }
 
-    public void setZeroPowerBehavior (DcMotor.ZeroPowerBehavior behavior) {
-        for (DcMotor motor : motors) motor.setZeroPowerBehavior(behavior);
-    }
-
     @Override
     public void stop() {
         setAllPower(0);
@@ -129,6 +123,10 @@ public class DrivetrainController implements Controller {
         defGoBilda();
         setZeroPowerBehavior(BRAKE);
     }
+    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
+        for (DcMotor motor : motors) motor.setZeroPowerBehavior(behavior);
+    }
+
 
     @Override
     public void start() {

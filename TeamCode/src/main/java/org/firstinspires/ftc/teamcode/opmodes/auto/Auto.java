@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto.params;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -36,7 +36,6 @@ public class Auto extends OpMode {
     private int ringCount = -1;
     private Sequence currentSequence;
     protected final static Object lock = new Object();
-    private String startingSide;
     protected String sequenceName;
 
     @Override
@@ -110,7 +109,6 @@ public class Auto extends OpMode {
     }
 
     protected String makeSequenceName(String alliance, String side) {
-        startingSide = side;
         return (alliance + side).toLowerCase();
     }
 

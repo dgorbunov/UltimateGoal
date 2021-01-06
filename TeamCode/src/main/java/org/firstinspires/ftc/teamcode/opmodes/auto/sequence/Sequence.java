@@ -27,21 +27,17 @@ public abstract class Sequence {
 
     //TODO: Build all trajectories before running?
 
-    public Sequence(ControllerManager controllers, Telemetry tel) {
-        this.telemetry = tel;
+    public Sequence(ControllerManager controllers, Telemetry telemetry) {
+        this.telemetry = telemetry;
         this.controllers = controllers;
-        this.actions = new Actions(tel);
+        this.actions = new Actions(this.telemetry);
     }
 
     public void init(int ringCount) {
-        init(ringCount, startPose);
-    }
 
-    public void init(int ringCount, Pose2d startPose) {
         synchronized (lock) {
             telemetry.addData("Sequence", "ringCount: " +ringCount + " start pose: " + startPose.toString());
             this.ringCount = ringCount;
-            this.startPose = startPose;
 
             // Reset all actions
             actions = new Actions(telemetry);

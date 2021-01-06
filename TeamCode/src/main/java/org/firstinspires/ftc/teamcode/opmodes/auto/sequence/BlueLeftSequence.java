@@ -10,7 +10,7 @@ public class BlueLeftSequence extends Sequence {
 
     public BlueLeftSequence(ControllerManager controllers, Telemetry tel) {
         super(controllers, tel);
-        this.startPose = new Pose2d(
+        startPose = new Pose2d(
                 FieldConstants.BlueLeft.StartingPos,
                 Math.toRadians(0)); // TODO: rotate 180?
     }

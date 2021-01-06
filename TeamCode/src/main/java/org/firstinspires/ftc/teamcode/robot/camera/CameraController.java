@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.camera;
 
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -24,9 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 
@@ -56,8 +59,8 @@ public class CameraController implements Controller {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    public final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
-    public final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
+    public final float CAMERA_FORWARD_DISPLACEMENT  = 8.5f * mmPerInch;   // eg: Camera inches in front of robot-center
+    public final float CAMERA_VERTICAL_DISPLACEMENT = 4.0f * mmPerInch;   // eg: Camera inches above ground
     public final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
@@ -92,6 +95,9 @@ public class CameraController implements Controller {
         targetsUltimateGoal.deactivate();
     }
 
+    /*
+     Original SDK method, not used
+     */
     public void countRings() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -119,9 +125,12 @@ public class CameraController implements Controller {
         if (tfod != null) {
             List<Recognition> recognitions = tfod.getRecognitions();
             if (recognitions != null && recognitions.size() != 0) {
-                Collections.sort(recognitions, Comparator.comparingDouble(Recognition::getConfidence)); //sort recognitions by confidence
+                //sort recognitions by confidence
+                Collections.sort(recognitions, Comparator.comparingDouble(Recognition::getConfidence));
 
-                topRecognition = recognitions.get(recognitions.size() - 1); //set top recognition to recognition with most confidence
+                //set top recognition to recognition with most confidence
+                topRecognition = recognitions.get(recognitions.size() - 1);
+
                 return topRecognition.getLabel();
             }
             else return LABEL_NO_ELEMENT;
@@ -142,7 +151,6 @@ public class CameraController implements Controller {
     }
 
     private void trackTargets(){
-
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
@@ -162,7 +170,10 @@ public class CameraController implements Controller {
 
     }
 
-    public void printTargetLocalization() {
+
+    @Nullable
+    public Pose2d getRobotPosition(){
+        trackTargets();
         // Provide feedback as to where the robot is located (if we know).
         if (targetVisible) {
             // express position (translation) of robot in inches.
@@ -173,37 +184,15 @@ public class CameraController implements Controller {
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            rotation.toAngleUnit(RADIANS);
+            rotation.toAxesReference(INTRINSIC);
+            return new Pose2d(translation.get(0), translation.get(1), rotation.thirdAngle); //X, Y, rotation
         }
         else {
             telemetry.addData("Visible Target", "none");
+            return null;
         }
     }
-//
-//    public double getXTranslationFromTarget(){
-//        trackTargets();
-//        // Provide feedback as to where the robot is located (if we know).
-//        if (targetVisible) {
-//            // express position (translation) of robot in inches.
-//            VectorF translation = lastLocation.getTranslation();
-//            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-//                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-//
-//            // express the rotation of the robot in degrees.
-//            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-//            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-//        }
-//        else {
-//            telemetry.addData("Visible Target", "none");
-//            return 0;
-//        }
-//    }
-
-//    public String getTargetName(){
-//        trackTargets();
-//        // Provide feedback as to where the robot is located (if we know).
-//        if (targetVisible) return trackable.getName();
-//        else return "None";
-//    }
 
     @Override
     public void stop() { }

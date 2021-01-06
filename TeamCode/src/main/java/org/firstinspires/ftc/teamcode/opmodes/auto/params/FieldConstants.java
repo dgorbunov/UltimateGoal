@@ -5,10 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class FieldConstants {
 
-    public FieldConstants (){
-
-    }
-
     /**
      * Auto Global Constants
      */
@@ -26,6 +22,7 @@ public class FieldConstants {
     public static final String Camera = "camera";
     public static final String Shooter = "shooter";
     public static final String Intake = "intake";
+    public static final String VertIntake = "verticalIntake";
     public static final String Wobble = "wobble";
     public static final String Drive = "drive";
     public static final String Hub = "hub";

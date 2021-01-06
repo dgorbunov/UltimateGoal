@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
@@ -85,7 +87,27 @@ public class ShooterController implements Controller {
         }
         shootImpl(ringCount);
 
-        shootingState = false;
+        stop();
+    }
+
+    public void shootAuto(ControllerManager controllers){
+        if (controllers.get(FieldConstants.Camera) == null){
+            controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, dashboardTelemetry));
+        }
+        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
+
+        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        //drive.autoTakeOver(); //from manual control
+        //TODO: merge drive classes, move this to drive class
+        //TODO: need to make sure it's looking at the right target and not a random one
+        //TODO: need to make sure it's knows what side it's on
+        //TODO: red and blue teles extending tele base class
+//        drive.setPoseEstimate(camera.getRobotPosition());
+//        Trajectory trajectory = drive.trajectoryBuilder(drive.GetCurrentPose())
+//                .lineTo(new Pose2d(Field))
+//                .build();
+//        drive.followTrajectoryAsync(new Trja);
+//        drive.waitForIdle();
     }
 
     public void spinUp(double MotorRPM){
