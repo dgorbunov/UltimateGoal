@@ -30,17 +30,17 @@ public class ControllerManager implements Controller{
     }
 
     public void make(HardwareMap hardwareMap, Telemetry telemetry){
-        add(FieldConstants.Drive, new DrivetrainController(hardwareMap, telemetry));
-        add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
-        add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
-        add(FieldConstants.VertIntake, new VertIntakeController(hardwareMap, telemetry));
-        add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
-        add(FieldConstants.Bumper, new BumperController(hardwareMap, telemetry));
-        add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
-        add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
+        add(new DrivetrainController(hardwareMap, telemetry), FieldConstants.Drive);
+        add(new HubController(hardwareMap, telemetry), FieldConstants.Hub);
+        add(new IntakeController(hardwareMap, telemetry), FieldConstants.Intake);
+        add(new VertIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
+        add(new ShooterController(hardwareMap, telemetry), FieldConstants.Shooter);
+        add(new BumperController(hardwareMap, telemetry), FieldConstants.Bumper);
+        add(new WobbleController(hardwareMap, telemetry), FieldConstants.Wobble);
+        add(new CameraController(hardwareMap, telemetry), FieldConstants.Camera);
     }
 
-    public void add(String controllerName, Controller controller) {
+    public void add(Controller controller, String controllerName) {
         synchronized (lock) {
             controllers.put(controllerName.toLowerCase(), controller);
         }
