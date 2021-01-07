@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele.base;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
@@ -15,11 +17,10 @@ import org.firstinspires.ftc.teamcode.robot.systems.VIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
+@Config //for FTCDash
 public abstract class Tele extends OpMode {
 
-    public Tele(){
-
-    }
+    public static volatile TeleConstants.DriverMode DriverMode = TeleConstants.DriverMode.OneDriver;
 
     private DriveLocalizationController drive;
     private IntakeController intake;
@@ -66,7 +67,7 @@ public abstract class Tele extends OpMode {
 
     public void start() {
         controllers.start();
-        gp = new TeleConstants(gamepad1, gamepad2); //will this work if
+        TeleConstants.setGamepads(gamepad1, gamepad2);
     }
 
     public void loop() {
@@ -81,6 +82,7 @@ public abstract class Tele extends OpMode {
         drive.update();
         if (TeleConstants.StartFlywheel) shooter.spinUp(4800);
         if (TeleConstants.Shoot) shooter.shoot( 3); //TODO: autoalign
+
         if (TeleConstants.IntakeForward) intake.run(0.8);
         if (TeleConstants.IntakeReverse) intake.run(-0.8); //TODO: multithread all of this
         if (TeleConstants.VertIntakeForward) vertIntake.run(1.0);
@@ -89,6 +91,8 @@ public abstract class Tele extends OpMode {
             intake.stop();
             vertIntake.stop();
         }
+        if (TeleConstants.VertIntakeForward) wobble.pickup();
+        if (TeleConstants.VertIntakeReverse) wobble.drop();
 
         telemetry.addLine(hub.getFormattedCurrentDraw());
     }
@@ -104,7 +108,4 @@ public abstract class Tele extends OpMode {
         telemetry.addLine("Stopped");
     }
 
-//    public static Telemetry GetTelemetry() {
-//        return sTelemetry;
-//    }
 }
