@@ -46,7 +46,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     /**
      * Options for inaccurate heading
      * Retune everyhing
-     * Lower speed/acceleration
+     * Lower speed/acceleration!!!
      * Tune LEFT_MULTIPLIER
      * Use splines that turn instead of direct turns
      * Tune HEADING_PID, more aggresive
@@ -64,9 +64,9 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
         ));
 
         if (DrivetrainController.TESTING) {
-            leftEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "left_rear"));
-            rightEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "right_rear"));
-            frontEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "right_front"));
+            leftEncoder = new Encoder(new MockDcMotorEx("left_rear"));
+            rightEncoder = new Encoder(new MockDcMotorEx("right_rear"));
+            frontEncoder = new Encoder(new MockDcMotorEx("right_front"));
         } else {
             leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_rear"));
             rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_rear"));

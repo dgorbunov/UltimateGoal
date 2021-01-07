@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
@@ -90,18 +89,7 @@ public class ShooterController implements Controller {
         if (controllers.get(FieldConstants.Camera) == null){
             controllers.add(new CameraController(hardwareMap, dashboardTelemetry), FieldConstants.Camera);
         }
-        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
 
-        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        //drive.autoTakeOver(); //from manual control
-        //TODO: need to make sure it's looking at the right target and not a random one
-        //TODO: need to make sure it's knows what side it's on
-//        drive.setPoseEstimate(camera.getRobotPosition());
-//        Trajectory trajectory = drive.trajectoryBuilder(drive.GetCurrentPose())
-//                .lineTo(new Pose2d(Field))
-//                .build();
-//        drive.followTrajectoryAsync(new Trja);
-//        drive.waitForIdle();
     }
 
     public void spinUp(double MotorRPM){

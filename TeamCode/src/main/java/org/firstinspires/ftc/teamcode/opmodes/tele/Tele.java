@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
+import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
+import org.firstinspires.ftc.teamcode.util.Button;
 
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants.IntakeForwardPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants.IntakeReversePower;
@@ -23,58 +23,54 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants.V
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants.VertIntakeReversePower;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
+@Disabled
 @Config //for FTCDash
 public abstract class Tele extends OpMode {
 
-    public static volatile TeleConstants.DriverMode DriverMode = TeleConstants.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
-   // DrivetrainController.TESTING = true;
+    GamepadMappings gameMap = new GamepadMappings();
+    Button intakeButton;
+    Button vertIntakeButton;
+    Button wobbleButton;
+    Button flywheelButton;
+    Button shootButton;
 
-    private DrivetrainController drive;
-    private IntakeController intake;
-    private ShooterController shooter;
-    private VertIntakeController vertIntake;
-    private WobbleController wobble;
-    private HubController hub;
+    protected DrivetrainController drive;
+    protected IntakeController intake;
+    protected ShooterController shooter;
+    protected VertIntakeController vertIntake;
+    protected WobbleController wobble;
+    protected HubController hub;
     //private CameraController camera;
 
-    private ControllerManager controllers;
+    protected ControllerManager controllers;
 
     public void init() {
         telemetry.addLine("Initializing...");
 
-
+        DrivetrainController.TESTING = true;
 
         controllers = new ControllerManager(telemetry);
-//        controllers.make(hardwareMap, telemetry);
+        controllers.make(hardwareMap, telemetry);
 
-//        drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-//        hub = controllers.get(HubController.class, FieldConstants.Hub);
-//        shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-//        intake = controllers.get(IntakeController.class, FieldConstants.Intake);
-//        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
-//        wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
-//        camera = controllers.get(CameraController.class, FieldConstants.Camera);
-
-        //also need to fix Auto
-
-        drive = new DrivetrainController(hardwareMap, telemetry);
-        hub = new HubController(hardwareMap, telemetry);
-        shooter = new ShooterController(hardwareMap, telemetry);
-        intake = new IntakeController(hardwareMap, telemetry);
-        vertIntake = new VertIntakeController(hardwareMap, telemetry);
-        wobble = new WobbleController(hardwareMap, telemetry);
-//        camera = new CameraController(hardwareMap, telemetry);
-
-        //controllers.add(drive, FieldConstants.Drive);
-        controllers.add(hub, FieldConstants.Hub);
-        controllers.add(shooter, FieldConstants.Shooter);
-        controllers.add(intake, FieldConstants.Intake);
-        controllers.add(vertIntake, FieldConstants.VertIntake);
-        controllers.add(wobble, FieldConstants.Wobble);
-//        controllers.add(camera, FieldConstants.Camera);
+        drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        hub = controllers.get(HubController.class, FieldConstants.Hub);
+        shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        intake = controllers.get(IntakeController.class, FieldConstants.Intake);
+        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
+        wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
 
         controllers.init();
+
+        gameMap.setGamepads(gamepad1, gamepad2);
+
+
+        wobbleButton = new Button();
+        flywheelButton = new Button();
+        vertIntakeButton = new Button();
+        intakeButton = new Button();
+        shootButton = new Button();
 
         telemetry.clear();
         telemetry.addLine("Initialized");
@@ -85,7 +81,6 @@ public abstract class Tele extends OpMode {
     }
 
     public void start() {
-        TeleConstants.setGamepads(gamepad1, gamepad2);
         controllers.start();
     }
 
@@ -100,21 +95,36 @@ public abstract class Tele extends OpMode {
 
         drive.update();
 
+        shootButton.runOnce(gameMap.ShootButton(), () -> shooter.shoot(3));
 
-        if (TeleConstants.StartFlywheel) shooter.spinUp(4800);
-        if (TeleConstants.Shoot) shooter.shoot( 3); //TODO: autoShoot();
+        intakeButton.toggle(
+                gameMap.IntakeButton(),
+                () -> intake.run(IntakeForwardPower),
+                () -> intake.run(IntakeReversePower),
+                () -> intake.stop());
 
-        if (TeleConstants.IntakeForward) intake.run(IntakeForwardPower);
-        if (TeleConstants.IntakeReverse) intake.run(IntakeReversePower); //TODO: multithread all of this
-        if (TeleConstants.VertIntakeForward) vertIntake.run(VertIntakeForwardPower);
-        if (TeleConstants.VertIntakeReverse) vertIntake.run(VertIntakeReversePower);
-        if (TeleConstants.StopAllIntakes) {
+        vertIntakeButton.toggle(
+                gameMap.VertIntakeButton(),
+                () -> vertIntake.run(VertIntakeForwardPower),
+                () -> vertIntake.run(VertIntakeReversePower),
+                () -> vertIntake.stop());
+
+        wobbleButton.toggle(
+                gameMap.VertIntakeButton(),
+                () -> wobble.pickup(),
+                () -> wobble.drop());
+
+        flywheelButton.toggle(
+                gameMap.FlywheelButton(),
+                () -> shooter.spinUp(4800),
+                ()-> shooter.stop());
+
+        if (gameMap.StopIntakesButton()) {
             intake.stop();
             vertIntake.stop();
+            intakeButton.resetToggle();
+            vertIntakeButton.resetToggle();
         }
-
-        if (TeleConstants.PickupWobble) wobble.pickup();
-        if (TeleConstants.DropWobble) wobble.drop();
 
         telemetry.addLine(hub.getFormattedCurrentDraw());
     }

@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -19,6 +17,10 @@ public class MockDcMotorEx implements DcMotorEx {
         public MockDcMotorEx(String name, Telemetry telemetry){
                 this.telemetry = telemetry;
                 this.name = name;
+        }
+
+        public MockDcMotorEx(String name){
+                this(name, null);
         }
 
         @Override
@@ -38,12 +40,12 @@ public class MockDcMotorEx implements DcMotorEx {
 
         @Override
         public void setVelocity(double angularRate) {
-                telemetry.addData(name + ": Set Velocity", angularRate);
+                if (telemetry != null) telemetry.addData(name + ": Set Velocity", angularRate);
         }
 
         @Override
         public void setVelocity(double angularRate, AngleUnit unit) {
-                telemetry.addData(name + ": Set Velocity", angularRate);
+                if (telemetry != null) telemetry.addData(name + ": Set Velocity", angularRate);
         }
 
         @Override
@@ -157,7 +159,7 @@ public class MockDcMotorEx implements DcMotorEx {
 
         @Override
         public void setTargetPosition(int position) {
-                telemetry.addData(name + ": Set Target Position", position);
+                if (telemetry != null) telemetry.addData(name + ": Set Target Position", position);
         }
 
         @Override
@@ -197,7 +199,7 @@ public class MockDcMotorEx implements DcMotorEx {
 
         @Override
         public void setPower(double power) {
-                telemetry.addData(name + ": Set Power", power);
+                if (telemetry != null) telemetry.addData(name + ": Set Power", power);
         }
 
         @Override
