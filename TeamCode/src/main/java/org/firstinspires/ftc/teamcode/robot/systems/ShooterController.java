@@ -58,7 +58,8 @@ public class ShooterController implements Controller {
         controllers = new ControllerManager(dashboardTelemetry);
         bumper = new BumperController(hardwareMap, dashboardTelemetry);
 
-        controllers.add(FieldConstants.Bumper, bumper);
+        controllers.add(bumper, FieldConstants.Bumper);
+        //TODO: need to pass it the common ControllerManager instance?
 
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -87,7 +88,7 @@ public class ShooterController implements Controller {
 
     public void shootAuto(ControllerManager controllers){
         if (controllers.get(FieldConstants.Camera) == null){
-            controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, dashboardTelemetry));
+            controllers.add(new CameraController(hardwareMap, dashboardTelemetry), FieldConstants.Camera);
         }
         CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
 

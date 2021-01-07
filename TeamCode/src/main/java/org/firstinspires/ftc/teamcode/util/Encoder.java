@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
  * Wraps a motor instance to provide corrected velocity counts and allow reversing without changing the corresponding
  * slot's motor direction
  */
-public class Encoder {
+public class Encoder{
     private final static int CPS_STEP = 0x10000;
 
     private static double inverseOverflow(double input, double estimate) {

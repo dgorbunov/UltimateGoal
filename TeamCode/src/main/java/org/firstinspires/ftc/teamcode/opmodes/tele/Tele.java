@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,31 +28,51 @@ public abstract class Tele extends OpMode {
 
     public static volatile TeleConstants.DriverMode DriverMode = TeleConstants.DriverMode.OneDriver;
 
+   // DrivetrainController.TESTING = true;
+
     private DrivetrainController drive;
     private IntakeController intake;
     private ShooterController shooter;
     private VertIntakeController vertIntake;
     private WobbleController wobble;
     private HubController hub;
-    private CameraController camera;
+    //private CameraController camera;
 
     private ControllerManager controllers;
 
     public void init() {
         telemetry.addLine("Initializing...");
 
-        DrivetrainController.TESTING = true;
+
 
         controllers = new ControllerManager(telemetry);
-        controllers.make(hardwareMap, telemetry);
+//        controllers.make(hardwareMap, telemetry);
 
-        drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        hub = controllers.get(HubController.class, FieldConstants.Hub);
-        shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        intake = controllers.get(IntakeController.class, FieldConstants.Intake);
-        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
-        wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
-        camera = controllers.get(CameraController.class, FieldConstants.Camera);
+//        drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+//        hub = controllers.get(HubController.class, FieldConstants.Hub);
+//        shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+//        intake = controllers.get(IntakeController.class, FieldConstants.Intake);
+//        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
+//        wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
+//        camera = controllers.get(CameraController.class, FieldConstants.Camera);
+
+        //also need to fix Auto
+
+        drive = new DrivetrainController(hardwareMap, telemetry);
+        hub = new HubController(hardwareMap, telemetry);
+        shooter = new ShooterController(hardwareMap, telemetry);
+        intake = new IntakeController(hardwareMap, telemetry);
+        vertIntake = new VertIntakeController(hardwareMap, telemetry);
+        wobble = new WobbleController(hardwareMap, telemetry);
+//        camera = new CameraController(hardwareMap, telemetry);
+
+        //controllers.add(drive, FieldConstants.Drive);
+        controllers.add(hub, FieldConstants.Hub);
+        controllers.add(shooter, FieldConstants.Shooter);
+        controllers.add(intake, FieldConstants.Intake);
+        controllers.add(vertIntake, FieldConstants.VertIntake);
+        controllers.add(wobble, FieldConstants.Wobble);
+//        controllers.add(camera, FieldConstants.Camera);
 
         controllers.init();
 
@@ -100,7 +121,7 @@ public abstract class Tele extends OpMode {
 
     protected abstract void autoShoot();
 
-    public void stop() { //code to run when program is stopped
+    public void stop() {
         telemetry.addLine("Stopping...");
 
         controllers.stop();

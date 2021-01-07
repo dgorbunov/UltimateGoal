@@ -152,44 +152,6 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 //        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 //        imu.initialize(parameters);
 
-        if (!TESTING) {
-            leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
-            leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
-            rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
-            rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
-        }
-        else {
-            leftFront = new MockDcMotorEx("left_front", telemetry);
-            leftRear = new MockDcMotorEx("left_rear", telemetry);
-            rightRear = new MockDcMotorEx("right_rear", telemetry);
-            rightFront = new MockDcMotorEx("right_front", telemetry);
-        }
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-
-        setLocalizer(new ThreeWheelLocalizer(hardwareMap));
-        /** If using two wheel,
-         *  See also {@link #getRawExternalHeading()}. */
-
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -232,20 +194,60 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     @Override
     public void init() {
         if (telemetry != null) {
-            telemetry.addData("MecanumDrivetrainController", "init");
+            telemetry.addData("DrivetrainController", "init");
         }
+
+        if (TESTING) {
+            leftFront = new MockDcMotorEx("left_front", telemetry);
+            leftRear = new MockDcMotorEx("left_rear", telemetry);
+            rightRear = new MockDcMotorEx("right_rear", telemetry);
+            rightFront = new MockDcMotorEx("right_front", telemetry);
+        }
+        else {
+            leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
+            leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
+            rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
+            rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
+        }
+
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+        if (!TESTING) {
+            for (DcMotorEx motor : motors) {
+                MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+                motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+                motor.setMotorType(motorConfigurationType);
+            }
+        }
+
+        if (RUN_USING_ENCODER) {
+            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+        }
+
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+
+        setLocalizer(new ThreeWheelLocalizer(hardwareMap));
+        /** If using two wheel,
+         *  See also {@link #getRawExternalHeading()}. */
     }
 
     @Override
     public void start() {
         if (telemetry != null) {
-            telemetry.addData("MecanumDrivetrainController", "start");
+            telemetry.addData("DrivetrainController", "start");
         }
     }
 
     public void stop() {
         if (telemetry != null) {
-            telemetry.addData("MecanumDrivetrainController", "stop");
+            telemetry.addData("DrivetrainController", "stop");
         }
 
         mode = Mode.IDLE; //return out of the current thread

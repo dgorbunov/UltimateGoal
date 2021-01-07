@@ -8,7 +8,9 @@ import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,10 +63,15 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_rear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_rear"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_front"));
-
+        if (DrivetrainController.TESTING) {
+            leftEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "left_rear"));
+            rightEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "right_rear"));
+            frontEncoder = new Encoder(hardwareMap.get(MockDcMotorEx.class, "right_front"));
+        } else {
+            leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_rear"));
+            rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_rear"));
+            frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_front"));
+        }
     }
 
     public static double encoderTicksToInches(double ticks) {

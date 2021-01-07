@@ -64,7 +64,7 @@ public class ShooterTesting extends OpMode {
         controllers = new ControllerManager(dashboardTelemetry);
         hub = new HubController(hardwareMap, dashboardTelemetry);
 
-        controllers.add(FieldConstants.Hub, hub);
+        controllers.add(hub, FieldConstants.Hub);
 
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(ShooterDirection);
