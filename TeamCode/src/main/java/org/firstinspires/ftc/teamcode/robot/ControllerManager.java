@@ -2,7 +2,18 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import androidx.annotation.Nullable;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
+import org.firstinspires.ftc.teamcode.robot.systems.HubController;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
+import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +25,19 @@ public class ControllerManager implements Controller{
     protected final Object lock = new Object();
     Telemetry telemetry;
 
-    public ControllerManager(Telemetry tel) {
-        this.telemetry = tel;
+    public ControllerManager(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
+    public void make(HardwareMap hardwareMap, Telemetry telemetry){
+        add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
+        add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
+        add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
+        add(FieldConstants.VertIntake, new VertIntakeController(hardwareMap, telemetry));
+        add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
+        add(FieldConstants.Bumper, new BumperController(hardwareMap, telemetry));
+        add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
+        add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
     }
 
     public void add(String controllerName, Controller controller) {

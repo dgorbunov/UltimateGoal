@@ -7,10 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.Tele;
 @Config //for FTCDash
 public class TeleConstants{
 
-    public TeleConstants(){
-
-    }
-
     static Gamepad gamepad1;
     static Gamepad gamepad2;
 

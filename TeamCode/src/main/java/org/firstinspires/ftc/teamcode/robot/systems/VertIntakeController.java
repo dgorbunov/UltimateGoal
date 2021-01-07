@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,20 +10,21 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
-public class VIntakeController implements Controller {
+public class VertIntakeController implements Controller{
     private Telemetry telemetry;
-    private MockDcMotorEx vIntake;
+    private HardwareMap hardwareMap;
+    private DcMotorEx vIntake;
     public static String ControllerName;
 
-    public VIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
+    public VertIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        vIntake = new MockDcMotorEx("v_intake", telemetry);
         ControllerName = getClass().getSimpleName();
+        vIntake = hardwareMap.get(DcMotorEx.class, "vIntake");
     }
 
     @Override
     public void init() {
-
     }
 
     @Override

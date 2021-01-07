@@ -5,14 +5,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.CameraControl;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.systems.VIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
@@ -24,9 +26,10 @@ public abstract class Tele extends OpMode {
     private DriveLocalizationController drive;
     private IntakeController intake;
     private ShooterController shooter;
-    private VIntakeController vertIntake;
+    private VertIntakeController vertIntake;
     private WobbleController wobble;
     private HubController hub;
+    private CameraController camera;
 
     private TeleConstants gp;
 
@@ -35,22 +38,18 @@ public abstract class Tele extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
 
+        DriveLocalizationController.TESTING = true;
+
         controllers = new ControllerManager(telemetry);
+        controllers.make(hardwareMap, telemetry);
 
-        drive = new DriveLocalizationController(hardwareMap, telemetry);
-        hub = new HubController(hardwareMap, telemetry);
-        shooter = new ShooterController(hardwareMap, telemetry);
-        intake = new IntakeController(hardwareMap, telemetry);
-        vertIntake = new VIntakeController(hardwareMap, telemetry);
-        wobble = new WobbleController(hardwareMap, telemetry);
-
-
-        controllers.add(FieldConstants.Drive, drive);
-        controllers.add(FieldConstants.Hub, hub);
-        controllers.add(FieldConstants.Shooter, shooter);
-        controllers.add(FieldConstants.Intake, intake);
-        controllers.add(FieldConstants.VertIntake, vertIntake);
-        controllers.add(FieldConstants.Wobble, wobble);
+        drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        hub = controllers.get(HubController.class, FieldConstants.Hub);
+        shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        intake = controllers.get(IntakeController.class, FieldConstants.Intake);
+        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
+        wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
+        camera = controllers.get(CameraController.class, FieldConstants.Camera);
 
         controllers.init();
 
@@ -88,8 +87,8 @@ public abstract class Tele extends OpMode {
             intake.stop();
             vertIntake.stop();
         }
-        if (TeleConstants.VertIntakeForward) wobble.pickup();
-        if (TeleConstants.VertIntakeReverse) wobble.drop();
+        if (TeleConstants.PickupWobble) wobble.pickup();
+        if (TeleConstants.DropWobble) wobble.drop();
 
         telemetry.addLine(hub.getFormattedCurrentDraw());
     }

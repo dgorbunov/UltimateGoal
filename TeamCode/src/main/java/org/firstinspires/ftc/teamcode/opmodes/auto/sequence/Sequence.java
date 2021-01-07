@@ -34,7 +34,6 @@ public abstract class Sequence {
     }
 
     public void init(int ringCount) {
-
         synchronized (lock) {
             telemetry.addData("Sequence", "ringCount: " +ringCount + " start pose: " + startPose.toString());
             this.ringCount = ringCount;

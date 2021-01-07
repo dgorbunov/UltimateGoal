@@ -35,11 +35,13 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.tele.Tele;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 
 import java.util.ArrayList;
@@ -64,6 +66,8 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.M
 public class DriveLocalizationController extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.1, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, 0.2, 1);
+
+    public static boolean TESTING = false;
 
     public static double LATERAL_MULTIPLIER = 1; //Calibrate using StrafeTest
 
@@ -151,10 +155,18 @@ public class DriveLocalizationController extends MecanumDrive implements Control
 //        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 //        imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
-        leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
+        if (!TESTING) {
+            leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
+            leftRear = hardwareMap.get(DcMotorEx.class, "left_rear");
+            rightRear = hardwareMap.get(DcMotorEx.class, "right_rear");
+            rightFront = hardwareMap.get(DcMotorEx.class, "right_front");
+        }
+        else {
+            leftFront = new MockDcMotorEx("left_front", telemetry);
+            leftRear = new MockDcMotorEx("left_rear", telemetry);
+            rightRear = new MockDcMotorEx("right_rear", telemetry);
+            rightFront = new MockDcMotorEx("right_front", telemetry);
+        }
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

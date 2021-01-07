@@ -43,7 +43,7 @@ public class Auto extends OpMode {
         telemetry.addLine("Initializing...");
 
         controllers = new ControllerManager(telemetry);
-        makeControllers();
+        controllers.make(hardwareMap, telemetry);
 
         // The controllers must be set up before
         makeSequences();
@@ -86,6 +86,7 @@ public class Auto extends OpMode {
 
     @Override
     public void loop() {
+
     }
 
     @Override
@@ -110,16 +111,6 @@ public class Auto extends OpMode {
 
     protected String makeSequenceName(String alliance, String side) {
         return (alliance + side).toLowerCase();
-    }
-
-    private void makeControllers() {
-        controllers.add(FieldConstants.Camera, new CameraController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Shooter, new ShooterController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Wobble, new WobbleController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
-        controllers.add(FieldConstants.Bumper, new BumperController(hardwareMap, telemetry));
     }
 
     private void makeSequences() {
