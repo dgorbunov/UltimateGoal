@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.robot.drive.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 /*
  * This is a simple routine to test turning capabilities.
@@ -18,7 +17,7 @@ public class TurnTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DriveLocalizationController drive = new DriveLocalizationController(hardwareMap);
+        DrivetrainController drive = new DrivetrainController(hardwareMap);
 
         waitForStart();
 

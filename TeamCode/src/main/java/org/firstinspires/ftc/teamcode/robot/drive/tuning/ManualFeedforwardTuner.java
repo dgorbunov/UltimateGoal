@@ -10,12 +10,10 @@ import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
-import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 import java.util.Objects;
 
@@ -51,7 +49,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    private DriveLocalizationController drive;
+    private DrivetrainController drive;
 
     enum Mode {
         DRIVER_MODE,
@@ -75,7 +73,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new DriveLocalizationController(hardwareMap);
+        drive = new DrivetrainController(hardwareMap);
 
         mode = Mode.TUNING_MODE;
 

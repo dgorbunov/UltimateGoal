@@ -29,6 +29,11 @@ public class TeleConstants{
     public static final boolean PickupWobble = gamepad1.left_bumper;
     public static final boolean DropWobble = gamepad1.right_bumper;
 
+    public static final double IntakeForwardPower = 0.8;
+    public static final double IntakeReversePower = -0.8;
+    public static final double VertIntakeForwardPower = 1;
+    public static final double VertIntakeReversePower = -1;
+
     public enum DriverMode {
         OneDriver, TwoDrivers
     }

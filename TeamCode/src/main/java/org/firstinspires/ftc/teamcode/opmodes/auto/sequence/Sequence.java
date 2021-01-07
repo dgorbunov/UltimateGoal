@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -43,7 +43,7 @@ public abstract class Sequence {
             makeActions();
 
             // Define our start pose
-            DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+            DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
             if (drive != null) {
                 drive.setPoseEstimate(startPose);
             }
@@ -69,7 +69,7 @@ public abstract class Sequence {
     }
 
     public Pose2d GetCurrentPose() {
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         if (drive != null) {
             return drive.getPoseEstimate();
         }
@@ -165,7 +165,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildSplineTrajectory(Vector2d position, double initialHeading, double targetHeading){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .splineTo(position, Math.toRadians(targetHeading))
                 .build();
@@ -174,7 +174,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildSplineTrajectory(Pose2d[] positions){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose());
         for (Pose2d position : positions) {
             trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
@@ -185,7 +185,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildConstantSplineTrajectory(Vector2d position, double heading){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .splineToConstantHeading(position, Math.toRadians(heading));
 
@@ -193,7 +193,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildLineTrajectory(Vector2d position){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .lineTo(position)
                 .build();
@@ -201,7 +201,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildStrafeTrajectory(Vector2d position){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .strafeTo(position)
                 .build();
@@ -214,7 +214,7 @@ public abstract class Sequence {
             throw new IllegalArgumentException("Invalid trajectory");
         }
 
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         drive.followTrajectoryAsync(trajectory);
         drive.waitForIdle();
         //although this may look equivalent to followTrajectory it is non-blocking
@@ -222,7 +222,7 @@ public abstract class Sequence {
     }
 
     private Trajectory buildIntakeTrajectory(Vector2d position, double heading, double timeDelay){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
         turn(heading);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
@@ -235,7 +235,7 @@ public abstract class Sequence {
     }
 
     private void turn(double heading){
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         drive.turnAsync(Math.toRadians(heading));
         drive.waitForIdle();
     }

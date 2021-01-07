@@ -35,20 +35,21 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.tele.Tele;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.TRACK_WIDTH;
@@ -56,14 +57,10 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.e
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
-import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_VEL;
 
 
 @Config
-public class DriveLocalizationController extends MecanumDrive implements Controller {
+public class DrivetrainController extends MecanumDrive implements Controller {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.1, 0.75);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, 0.2, 1);
 
@@ -110,13 +107,13 @@ public class DriveLocalizationController extends MecanumDrive implements Control
     Telemetry telemetry;
     HardwareMap hardwareMap;
 
-    public DriveLocalizationController(HardwareMap hardwareMap, Telemetry telemetry) {
+    public DrivetrainController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
 
-    public DriveLocalizationController(HardwareMap hardwareMap) {
+    public DrivetrainController(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.hardwareMap = hardwareMap;

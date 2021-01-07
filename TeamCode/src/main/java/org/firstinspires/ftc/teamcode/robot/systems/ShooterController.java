@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
@@ -22,6 +22,8 @@ public class ShooterController implements Controller {
     public static volatile double ShootingDelay = 750;
     public static volatile double SpinUpDelay = 750;
     public static volatile double RetractDelay = 750;
+
+    private volatile int ringCount = 3;
 
     private final double TicksPerRev = 28; //Do not modify
 
@@ -38,8 +40,9 @@ public class ShooterController implements Controller {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    public Thread telemetryThread = new Thread(this::telemetry);
-    public Thread motorThread = new Thread(this::setVelocity);
+    private Thread telemetryThread = new Thread(this::telemetry);
+    private Thread motorThread = new Thread(this::setVelocity);
+    private Thread shootImpl = new Thread(this::shootImpl);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.dashboardTelemetry = telemetry;
@@ -77,17 +80,9 @@ public class ShooterController implements Controller {
         shooter.setPower(0);
     }
 
-    public void shoot(int ringCount){
-        shootingState = true;
-        telemetryThread.start();
-
-        if (!motorThread.isAlive()) {
-            motorThread.start();
-            sleep(SpinUpDelay);
-        }
-        shootImpl(ringCount);
-
-        stop();
+    public synchronized void shoot(int ringCount){
+        this.ringCount = ringCount;
+        shootImpl.start();
     }
 
     public void shootAuto(ControllerManager controllers){
@@ -96,12 +91,10 @@ public class ShooterController implements Controller {
         }
         CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
 
-        DriveLocalizationController drive = controllers.get(DriveLocalizationController.class, FieldConstants.Drive);
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         //drive.autoTakeOver(); //from manual control
-        //TODO: merge drive classes, move this to drive class
         //TODO: need to make sure it's looking at the right target and not a random one
         //TODO: need to make sure it's knows what side it's on
-        //TODO: red and blue teles extending tele base class
 //        drive.setPoseEstimate(camera.getRobotPosition());
 //        Trajectory trajectory = drive.trajectoryBuilder(drive.GetCurrentPose())
 //                .lineTo(new Pose2d(Field))
@@ -122,13 +115,23 @@ public class ShooterController implements Controller {
 
     }
 
-    private void shootImpl(int ringCount){
+    private synchronized void shootImpl(){
+        shootingState = true;
+        telemetryThread.start();
+
+        if (!motorThread.isAlive()) {
+            motorThread.start();
+            sleep(SpinUpDelay);
+        }
+
         for (int i = 0; i < ringCount; i++) {
             bumper.bump();
             sleep(RetractDelay);
             bumper.retract();
             sleep(ShootingDelay);
         }
+
+        stop();
     }
 
     public synchronized void telemetry(){

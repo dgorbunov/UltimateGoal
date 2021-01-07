@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -30,7 +30,7 @@ public class ControllerManager implements Controller{
     }
 
     public void make(HardwareMap hardwareMap, Telemetry telemetry){
-        add(FieldConstants.Drive, new DriveLocalizationController(hardwareMap, telemetry));
+        add(FieldConstants.Drive, new DrivetrainController(hardwareMap, telemetry));
         add(FieldConstants.Hub, new HubController(hardwareMap, telemetry));
         add(FieldConstants.Intake, new IntakeController(hardwareMap, telemetry));
         add(FieldConstants.VertIntake, new VertIntakeController(hardwareMap, telemetry));
