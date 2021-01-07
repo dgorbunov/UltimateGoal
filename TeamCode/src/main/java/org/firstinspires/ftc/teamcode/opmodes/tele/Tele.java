@@ -1,14 +1,13 @@
-package org.firstinspires.ftc.teamcode.opmodes.tele.base;
+package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.deprecated.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.drive.DriveLocalizationController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -30,8 +29,6 @@ public abstract class Tele extends OpMode {
     private HubController hub;
 
     private TeleConstants gp;
-
-    protected String alliance;
 
     private ControllerManager controllers;
 

@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.tele.base;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+package org.firstinspires.ftc.teamcode.opmodes.tele.params;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-@Disabled
+import org.firstinspires.ftc.teamcode.opmodes.tele.Tele;
+
+@Config //for FTCDash
 public class TeleConstants{
 
     public TeleConstants(){

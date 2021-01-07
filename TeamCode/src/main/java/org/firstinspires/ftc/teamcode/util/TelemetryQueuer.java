@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.util;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -15,6 +17,7 @@ public class TelemetryQueuer{
     //TODO: finish, implement telemtry. Refactor all telemetry to this class?
 
     Telemetry telemetry;
+    FtcDashboard dashboard;
 
     public TelemetryQueuer(Telemetry telemetry){
         this.telemetry = telemetry;
