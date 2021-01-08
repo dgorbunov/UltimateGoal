@@ -17,18 +17,18 @@ public class GamepadMappings {
     }
 
     public boolean ShootButton() {
-        return !gamepad1.start && gamepad1.a;
+        return gamepad1.a && !gamepad1.start;
     }
     public boolean FlywheelButton() {
-        return gamepad1.b;
+        return gamepad1.b && !gamepad1.start;
     }
     public boolean IntakeButton() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;
     }
     public boolean VertIntakeButton() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.start;
-        return gamepad2.start;
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.start && !gamepad1.b && !gamepad1.a;
+        return gamepad2.start && !gamepad2.b && !gamepad2.a;
     }
     public boolean StopIntakesButton() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.x;
