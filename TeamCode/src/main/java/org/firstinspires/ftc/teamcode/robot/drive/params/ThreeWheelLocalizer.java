@@ -72,6 +72,9 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
             rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_rear"));
             frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_front"));
         }
+
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+
     }
 
     public static double encoderTicksToInches(double ticks) {

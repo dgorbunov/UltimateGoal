@@ -62,7 +62,8 @@ public class Auto extends OpMode {
 
     @Override
     public void start() { //code to run once when play is hit
-        controllers.start(); //stop camera instance
+        controllers.start();
+        controllers.get(CameraController.class, FieldConstants.Camera).stopTFOD();
 
             try {
                 telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));

@@ -22,6 +22,8 @@ public class BumperController implements Controller {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         bumper = new MockServo("bumper", telemetry);
+
+        //TODO: migrate to @ShooterController
     }
 
     @Override

@@ -137,6 +137,7 @@ public abstract class Sequence {
 
     public void intakeRings(int numRings, Vector2d position, double heading) {
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
+        intake.extend();
         switch (numRings) {
             case (0):
                 telemetry.addData("Sequence", "no rings to intake");

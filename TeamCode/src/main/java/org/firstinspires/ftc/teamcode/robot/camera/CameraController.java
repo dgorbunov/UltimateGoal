@@ -91,8 +91,22 @@ public class CameraController implements Controller {
 
     @Override
     public void start() {
-        if (tfod != null) tfod.shutdown();
-        targetsUltimateGoal.deactivate();
+
+    }
+
+    @Override
+    public void stop() {
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+
+        if (targetsUltimateGoal != null){
+            targetsUltimateGoal.deactivate();
+        }
+    }
+
+    public void stopTFOD(){
+        tfod.deactivate();
     }
 
     /*
@@ -193,9 +207,6 @@ public class CameraController implements Controller {
             return null;
         }
     }
-
-    @Override
-    public void stop() { }
 
     private void initVuforia() {
         /*

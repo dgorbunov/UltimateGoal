@@ -11,10 +11,15 @@ public class GamepadMappings {
     Gamepad gamepad1;
     Gamepad gamepad2;
 
-    public void setGamepads(Gamepad gamepad1, Gamepad gamepad2){
+    public GamepadMappings(Gamepad gamepad1, Gamepad gamepad2) {
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
     }
+
+    public void setGamepads(Gamepad gamepad1, Gamepad gamepad2){
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
+    } //TODO: move to constructor?
 
     public boolean ShootButton() {
         return gamepad1.a && !gamepad1.start;

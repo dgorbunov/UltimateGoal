@@ -29,7 +29,7 @@ public abstract class Tele extends OpMode {
 
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
-    GamepadMappings gameMap = new GamepadMappings();
+    GamepadMappings gameMap = new GamepadMappings(gamepad1, gamepad2);
     Button intakeButton;
     Button vertIntakeButton;
     Button wobbleButton;
@@ -63,7 +63,7 @@ public abstract class Tele extends OpMode {
 
         controllers.init();
 
-        gameMap.setGamepads(gamepad1, gamepad2);
+//        gameMap.setGamepads(gamepad1, gamepad2);
 
 
         wobbleButton = new Button();
