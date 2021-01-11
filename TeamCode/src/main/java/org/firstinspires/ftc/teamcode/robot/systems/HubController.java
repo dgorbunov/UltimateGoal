@@ -8,20 +8,27 @@ import org.openftc.revextensions2.ExpansionHubEx;
 
 public class HubController implements Controller {
     private ExpansionHubEx controlHub;
+    private ExpansionHubEx expansionHub;
+    boolean twoHubs = false;
     private Telemetry telemetry;
     public static String ControllerName;
 
-    public HubController (HardwareMap hardwareMap, Telemetry telemetry){
+    public HubController (HardwareMap hardwareMap, Telemetry telemetry, boolean twoHubs){
+        this.twoHubs = twoHubs;
         controlHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
+        if (twoHubs) expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub");
+
         this.telemetry = telemetry;
         ControllerName = getClass().getSimpleName();
     }
 
     public String getFormattedCurrentDraw(){
+        if (twoHubs) return "Using " + controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + "A";
         return "Using " + controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + "A";
     }
 
     public double getCurrentDraw(){
+        if (twoHubs) return expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
         return controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
     }
 

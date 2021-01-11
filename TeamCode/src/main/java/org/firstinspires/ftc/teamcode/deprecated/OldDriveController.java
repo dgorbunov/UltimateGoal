@@ -12,8 +12,7 @@ import java.util.List;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-@Deprecated
-public class DrivetrainController implements Controller {
+public class OldDriveController implements Controller {
 
     DcMotor leftFront;
     DcMotor leftRear;
@@ -26,7 +25,7 @@ public class DrivetrainController implements Controller {
     boolean slowMode = false;
     boolean justHit = false;
 
-    public DrivetrainController(HardwareMap hardwareMap, Telemetry tel) {
+    public OldDriveController(HardwareMap hardwareMap, Telemetry tel) {
 
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         leftRear = hardwareMap.get(DcMotor.class, "left_rear");
@@ -34,6 +33,11 @@ public class DrivetrainController implements Controller {
         rightRear = hardwareMap.get(DcMotor.class, "right_rear");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry = tel;
     }
@@ -70,7 +74,7 @@ public class DrivetrainController implements Controller {
             }
             else {
                 y = -gamepad.left_stick_y; //reversed
-                x = gamepad.left_stick_x * 1.5; // Counteract imperfect strafing
+                x = gamepad.left_stick_x; // Counteract imperfect strafing
                 rx = gamepad.right_stick_x; //Might need to change for Acto
             }
 

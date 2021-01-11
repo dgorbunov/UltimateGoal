@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.deprecated.OldDriveController;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
@@ -29,14 +29,16 @@ public abstract class Tele extends OpMode {
 
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
-    GamepadMappings gameMap = new GamepadMappings(gamepad1, gamepad2);
+    GamepadMappings gameMap = new GamepadMappings();
     Button intakeButton;
     Button vertIntakeButton;
     Button wobbleButton;
     Button flywheelButton;
     Button shootButton;
+    Button driveModeButton;
 
     protected DrivetrainController drive;
+    protected OldDriveController drive2;
     protected IntakeController intake;
     protected ShooterController shooter;
     protected VertIntakeController vertIntake;
@@ -49,7 +51,7 @@ public abstract class Tele extends OpMode {
     public void init() {
         telemetry.addLine("Initializing...");
 
-        DrivetrainController.TESTING = true;
+        DrivetrainController.TESTING = false;
 
         controllers = new ControllerManager(telemetry);
         controllers.make(hardwareMap, telemetry);
@@ -60,10 +62,12 @@ public abstract class Tele extends OpMode {
         intake = controllers.get(IntakeController.class, FieldConstants.Intake);
         vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
         wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
+        drive2 = new OldDriveController(hardwareMap, telemetry);
 
         controllers.init();
+        drive2.init();
 
-//        gameMap.setGamepads(gamepad1, gamepad2);
+        gameMap.setGamepads(gamepad1, gamepad2);
 
 
         wobbleButton = new Button();
@@ -71,6 +75,7 @@ public abstract class Tele extends OpMode {
         vertIntakeButton = new Button();
         intakeButton = new Button();
         shootButton = new Button();
+        driveModeButton = new Button();
 
         telemetry.clear();
         telemetry.addLine("Initialized");
@@ -82,18 +87,37 @@ public abstract class Tele extends OpMode {
 
     public void start() {
         controllers.start();
+        drive2.start();
     }
 
-    public void loop() {
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
 
-        drive.update();
+    public void loop() {
+////
+//        drive.setWeightedDrivePower(
+//                new Pose2d(
+//                        -gamepad1.left_stick_y,
+//                        -gamepad1.left_stick_x,
+//                        -gamepad1.right_stick_x
+//                ));
+        drive2.drive(gamepad1);
+
+//        drive.update();
+
+//        driveModeButton.toggle(
+//                gameMap.DriveModeButton(),
+//                () -> drive.setWeightedDrivePower(
+//                new Pose2d(
+//                        TeleConstants.DriveSlowPower * -gamepad1.left_stick_y,
+//                        TeleConstants.DriveSlowPower * -gamepad1.left_stick_x,
+//                        TeleConstants.DriveSlowPower * -gamepad1.right_stick_x
+//                )),
+//                () -> drive.setWeightedDrivePower(
+//                new Pose2d(
+//                        TeleConstants.DriveFullPower * -gamepad1.left_stick_y,
+//                        TeleConstants.DriveFullPower * -gamepad1.left_stick_x,
+//                        TeleConstants.DriveFullPower * -gamepad1.right_stick_x
+//                )
+//        ));
 
         shootButton.runOnce(gameMap.ShootButton(), () -> shooter.shoot(3));
 

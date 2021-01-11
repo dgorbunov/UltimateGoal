@@ -62,7 +62,7 @@ public class ShooterTesting extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         controllers = new ControllerManager(dashboardTelemetry);
-        hub = new HubController(hardwareMap, dashboardTelemetry);
+        hub = new HubController(hardwareMap, dashboardTelemetry, false);
 
         controllers.add(hub, FieldConstants.Hub);
 

@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.robot.systems;
+        package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
+@Config
 public class ShooterController implements Controller {
 
     public static volatile double MotorRPM = 4800;
@@ -76,7 +78,6 @@ public class ShooterController implements Controller {
     @Override
     public void stop() {
         shootingState = false;
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setPower(0);
     }
 
