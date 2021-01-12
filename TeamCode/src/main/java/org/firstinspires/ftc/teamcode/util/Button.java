@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.util;
 
 public class Button {
-
-    boolean buttonState;
     boolean pressed;
     int index;
 
     public Button() {
-        reset();
+        initButton();
     }
 
     /**
@@ -29,6 +27,23 @@ public class Button {
     }
 
     /**
+     * Invokes selected method every call, change selected method with button
+     */
+    public void toggleLoop(boolean buttonState, Runnable... methods){
+        if (buttonState){
+            if (!pressed) {
+                pressed = true;
+                index ++;
+                if (index == methods.length) {
+                    index = 0;
+                }
+            }
+        } else pressed = false;
+
+        methods[index].run();
+    }
+
+    /**
      * Runs method once, no matter the length of button press
      */
     public void runOnce(boolean buttonState, Runnable method){
@@ -42,10 +57,10 @@ public class Button {
     }
 
     public void resetToggle() {
-        reset();
+        initButton();
     }
 
-    private void reset() {
+    private void initButton() {
         pressed = false;
         index = 0;
     }
