@@ -14,7 +14,7 @@ public class WobbleController implements Controller {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private Servo wobbleGrip;
-    private Servo wobbleRotate;
+    private Servo wobbleArm;
     public static String ControllerName;
 
     public static double GripGrabPos = 0.5;
@@ -31,11 +31,12 @@ public class WobbleController implements Controller {
 
     @Override
     public void init() {
-//        wobbleGrip = hardwareMap.get(Servo.class, "wobble_grip");
-//        wobbleRotate = hardwareMap.get(Servo.class, "wobble_rotate");
+        wobbleGrip = hardwareMap.get(Servo.class, "wobble_grip");
+        wobbleArm = hardwareMap.get(Servo.class, "wobble_arm");
 //        wobbleGrip.scaleRange();
-//        wobbleLift.scaleRange();
-//        //TODO: Scale servo range
+//        wobbleArm.scaleRange();
+        wobbleGrip.setPosition(GripReleasePos);
+        wobbleArm.setPosition(ArmPickupPos);
     }
 
     @Override
@@ -48,15 +49,33 @@ public class WobbleController implements Controller {
     }
 
     // TODO: drop wobble
-    public void drop() {
+    public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
+        wobbleArm.setPosition(ArmDropPos);
         sleep(1000);
+        wobbleGrip.setPosition(ArmPickupPos);
     }
 
     // TODO: pickup wobble
-    public void pickup() {
+    public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
-        sleep(1000);
+        wobbleGrip.setPosition(GripGrabPos);
+        sleep(250);
+        wobbleArm.setPosition(ArmPickupPos);
+        sleep(750);
+    }
+
+    public void grab(){
+        wobbleGrip.setPosition(GripGrabPos);
+    }
+    public void release(){
+        wobbleGrip.setPosition(GripReleasePos);
+    }
+    public void lift(){
+        wobbleArm.setPosition(ArmPickupPos);
+    }
+    public void drop(){
+        wobbleArm.setPosition(ArmDropPos);
     }
 
 

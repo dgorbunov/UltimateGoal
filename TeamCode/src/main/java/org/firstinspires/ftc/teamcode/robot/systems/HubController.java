@@ -23,8 +23,7 @@ public class HubController implements Controller {
     }
 
     public String getFormattedCurrentDraw(){
-        if (twoHubs) return "Using " + controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + "A";
-        return "Using " + controlHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + "A";
+        return "Using " + getCurrentDraw() + " A";
     }
 
     public double getCurrentDraw(){

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 public abstract class Sequence {
@@ -99,7 +100,7 @@ public abstract class Sequence {
     public void dropWobble() {
         telemetry.addData("Sequence","dropWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
-        wobble.drop();
+        wobble.dropAuto();
     }
 
     public void moveToStart(Vector2d wobblePos, double initialHeading, double targetHeading) {
@@ -111,7 +112,7 @@ public abstract class Sequence {
     public void pickupWobble() {
         telemetry.addData("Sequence", "collectWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
-        wobble.pickup();
+        wobble.pickupAuto();
     }
 
     public void moveToShoot(Vector2d position, double heading) {
@@ -229,7 +230,7 @@ public abstract class Sequence {
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .lineTo(position)
                 .addTemporalMarker(timeDelay, () -> { // This marker runs x # of seconds into the trajectory
-                    intake.run(1);
+                    intake.run(FORWARD);
                 })
                 .build();
         return trajectory;

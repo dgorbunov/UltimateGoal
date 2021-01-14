@@ -19,7 +19,8 @@ public class IntakeController implements Controller {
 
     public static double ArmStartPos = 0;
     public static double ArmDropPos = 1;
-    public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.FORWARD;
+    public static double IntakePower = 0.8;
+    public static DcMotorEx.Direction Direction = DcMotorEx.Direction.FORWARD;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -34,6 +35,7 @@ public class IntakeController implements Controller {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         arm = hardwareMap.get(Servo.class, "intake_arm");
         arm.setPosition(ArmStartPos);
+        intake.setDirection(Direction);
     }
 
     @Override
@@ -49,8 +51,9 @@ public class IntakeController implements Controller {
         intake.setPower(0);
     }
 
-    public void run(double motorPower) {
+    public void run(DcMotorEx.Direction Direction) {
         telemetry.addData(ControllerName, "Intaking");
-        intake.setPower(motorPower);
+        if (Direction == DcMotorSimple.Direction.FORWARD) intake.setPower(IntakePower);
+        else intake.setPower(-IntakePower);
     }
 }

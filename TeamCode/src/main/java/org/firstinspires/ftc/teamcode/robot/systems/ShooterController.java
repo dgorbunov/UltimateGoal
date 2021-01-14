@@ -1,20 +1,20 @@
         package org.firstinspires.ftc.teamcode.robot.systems;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+        import com.acmerobotics.dashboard.FtcDashboard;
+        import com.acmerobotics.dashboard.config.Config;
+        import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+        import com.qualcomm.robotcore.hardware.DcMotorEx;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
+        import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
+        import org.firstinspires.ftc.robotcore.external.Telemetry;
+        import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+        import org.firstinspires.ftc.teamcode.robot.Controller;
+        import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+        import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+        import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
-import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+        import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @Config
 public class ShooterController implements Controller {
@@ -23,6 +23,8 @@ public class ShooterController implements Controller {
     public static volatile double ShootingDelay = 750;
     public static volatile double SpinUpDelay = 750;
     public static volatile double RetractDelay = 750;
+
+    public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
     private volatile int ringCount = 3;
 
@@ -63,7 +65,7 @@ public class ShooterController implements Controller {
         //TODO: need to pass it the common ControllerManager instance?
 
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter.setDirection(Direction);
 
         TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
 

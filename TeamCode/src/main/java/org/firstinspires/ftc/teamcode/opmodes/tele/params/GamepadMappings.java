@@ -37,7 +37,11 @@ public class GamepadMappings {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.x;
         return gamepad2.x;
     }
-    public boolean WobbleButton() {
+    public boolean WobbleGrip() {
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.y;
+        return gamepad2.y;
+    };
+    public boolean WobbleArm() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.y;
         return gamepad2.y;
     };

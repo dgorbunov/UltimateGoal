@@ -12,7 +12,8 @@ import java.util.List;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-public class OldDriveController implements Controller {
+@Deprecated
+public class DrivetrainController implements Controller {
 
     DcMotor leftFront;
     DcMotor leftRear;
@@ -25,7 +26,7 @@ public class OldDriveController implements Controller {
     boolean slowMode = false;
     boolean justHit = false;
 
-    public OldDriveController(HardwareMap hardwareMap, Telemetry tel) {
+    public DrivetrainController(HardwareMap hardwareMap, Telemetry tel) {
 
         leftFront = hardwareMap.get(DcMotor.class, "left_front");
         leftRear = hardwareMap.get(DcMotor.class, "left_rear");
@@ -34,10 +35,10 @@ public class OldDriveController implements Controller {
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry = tel;
     }

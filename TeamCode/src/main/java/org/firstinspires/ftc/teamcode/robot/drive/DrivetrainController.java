@@ -153,7 +153,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 //        imu.initialize(parameters);
 
         if (telemetry != null) {
-            telemetry.addData("OldDriveController", "init");
+            telemetry.addData("DrivetrainController", "init");
         }
 
         if (TESTING) {
@@ -244,13 +244,13 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     @Override
     public void start() {
         if (telemetry != null) {
-            telemetry.addData("OldDriveController", "start");
+            telemetry.addData("DrivetrainController", "start");
         }
     }
 
     public void stop() {
         if (telemetry != null) {
-            telemetry.addData("OldDriveController", "stop");
+            telemetry.addData("DrivetrainController", "stop");
         }
 
         mode = Mode.IDLE; //return out of the current thread

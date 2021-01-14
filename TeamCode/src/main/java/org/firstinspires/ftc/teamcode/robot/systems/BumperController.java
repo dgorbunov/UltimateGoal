@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.util.MockServo;
 @Config
 public class BumperController implements Controller {
 
-    private MockServo bumper;
+    private Servo bumper;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
@@ -19,13 +19,13 @@ public class BumperController implements Controller {
     public BumperController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-        bumper = new MockServo("bumper", telemetry);
 
         //TODO: migrate to @ShooterController
     }
 
     @Override
     public void init() {
+        bumper = hardwareMap.get(Servo.class, "bumper");
         retract();
     }
 
