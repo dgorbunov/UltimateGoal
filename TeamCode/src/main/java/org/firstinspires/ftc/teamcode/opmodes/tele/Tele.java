@@ -29,12 +29,13 @@ public abstract class Tele extends OpMode {
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
     GamepadMappings gameMap = new GamepadMappings();
-    Button intakeButton;
-    Button vertIntakeButton;
-    Button wobbleButton;
-    Button flywheelButton;
-    Button shootButton;
-    Button driveModeButton;
+    Button intakeButton = new Button();
+    Button vertIntakeButton = new Button();
+    Button wobbleArmButton = new Button();
+    Button wobbleGripButton = new Button();
+    Button flywheelButton = new Button();
+    Button shootButton = new Button();
+    Button driveModeButton = new Button();
 
     protected org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController drive;
     protected IntakeController intake;
@@ -64,14 +65,6 @@ public abstract class Tele extends OpMode {
         controllers.init();
 
         gameMap.setGamepads(gamepad1, gamepad2);
-
-
-        wobbleButton = new Button();
-        flywheelButton = new Button();
-        vertIntakeButton = new Button();
-        intakeButton = new Button();
-        shootButton = new Button();
-        driveModeButton = new Button();
 
         telemetry.clear();
         telemetry.addLine("Initialized");
@@ -119,10 +112,15 @@ public abstract class Tele extends OpMode {
                 () -> vertIntake.run(REVERSE),
                 () -> vertIntake.stop());
 
-        wobbleButton.toggle(
-                gameMap.VertIntakeButton(),
-                () -> wobble.pickupAuto(),
-                () -> wobble.dropAuto());
+        wobbleArmButton.toggle(
+                gameMap.WobbleArm(),
+                () -> wobble.drop(),
+                () -> wobble.lift());
+
+        wobbleGripButton.toggle(
+                gameMap.WobbleGrip(),
+                () -> wobble.grab(),
+                () -> wobble.release());
 
         flywheelButton.toggle(
                 gameMap.FlywheelButton(),

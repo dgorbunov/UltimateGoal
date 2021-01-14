@@ -38,12 +38,12 @@ public class GamepadMappings {
         return gamepad2.x;
     }
     public boolean WobbleGrip() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.y;
-        return gamepad2.y;
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_left || gamepad1.dpad_right;
+        return gamepad2.dpad_left || gamepad2.dpad_right;
     };
     public boolean WobbleArm() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.y;
-        return gamepad2.y;
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
+        return gamepad2.dpad_up || gamepad2.dpad_down;
     };
 
     public enum DriverMode {

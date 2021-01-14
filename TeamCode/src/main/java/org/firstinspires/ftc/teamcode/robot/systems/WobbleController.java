@@ -17,10 +17,10 @@ public class WobbleController implements Controller {
     private Servo wobbleArm;
     public static String ControllerName;
 
-    public static double GripGrabPos = 0.5;
-    public static double GripReleasePos = 1;
-    public static double ArmDropPos = 0;
-    public static double ArmPickupPos = 0.5;
+    public static double GripGrabPos = 0.8;
+    public static double GripReleasePos = 0.55;
+    public static double ArmDropPos = 0.18;
+    public static double ArmPickupPos = 0.8;
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
