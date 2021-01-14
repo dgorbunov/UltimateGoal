@@ -36,6 +36,8 @@ public class IntakeController implements Controller {
         arm = hardwareMap.get(Servo.class, "intake_arm");
         arm.setPosition(ArmStartPos);
         intake.setDirection(Direction);
+//        arm.scaleRange();
+        //TODO: scale range for all servos
     }
 
     @Override

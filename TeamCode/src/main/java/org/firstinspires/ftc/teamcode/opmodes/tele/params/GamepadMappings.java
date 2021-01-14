@@ -16,24 +16,24 @@ public class GamepadMappings {
         this.gamepad2 = gamepad2;
     }
 
-    public boolean DriveModeButton() {
+    public boolean DriveMode() {
         return gamepad1.right_bumper;
     }
-    public boolean ShootButton() {
+    public boolean Shoot() {
         return gamepad1.a && !gamepad1.start;
     }
-    public boolean FlywheelButton() {
+    public boolean StartFlywheel() {
         return gamepad1.b && !gamepad1.start;
     }
-    public boolean IntakeButton() {
+    public boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;
     }
-    public boolean VertIntakeButton() {
+    public boolean VertIntake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.start && !gamepad1.b && !gamepad1.a;
         return gamepad2.start && !gamepad2.b && !gamepad2.a;
     }
-    public boolean StopIntakesButton() {
+    public boolean StopAllIntakes() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.x;
         return gamepad2.x;
     }
@@ -45,6 +45,10 @@ public class GamepadMappings {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
         return gamepad2.dpad_up || gamepad2.dpad_down;
     };
+    public boolean ExtendIntake() {
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.y;
+        return gamepad2.y;
+    }
 
     public enum DriverMode {
         OneDriver, TwoDrivers

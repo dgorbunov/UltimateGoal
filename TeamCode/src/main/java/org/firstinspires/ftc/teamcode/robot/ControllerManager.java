@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
-import org.firstinspires.ftc.teamcode.robot.systems.BumperController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
@@ -35,7 +34,6 @@ public class ControllerManager implements Controller{
         add(new IntakeController(hardwareMap, telemetry), FieldConstants.Intake);
         add(new VertIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
         add(new ShooterController(hardwareMap, telemetry), FieldConstants.Shooter);
-        add(new BumperController(hardwareMap, telemetry), FieldConstants.Bumper);
         add(new WobbleController(hardwareMap, telemetry), FieldConstants.Wobble);
         add(new CameraController(hardwareMap, telemetry), FieldConstants.Camera);
     }

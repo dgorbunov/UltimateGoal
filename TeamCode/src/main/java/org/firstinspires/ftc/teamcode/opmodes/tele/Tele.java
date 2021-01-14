@@ -36,6 +36,7 @@ public abstract class Tele extends OpMode {
     Button flywheelButton = new Button();
     Button shootButton = new Button();
     Button driveModeButton = new Button();
+    Button extendIntakeButton = new Button();
 
     protected org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController drive;
     protected IntakeController intake;
@@ -81,7 +82,7 @@ public abstract class Tele extends OpMode {
 
     public void loop() {
         driveModeButton.toggleLoop(
-                gameMap.DriveModeButton(),
+                gameMap.DriveMode(),
                 () -> drive.setWeightedDrivePower(
                 new Pose2d(
                         TeleConstants.DriveFullPower * -gamepad1.left_stick_y,
@@ -98,16 +99,17 @@ public abstract class Tele extends OpMode {
 
         drive.update();
 
-        shootButton.runOnce(gameMap.ShootButton(), () -> shooter.shoot(3));
+        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3));
+        extendIntakeButton.runOnce(gameMap.ExtendIntake(), () -> intake.extend());
 
         intakeButton.toggle(
-                gameMap.IntakeButton(),
+                gameMap.Intake(),
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
                 () -> intake.stop());
 
         vertIntakeButton.toggle(
-                gameMap.VertIntakeButton(),
+                gameMap.VertIntake(),
                 () -> vertIntake.run(FORWARD),
                 () -> vertIntake.run(REVERSE),
                 () -> vertIntake.stop());
@@ -123,11 +125,13 @@ public abstract class Tele extends OpMode {
                 () -> wobble.release());
 
         flywheelButton.toggle(
-                gameMap.FlywheelButton(),
+                gameMap.StartFlywheel(),
                 () -> shooter.spinUp(4800),
                 ()-> shooter.stop());
 
-        if (gameMap.StopIntakesButton()) {
+
+
+        if (gameMap.StopAllIntakes()) {
             intake.stop();
             vertIntake.stop();
             intakeButton.resetToggle();

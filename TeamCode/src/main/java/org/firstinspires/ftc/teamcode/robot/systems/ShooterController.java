@@ -6,13 +6,13 @@
         import com.qualcomm.robotcore.hardware.DcMotorEx;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
+        import com.qualcomm.robotcore.hardware.Servo;
 
         import org.firstinspires.ftc.robotcore.external.Telemetry;
         import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
         import org.firstinspires.ftc.teamcode.robot.Controller;
         import org.firstinspires.ftc.teamcode.robot.ControllerManager;
         import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-        import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
         import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
@@ -23,6 +23,9 @@ public class ShooterController implements Controller {
     public static volatile double ShootingDelay = 750;
     public static volatile double SpinUpDelay = 750;
     public static volatile double RetractDelay = 750;
+
+    public static double BumpPosition = 0.6;
+    public static double RetractPosition = 0.35;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
@@ -37,8 +40,7 @@ public class ShooterController implements Controller {
     float wheelRadius = 0.051f; //meters
 
     private DcMotorEx shooter;
-    private BumperController bumper;
-    private ControllerManager controllers;
+    private Servo bumper;
     private HardwareMap hardwareMap;
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -51,36 +53,33 @@ public class ShooterController implements Controller {
         this.dashboardTelemetry = telemetry;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
-        shooter = new MockDcMotorEx("shooter", this.dashboardTelemetry);
     }
 
     @Override
     public void init() {
         dashboardTelemetry = new MultipleTelemetry(dashboardTelemetry, dashboardTelemetry);
 
-        controllers = new ControllerManager(dashboardTelemetry);
-        bumper = new BumperController(hardwareMap, dashboardTelemetry);
-
-        controllers.add(bumper, FieldConstants.Bumper);
-        //TODO: need to pass it the common ControllerManager instance?
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+        bumper = hardwareMap.get(Servo.class, "bumper");
 
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
 
         TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
 
-        controllers.init();
+        retract();
     }
 
     @Override
     public void start() {
-        controllers.start();
+
     }
 
     @Override
     public void stop() {
         shootingState = false;
         shooter.setPower(0);
+        bumper.setPosition(RetractPosition);
     }
 
     public synchronized void shoot(int ringCount){
@@ -117,9 +116,9 @@ public class ShooterController implements Controller {
         }
 
         for (int i = 0; i < ringCount; i++) {
-            bumper.bump();
+            bump();
             sleep(RetractDelay);
-            bumper.retract();
+            retract();
             sleep(ShootingDelay);
         }
 
@@ -145,7 +144,6 @@ public class ShooterController implements Controller {
 
     private synchronized void setVelocity() {
         while (shootingState) {
-            dashboardTelemetry.addData(ControllerName, "shooter is running");
             TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
             shooter.setVelocity(TargetTicksPerSecond);
         }
@@ -153,6 +151,13 @@ public class ShooterController implements Controller {
 
     public double getVelocity(){
         return shooter.getVelocity();
+    }
+
+    private void bump() {
+        bumper.setPosition(BumpPosition);
+    }
+    private void retract() {
+        bumper.setPosition(RetractPosition);
     }
 
 }

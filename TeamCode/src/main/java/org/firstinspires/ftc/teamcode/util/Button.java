@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.util;
 
+/**
+ * Author: Daniel
+ * Easy to use interface for logic operations for booleans
+ * Recommended to only use one method per object
+ */
+
 public class Button {
     boolean pressed;
     int index;
@@ -9,7 +15,7 @@ public class Button {
     }
 
     /**
-     * Toggles between arbitrary number of methods every time button is depressed and pressed
+     * Toggles between running arbitrary number of methods (once) every time button is depressed and pressed
      */
 
     public void toggle(boolean buttonState, Runnable... methods){
@@ -27,7 +33,7 @@ public class Button {
     }
 
     /**
-     * Invokes selected method every call, change selected method with button
+     * Runs selected method every call, change selected method with button
      */
     public void toggleLoop(boolean buttonState, Runnable... methods){
         if (buttonState){
