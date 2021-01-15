@@ -17,10 +17,11 @@ public class IntakeController implements Controller {
     private Servo arm;
     public static String ControllerName;
 
-    public static double ArmStartPos = 0;
-    public static double ArmDropPos = 1;
+    public static double ArmStartPos = 0.262;
+    public static double ArmDropPos = 0.6;
     public static double IntakePower = 0.8;
-    public static DcMotorEx.Direction Direction = DcMotorEx.Direction.FORWARD;
+    public static DcMotorEx.Direction IntakeDirection = DcMotorEx.Direction.FORWARD;
+    public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -34,10 +35,11 @@ public class IntakeController implements Controller {
     public void init() {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         arm = hardwareMap.get(Servo.class, "intake_arm");
+        arm.setDirection(ArmDirection);
+
         arm.setPosition(ArmStartPos);
-        intake.setDirection(Direction);
-//        arm.scaleRange();
-        //TODO: scale range for all servos
+        intake.setDirection(IntakeDirection);
+
     }
 
     @Override
@@ -45,12 +47,13 @@ public class IntakeController implements Controller {
     }
 
     public void extend() {
-        arm.setPosition(1);
+        arm.setPosition(ArmDropPos);
     }
 
     @Override
     public void stop() {
         intake.setPower(0);
+        arm.setPosition(ArmStartPos);
     }
 
     public void run(DcMotorEx.Direction Direction) {

@@ -19,25 +19,31 @@
 @Config
 public class ShooterController implements Controller {
 
-    public static volatile double MotorRPM = 4800;
-    public static volatile double ShootingDelay = 750;
-    public static volatile double SpinUpDelay = 750;
-    public static volatile double RetractDelay = 750;
+    public static volatile double SpinUpDelay = 1500;
+    public static volatile double RetractDelay = 300;
+    public static volatile double ShootingDelay[] = {250,250,0};
+    public static volatile boolean useDelayArray = false;
+    public static volatile double Delay1 = 250;
+    public static volatile double Delay2 = 250;
+
 
     public static double BumpPosition = 0.6;
     public static double RetractPosition = 0.35;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
-    private volatile int ringCount = 3;
-
-    private final double TicksPerRev = 28; //Do not modify
+    //Do not modify
+    private final double TicksPerRev = 28;
+    double wheelRadius = 0.051; //meters
 
     public static String ControllerName;
+
+    private volatile int ringCount = 3;
+    private volatile double MotorRPM = 4800;
     public boolean shootingState = false;
 
-    public static volatile double TargetTicksPerSecond; //x rev/min * 2pi = x rad/min / 60 = x rad/sec;;
-    float wheelRadius = 0.051f; //meters
+    public static volatile double targetTicksPerSec;
+
 
     private DcMotorEx shooter;
     private Servo bumper;
@@ -46,7 +52,6 @@ public class ShooterController implements Controller {
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     private Thread telemetryThread = new Thread(this::telemetry);
-    private Thread motorThread = new Thread(this::setVelocity);
     private Thread shootImpl = new Thread(this::shootImpl);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
@@ -65,7 +70,7 @@ public class ShooterController implements Controller {
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
 
-        TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
+        shooter.setMotorDisable();
 
         retract();
     }
@@ -79,11 +84,26 @@ public class ShooterController implements Controller {
     public void stop() {
         shootingState = false;
         shooter.setPower(0);
+        shooter.setMotorDisable();
         bumper.setPosition(RetractPosition);
     }
 
     public synchronized void shoot(int ringCount){
+        shoot(ringCount, MotorRPM);
+    }
+
+    public synchronized void shoot(int ringCount, double RPM){
         this.ringCount = ringCount;
+        if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
+            this.MotorRPM = RPM;
+            setRPM(MotorRPM);
+            sleep(SpinUpDelay);
+        }
+        //if we are spinning up and not at target speed yet, hit this
+        else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
+            sleep(SpinUpDelay);
+        }
+
         shootImpl.start();
     }
 
@@ -94,63 +114,81 @@ public class ShooterController implements Controller {
 
     }
 
+    /**
+     * Spin up flywheel before shooting to save time
+     **/
     public void spinUp(double MotorRPM){
-        this.MotorRPM = MotorRPM;
         shootingState = true;
-
-        if (!motorThread.isAlive()) motorThread.start();
-        else {
-            dashboardTelemetry.addLine("Shooter thread already alive");
-            dashboardTelemetry.update();
-        }
-
+        setRPM(MotorRPM);
     }
+
 
     private synchronized void shootImpl(){
         shootingState = true;
         telemetryThread.start();
 
-        if (!motorThread.isAlive()) {
-            motorThread.start();
-            sleep(SpinUpDelay);
-        }
-
-        for (int i = 0; i < ringCount; i++) {
+        //FTCDash doesn't support array modification
+        //So we have to resort to this for quick delay modification
+        if (useDelayArray) {
+            for (int i = 0; i < ringCount; i++) {
+                bump();
+                sleep(RetractDelay);
+                retract();
+                sleep(ShootingDelay[i]);
+            }
+        } else {
             bump();
             sleep(RetractDelay);
             retract();
-            sleep(ShootingDelay);
+            sleep(Delay1);
+            bump();
+            sleep(RetractDelay);
+            retract();
+            sleep(Delay2);
+            bump();
+            sleep(RetractDelay);
+            retract();
         }
 
         stop();
     }
 
     public synchronized void telemetry(){
-        while (shootingState) {
-            double velocity = shooter.getVelocity();
-            double RPM = velocity / TicksPerRev * 60;
-            double velocityRad = RPM * 2 * Math.PI / 60;
-            dashboardTelemetry.addData("target RPM", MotorRPM);
-            dashboardTelemetry.addData("current RPM", RPM);
-            dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
-            dashboardTelemetry.addData("shooter power", shooter.getPower());
-
-            dashboardTelemetry.update();
-        }
-
-        dashboardTelemetry.addData("shooter stopped", shooter.getPower());
-        dashboardTelemetry.update();
+//        while (shootingState) {
+//            double velocity = shooter.getVelocity();
+//            double RPM = velocity / TicksPerRev * 60;
+//            double velocityRad = RPM * 2 * Math.PI / 60;
+//            dashboardTelemetry.addData("target RPM", MotorRPM);
+//            dashboardTelemetry.addData("current RPM", RPM);
+//            dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
+//            dashboardTelemetry.addData("shooter power", shooter.getPower());
+//
+//            dashboardTelemetry.update();
+//        }
+//
+//        dashboardTelemetry.addData("shooter stopped", shooter.getPower());
+//        dashboardTelemetry.update();
     }
 
-    private synchronized void setVelocity() {
+    @Deprecated
+    private synchronized void setVelocityLoop() {
         while (shootingState) {
-            TargetTicksPerSecond = MotorRPM * TicksPerRev / 60;
-            shooter.setVelocity(TargetTicksPerSecond);
+            targetTicksPerSec = MotorRPM * TicksPerRev / 60;
+            shooter.setVelocity(targetTicksPerSec);
         }
+    }
+
+    private void setRPM(double RPM) {
+        shooter.setMotorEnable();
+        shooter.setVelocity(TicksPerSecond(RPM));
     }
 
     public double getVelocity(){
         return shooter.getVelocity();
+    }
+
+    private double TicksPerSecond(double RPM){
+        return RPM * TicksPerRev / 60;
     }
 
     private void bump() {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.camera;
 
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -17,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
 import java.util.ArrayList;
@@ -54,6 +57,9 @@ public class CameraController implements Controller {
     private OpenGLMatrix lastLocation = null;
     private TFObjectDetector tfod;
 
+    private int tfodCropX = 425;
+    private int tfodCropY = 25;
+
     public boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
@@ -87,6 +93,8 @@ public class CameraController implements Controller {
     public void init() {
         initVuforia();
         initTfod();
+        //Stream camera frames to dashboard
+        FtcDashboard.getInstance().startCameraStream(tfod, 0);
     }
 
     @Override
@@ -103,6 +111,8 @@ public class CameraController implements Controller {
         if (targetsUltimateGoal != null){
             targetsUltimateGoal.deactivate();
         }
+
+        FtcDashboard.getInstance().stopCameraStream();
     }
 
     public void stopTFOD(){
@@ -248,8 +258,13 @@ public class CameraController implements Controller {
         // (typically 1.78 or 16/9).
 
         // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-        tfod.setZoom(2, 1.78);
-        //tfod.setClippingMargins
+        //
+
+        if (Auto.getSequenceSide() != null) {
+            if (Auto.getSequenceSide() == FieldConstants.LeftSide) tfod.setClippingMargins(tfodCropX, tfodCropY, 0, tfodCropY);
+            else tfod.setClippingMargins(0, tfodCropY, tfodCropX, tfodCropY);
+        }
+        tfod.setZoom(1.45 , 16.0/9.0);
 
     }
 

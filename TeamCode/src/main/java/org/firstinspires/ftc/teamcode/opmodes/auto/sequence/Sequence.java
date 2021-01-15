@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -66,15 +67,22 @@ public abstract class Sequence {
         synchronized (lock) {
             telemetry.addData("Sequence", "stop");
             actions.stop();
+
+            //Set starting position for TeleOp
+            TeleConstants.StartingPose = GetCurrentPose();
         }
     }
 
     public Pose2d GetCurrentPose() {
-        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        if (drive != null) {
-            return drive.getPoseEstimate();
+        try {
+            DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+            if (drive != null) {
+                return drive.getPoseEstimate();
+            }
+        } catch (Exception e){
+            telemetry.addData("Sequence", "Could not fetch ending pose");
+            telemetry.addData("Sequence", "Most likely stop pressed before start");
         }
-
         return startPose;
     }
 

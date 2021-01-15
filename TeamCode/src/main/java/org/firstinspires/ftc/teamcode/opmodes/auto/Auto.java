@@ -30,20 +30,17 @@ public class Auto extends OpMode {
     private Sequence currentSequence;
     protected final static Object lock = new Object();
     protected String sequenceName;
+    protected static String sequenceSide;
 
     @Override
     public void init() {
         telemetry.addLine("Initializing...");
 
+        //Do not change anything here!
         controllers = new ControllerManager(telemetry);
         controllers.make(hardwareMap, telemetry);
 
-        // The controllers must be set up before
         makeSequences();
-
-        // Initialize all controllers
-        controllers.init();
-
         synchronized (lock) {
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
@@ -51,6 +48,11 @@ public class Auto extends OpMode {
                 return;
             }
         }
+
+        sequenceSide = getSequenceSide(currentSequence);
+
+        // Initialize all controllers
+        controllers.init();
 
         telemetry.addLine("Initialized");
     }
@@ -107,6 +109,10 @@ public class Auto extends OpMode {
         return (alliance + side).toLowerCase();
     }
 
+    public static String getSequenceSide() {
+        return sequenceSide;
+    }
+
     private void makeSequences() {
         synchronized (lock) {
             sequences.put(makeSequenceName(
@@ -133,6 +139,11 @@ public class Auto extends OpMode {
 
     private String getSequenceName(Sequence sequence){
         return sequence.getClass().getSimpleName();
+    }
+
+    private String getSequenceSide(Sequence sequence){
+        if (getSequenceName(sequence).contains(FieldConstants.LeftSide)) return FieldConstants.LeftSide;
+        return FieldConstants.RightSide;
     }
 
     private void computeRingCount() {

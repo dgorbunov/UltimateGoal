@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
@@ -23,7 +26,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
-@Config //for FTCDash
+@Config
 public abstract class Tele extends OpMode {
 
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
@@ -36,9 +39,8 @@ public abstract class Tele extends OpMode {
     Button flywheelButton = new Button();
     Button shootButton = new Button();
     Button driveModeButton = new Button();
-    Button extendIntakeButton = new Button();
 
-    protected org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController drive;
+    protected DrivetrainController drive;
     protected IntakeController intake;
     protected ShooterController shooter;
     protected VertIntakeController vertIntake;
@@ -49,14 +51,16 @@ public abstract class Tele extends OpMode {
     protected ControllerManager controllers;
 
     public void init() {
+        //TODO: test this multitelemetry, camera frame streams to dash
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Initializing...");
 
-        org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.TESTING = false;
+        DrivetrainController.TESTING = false;
 
         controllers = new ControllerManager(telemetry);
         controllers.make(hardwareMap, telemetry);
 
-        drive = controllers.get(org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.class, FieldConstants.Drive);
+        drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         hub = controllers.get(HubController.class, FieldConstants.Hub);
         shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         intake = controllers.get(IntakeController.class, FieldConstants.Intake);
@@ -64,6 +68,8 @@ public abstract class Tele extends OpMode {
         wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
 
         controllers.init();
+
+        drive.setPoseEstimate(TeleConstants.StartingPose);
 
         gameMap.setGamepads(gamepad1, gamepad2);
 
@@ -77,6 +83,7 @@ public abstract class Tele extends OpMode {
 
     public void start() {
         controllers.start();
+        intake.extend();
     }
 
 
@@ -99,8 +106,7 @@ public abstract class Tele extends OpMode {
 
         drive.update();
 
-        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3));
-        extendIntakeButton.runOnce(gameMap.ExtendIntake(), () -> intake.extend());
+        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3, 4800));
 
         intakeButton.toggle(
                 gameMap.Intake(),
@@ -129,6 +135,9 @@ public abstract class Tele extends OpMode {
                 () -> shooter.spinUp(4800),
                 ()-> shooter.stop());
 
+        if (gameMap.Shoot()){
+            flywheelButton.resetToggle();
+        }
 
 
         if (gameMap.StopAllIntakes()) {

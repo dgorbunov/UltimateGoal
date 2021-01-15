@@ -17,10 +17,12 @@ public class WobbleController implements Controller {
     private Servo wobbleArm;
     public static String ControllerName;
 
-    public static double GripGrabPos = 0.8;
+    public static double GripInitPos = 0.55;
+    public static double ArmInitPos = 0.85;
+    public static double GripGrabPos = 0.9;
     public static double GripReleasePos = 0.55;
     public static double ArmDropPos = 0.18;
-    public static double ArmPickupPos = 0.8;
+    public static double ArmPickupPos = 0.5;
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -35,8 +37,8 @@ public class WobbleController implements Controller {
         wobbleArm = hardwareMap.get(Servo.class, "wobble_arm");
 //        wobbleGrip.scaleRange();
 //        wobbleArm.scaleRange();
-        wobbleGrip.setPosition(GripReleasePos);
-        wobbleArm.setPosition(ArmPickupPos);
+        wobbleGrip.setPosition(GripInitPos);
+        wobbleArm.setPosition(ArmInitPos);
     }
 
     @Override
@@ -46,6 +48,8 @@ public class WobbleController implements Controller {
 
     @Override
     public void stop() {
+        wobbleGrip.setPosition(GripInitPos);
+        wobbleArm.setPosition(ArmInitPos);
     }
 
     // TODO: drop wobble
