@@ -40,19 +40,19 @@ public class FieldConstants {
         public static final Vector2d RingPos = new Vector2d(-24.5 + TapeWidth, -36);
         public static final Vector2d ShootingPos = new Vector2d(-4, -36);
         public static final Vector2d IntakePos = new Vector2d(RingPos.getX() + 9, RingPos.getY());
+        public static final Vector2d LeftWobblePos = new Vector2d(-39, RedLeft.StartingPos.getY());
+        public static final Vector2d RightWobblePos = new Vector2d(-39, RedRight.StartingPos.getY());
     }
 
     public static class RedLeft {
         public static final Vector2d StartingPos = new Vector2d(-63, -24 - TapeWidth);
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
-        public static final Vector2d LeftWobblePos = new Vector2d(-39, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX(), RedField.RingPos.getY() + 16);
     }
 
     public static class RedRight {
         public static final Vector2d StartingPos = new Vector2d(-63, -48 - TapeWidth);
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
-        public static final Vector2d RightWobblePos = new Vector2d(-39, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX(), RedField.RingPos.getY() - 16);
     }
 

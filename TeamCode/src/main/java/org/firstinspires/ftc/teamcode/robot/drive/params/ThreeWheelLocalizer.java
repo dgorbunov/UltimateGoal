@@ -34,12 +34,12 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.6889764; // in (35mm/2 = 17.5mm)
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 16.4425748544; // in; distance between the left and right wheels (tuned)
+    public static double LATERAL_DISTANCE = 16.4559389109; // in; distance between the left and right wheels (tuned)
 
     public static double FORWARD_OFFSET = 0.39; // in; offset of the lateral wheel (about 1cm forward)
 
     public static double LEFT_MULTIPLIER = 1; //left encoder multiplier
-    public static double RIGHT_MULTIPLIER = 1.005; //right encoder multiplier
+    public static double RIGHT_MULTIPLIER = 1; //right encoder multiplier
     public static double LATERAL_MULTIPLIER = 1; // Multiplier in the Y direction (strafe)
     //TODO: Tune X/Y Multiplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
 

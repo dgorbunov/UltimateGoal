@@ -3,49 +3,49 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.*;
 
 public class RedLeftSequence extends Sequence {
 
     public RedLeftSequence(ControllerManager controllers, Telemetry tel){
         super(controllers, tel);
         startPose = new Pose2d(
-                FieldConstants.RedLeft.StartingPos,
+                RedLeft.StartingPos,
                 Math.toRadians(0));
     }
 
     protected void makeActions() {
         switch (ringCount) {
             case 0:
-                targetZone = FieldConstants.RedField.TargetZoneA;
+                targetZone = RedField.TargetZoneA;
                 break;
             case 1:
-                targetZone = FieldConstants.RedField.TargetZoneB;
+                targetZone = RedField.TargetZoneB;
                 break;
             case 4:
-                targetZone = FieldConstants.RedField.TargetZoneC;
+                targetZone = RedField.TargetZoneC;
                 break;
         }
         actions.add(() -> startShooter(4800));
-        actions.add(() -> moveToShoot(FieldConstants.RedField.ShootingPos, 0));
+        actions.add(() -> moveToShoot(RedLeft.IntermediatePos, RedField.ShootingPos));
         actions.add(() -> shootRings(3));
 
-        actions.add(() -> intakeRings(ringCount, FieldConstants.RedField.IntakePos, 0));
-        actions.add(() -> moveToShoot(FieldConstants.RedField.ShootingPos, 0));
+        actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
+        actions.add(() -> moveToShoot(RedField.ShootingPos, 0));
         actions.add(() -> shootRings(ringCount));
         actions.add(() -> stopShooter());
 
         actions.add(() -> moveLinear(targetZone, 0));
         actions.add(() -> dropWobble());
 
-        actions.add(() -> moveToStart(FieldConstants.RedRight.RightWobblePos, 0,180));
+        actions.add(() -> moveToStart(RedField.RightWobblePos, 0,180));
         actions.add(() -> pickupWobble());
-        actions.add(() -> moveToZone(targetZone, FieldConstants.RedRight.IntermediatePos,  180));
+        actions.add(() -> moveToZone(targetZone, RedRight.IntermediatePos,  180));
         actions.add(() -> dropWobble());
 
-        actions.add(() -> moveToLaunchLine(FieldConstants.RedLeft.LaunchLine));
+        actions.add(() -> moveToLaunchLine(RedLeft.LaunchLine));
         actions.add(() -> stop());
 
     }

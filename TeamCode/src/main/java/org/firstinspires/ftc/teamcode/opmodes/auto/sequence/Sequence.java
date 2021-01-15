@@ -123,6 +123,17 @@ public abstract class Sequence {
         wobble.pickupAuto();
     }
 
+    public void moveToShoot(Vector2d intermediate, Vector2d position) {
+        telemetry.addData("Sequence","moveToShoot" );
+
+        Vector2d positions[] = new Vector2d[] {
+                intermediate,
+                position
+        };
+
+        followTrajectoryAsync(buildLineTrajectory(positions));
+    }
+
     public void moveToShoot(Vector2d position, double heading) {
         telemetry.addData("Sequence","moveToShoot" );
         followTrajectoryAsync(buildLineTrajectory(position));
@@ -202,12 +213,14 @@ public abstract class Sequence {
         return trajectory.build();
     }
 
-    private Trajectory buildLineTrajectory(Vector2d position){
+    private Trajectory buildLineTrajectory(Vector2d... positions){
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .lineTo(position)
-                .build();
-        return trajectory;
+        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
+                for (Vector2d position : positions) {
+                    trajectory.lineTo(position);
+                }
+
+        return trajectory.build();
     }
 
     private Trajectory buildStrafeTrajectory(Vector2d position){

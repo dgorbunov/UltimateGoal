@@ -40,6 +40,7 @@ public class CameraController implements Controller {
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
+    RingDetector2 RingDetector;
 
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/UltimateGoal.tflite"; //For OpenRC, loaded from internal storage to reduce APK size
     public static final String LABEL_FIRST_ELEMENT = "Quad";
@@ -193,7 +194,6 @@ public class CameraController implements Controller {
         }
 
     }
-
 
     @Nullable
     public Pose2d getRobotPosition(){
