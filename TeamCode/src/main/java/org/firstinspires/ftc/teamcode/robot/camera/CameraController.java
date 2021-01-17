@@ -16,11 +16,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +43,7 @@ public class CameraController implements Controller {
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
-    RingDetector2 RingDetector;
+    RingDetector2 ringDetector;
 
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/UltimateGoal.tflite"; //For OpenRC, loaded from internal storage to reduce APK size
     public static final String LABEL_FIRST_ELEMENT = "Quad";
@@ -114,6 +117,19 @@ public class CameraController implements Controller {
         }
 
         FtcDashboard.getInstance().stopCameraStream();
+    }
+
+    public int getNumberOfRings() {
+        // With live preview
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "NAME_OF_CAMERA_IN_CONFIG_FILE");
+        int cameraMonitorViewId = 0;
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+
+        // OpenCvCamera webcam = new OpenCvCamera();
+        RingDetector detector = new RingDetector(camera, telemetry);
+        int rings = 0;
+
+        return rings;
     }
 
     public void stopTFOD(){

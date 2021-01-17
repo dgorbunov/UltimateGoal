@@ -9,6 +9,7 @@ public class TeleConstants {
     /**
      * Set by Sequence
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()
+     * TODO: write to a file
      */
     public static Pose2d StartingPose = new Pose2d(0,0,0);
 
