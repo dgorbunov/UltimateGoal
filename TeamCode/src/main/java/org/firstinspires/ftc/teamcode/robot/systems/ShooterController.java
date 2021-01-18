@@ -36,9 +36,7 @@ public class ShooterController implements Controller {
     public static String ControllerName;
 
     private volatile int ringCount = 3;
-    public static double MotorRPM = 4700;
-
-    public boolean shootingState = false;
+    public static double MotorRPM = 0;
 
     public static volatile double targetTicksPerSec;
 
@@ -46,21 +44,21 @@ public class ShooterController implements Controller {
     private DcMotorEx shooter;
     private Servo bumper;
     private HardwareMap hardwareMap;
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-    private Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    private Telemetry telemetry;
+    private boolean stopOnFinish = true;
 
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Thread telemetryThread = new Thread(this::telemetry);
     private Thread shootImpl = new Thread(this::shootImpl);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
-        this.dashboardTelemetry = telemetry;
+        this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
     }
 
     @Override
     public void init() {
-        dashboardTelemetry = new MultipleTelemetry(dashboardTelemetry, dashboardTelemetry);
 
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
@@ -68,6 +66,7 @@ public class ShooterController implements Controller {
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
 
+        //this is acting as our state variable
         shooter.setMotorDisable();
 
         retract();
@@ -80,11 +79,13 @@ public class ShooterController implements Controller {
 
     @Override
     public void stop() {
-        shootingState = false;
-        shooter.setPower(0);
-        shooter.setMotorDisable();
-        bumper.setPosition(RetractPosition);
+        //wait until shooting is finished
+            shooter.setPower(0);
+            shooter.setMotorDisable();
+            bumper.setPosition(RetractPosition);
     }
+
+
 
     public synchronized void shoot(int ringCount){
         shoot(ringCount, MotorRPM);
@@ -92,23 +93,21 @@ public class ShooterController implements Controller {
 
     public synchronized void shoot(int ringCount, double RPM){
         this.ringCount = ringCount;
-        if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
-            MotorRPM = RPM;
-            setRPM(MotorRPM);
-            sleep(SpinUpDelay);
-        }
-        //if we are spinning up and not at target speed yet, hit this
-        else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
-            sleep(0.5 * SpinUpDelay);
-            dashboardTelemetry.addLine("Spinner was not spinning at correct velocity.");
-        }
+        checkSpeed(RPM);
 
+        stopOnFinish = true;
         shootImpl.start();
-        stop();
     }
 
     public synchronized void powerShot(double RPM){
         ringCount = 1;
+        checkSpeed(RPM);
+
+        stopOnFinish = false;
+        shootImpl.start();
+    }
+
+    private synchronized void checkSpeed(double RPM) {
         if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
             MotorRPM = RPM;
             setRPM(MotorRPM);
@@ -117,24 +116,20 @@ public class ShooterController implements Controller {
         //if we are spinning up and not at target speed yet, hit this
         else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
             sleep(0.5 * SpinUpDelay);
-            dashboardTelemetry.addLine("Spinner was not spinning at correct velocity.");
+            telemetry.addLine("Spinner was not spinning at correct velocity.");
         }
-
-        shootImpl.start();
     }
 
     /**
      * Spin up flywheel before shooting to save time
      **/
     public void spinUp(double MotorRPM){
-        shootingState = true;
         setRPM(MotorRPM);
     }
 
 
     private synchronized void shootImpl(){
-        shootingState = true;
-        telemetryThread.start();
+//        telemetryThread.start();
 
         //FTCDash doesn't support array modification
         //So we have to resort to this for quick delay modification
@@ -171,7 +166,8 @@ public class ShooterController implements Controller {
             retract();
         }
 
-        stop();
+        if (stopOnFinish) stop();
+
     }
 
     public synchronized void telemetry(){
@@ -191,18 +187,10 @@ public class ShooterController implements Controller {
 //        dashboardTelemetry.update();
     }
 
-    @Deprecated
-    private synchronized void setVelocityLoop() {
-        while (shootingState) {
-            targetTicksPerSec = MotorRPM * TicksPerRev / 60;
-            shooter.setVelocity(targetTicksPerSec);
-        }
-    }
-
     private void setRPM(double RPM) {
         MotorRPM = RPM;
         shooter.setMotorEnable();
-        shooter.setVelocity(TicksPerSecond(RPM));
+        shooter.setVelocity(TicksPerSecond(MotorRPM));
     }
 
     public double getVelocity(){

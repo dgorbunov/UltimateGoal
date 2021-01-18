@@ -54,9 +54,11 @@ public abstract class Tele extends OpMode {
 
     protected ControllerManager controllers;
 
+    MultipleTelemetry data;
+
     public void init() {
-        //TODO: test this multitelemetry, camera frame streams to dash
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //TODO: how do you make this just telemetry?
+        data = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
         telemetry.addLine("Initializing...");
 
@@ -157,6 +159,7 @@ public abstract class Tele extends OpMode {
     }
 
     protected abstract void autoShoot();
+    protected abstract void powerShot();
 
     public void stop() {
         telemetry.addLine("Stopping...");

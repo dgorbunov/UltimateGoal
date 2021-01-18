@@ -34,11 +34,21 @@ public class RedTele extends Tele {
             drive.followTrajectory(trajectory);
             for (int i = 0; i < 3; i++) {
                 shooter.powerShot(RPMPowerShot);
-                if (i < 2) drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
+                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
             }
 
             shooter.stop();
         }
 
+    }
+
+    @Override
+    protected void powerShot() {
+        for (int i = 0; i < 3; i++) {
+            shooter.powerShot(RPMPowerShot);
+            if (i < 2) drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
+        }
+
+        shooter.stop();
     }
 }
