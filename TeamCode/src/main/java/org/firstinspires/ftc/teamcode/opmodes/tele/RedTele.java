@@ -14,6 +14,8 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @TeleOp(name="RedTele", group="Iterative Opmode")
 public class RedTele extends Tele {
+    private int powerShotCount = 0;
+
     public RedTele() {
         super();
     }
@@ -63,6 +65,16 @@ public class RedTele extends Tele {
 
     @Override
     protected void manShoot() {
-
+        if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
+            shooter.shoot(3, RPMGoal);
+        }
+        else {
+            powerShotCount++;
+            shooter.powerShot(RPMPowerShot);
+            if (powerShotCount >= 3) {
+                shooter.stop();
+                powerShotCount = 0;
+            }
+        }
     }
 }

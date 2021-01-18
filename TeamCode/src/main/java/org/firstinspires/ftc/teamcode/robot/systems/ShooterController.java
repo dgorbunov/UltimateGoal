@@ -17,7 +17,7 @@ public class ShooterController implements Controller {
 
     public static volatile double SpinUpDelay = 1500;
     public static volatile double RetractDelay = 300;
-    public static volatile double ShootingDelay[] = {250,250,0};
+    public static volatile double[] ShootingDelay = {250,250,0};
     public static volatile boolean useDelayArray = false;
     public static volatile double Delay1 = 250;
     public static volatile double Delay2 = 250;
@@ -122,7 +122,7 @@ public class ShooterController implements Controller {
         checkSpeed(RPM);
 
         stopOnFinish = false;
-        shootImpl.start();
+        shootImplBlocking();
     }
 
     private synchronized void checkSpeed(double RPM) {
