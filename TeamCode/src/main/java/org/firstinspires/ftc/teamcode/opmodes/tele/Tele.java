@@ -8,9 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
-import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
+import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
@@ -23,6 +24,9 @@ import org.firstinspires.ftc.teamcode.util.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
@@ -53,6 +57,7 @@ public abstract class Tele extends OpMode {
     public void init() {
         //TODO: test this multitelemetry, camera frame streams to dash
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
         telemetry.addLine("Initializing...");
 
         DrivetrainController.TESTING = false;
@@ -69,7 +74,7 @@ public abstract class Tele extends OpMode {
 
         controllers.init();
 
-        drive.setPoseEstimate(TeleConstants.StartingPose);
+        drive.setPoseEstimate(MechConstants.StartingPose);
 
         gameMap.setGamepads(gamepad1, gamepad2);
 
@@ -92,21 +97,22 @@ public abstract class Tele extends OpMode {
                 gameMap.DriveMode(),
                 () -> drive.setWeightedDrivePower(
                 new Pose2d(
-                        TeleConstants.DriveFullPower * -gamepad1.left_stick_y,
-                        TeleConstants.DriveFullPower * -gamepad1.left_stick_x,
-                        TeleConstants.DriveFullPower * -gamepad1.right_stick_x
+                        DriveFullPower * -gamepad1.left_stick_y,
+                        DriveFullPower * -gamepad1.left_stick_x,
+                        DriveFullPower * -gamepad1.right_stick_x
                 )),
                 () -> drive.setWeightedDrivePower(
                 new Pose2d(
-                        TeleConstants.DriveSlowPower * -gamepad1.left_stick_y,
-                        TeleConstants.DriveSlowPower * -gamepad1.left_stick_x,
-                        TeleConstants.DriveSlowPower * -gamepad1.right_stick_x
+                        DriveSlowPower * -gamepad1.left_stick_y,
+                        DriveSlowPower * -gamepad1.left_stick_x,
+                        DriveSlowPower * -gamepad1.right_stick_x
                 )
         ));
 
         drive.update();
 
-        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3, 4800));
+//        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3, 4700));
+        shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
 
         intakeButton.toggle(
                 gameMap.Intake(),
@@ -132,7 +138,7 @@ public abstract class Tele extends OpMode {
 
         flywheelButton.toggle(
                 gameMap.StartFlywheel(),
-                () -> shooter.spinUp(4800),
+                () -> shooter.spinUp(RPMGoal),
                 ()-> shooter.stop());
 
         if (gameMap.Shoot()){

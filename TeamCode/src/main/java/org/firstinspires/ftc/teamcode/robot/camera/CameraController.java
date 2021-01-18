@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.camera;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -16,14 +17,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +36,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-
+@Config
 public class CameraController implements Controller {
 
     Telemetry telemetry;
@@ -65,9 +63,9 @@ public class CameraController implements Controller {
     private int tfodCropY = 25;
 
     public boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    private float phoneXRotate = 180;
+    private float phoneYRotate  = 0;
+    private float phoneZRotate  = 0;
 
     public final float CAMERA_FORWARD_DISPLACEMENT  = 8.5f * mmPerInch;   // eg: Camera inches in front of robot-center
     public final float CAMERA_VERTICAL_DISPLACEMENT = 4.0f * mmPerInch;   // eg: Camera inches above ground
@@ -84,7 +82,7 @@ public class CameraController implements Controller {
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false  ;
+    private static final boolean PHONE_IS_PORTRAIT = false;
 
     private Recognition topRecognition = null;
     private VuforiaTrackables targetsUltimateGoal;
@@ -119,18 +117,18 @@ public class CameraController implements Controller {
         FtcDashboard.getInstance().stopCameraStream();
     }
 
-    public int getNumberOfRings() {
-        // With live preview
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "NAME_OF_CAMERA_IN_CONFIG_FILE");
-        int cameraMonitorViewId = 0;
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-
-        // OpenCvCamera webcam = new OpenCvCamera();
-        RingDetector detector = new RingDetector(camera, telemetry);
-        int rings = 0;
-
-        return rings;
-    }
+//    public int getNumberOfRings() {
+//        // With live preview
+//        WebcamName webcamName = hardwareMap.get(WebcamName.class, "NAME_OF_CAMERA_IN_CONFIG_FILE");
+//        int cameraMonitorViewId = 0;
+//        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+//
+//        // OpenCvCamera webcam = new OpenCvCamera();
+//        RingDetector detector = new RingDetector(camera, telemetry);
+//        int rings = 0;
+//
+//        return rings;
+//    }
 
     public void stopTFOD(){
         tfod.deactivate();

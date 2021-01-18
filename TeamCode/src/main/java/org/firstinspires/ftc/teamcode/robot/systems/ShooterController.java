@@ -9,10 +9,7 @@
         import com.qualcomm.robotcore.hardware.Servo;
 
         import org.firstinspires.ftc.robotcore.external.Telemetry;
-        import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
         import org.firstinspires.ftc.teamcode.robot.Controller;
-        import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-        import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
         import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
@@ -39,7 +36,8 @@ public class ShooterController implements Controller {
     public static String ControllerName;
 
     private volatile int ringCount = 3;
-    private volatile double MotorRPM = 4800;
+    public static double MotorRPM = 4700;
+
     public boolean shootingState = false;
 
     public static volatile double targetTicksPerSec;
@@ -95,23 +93,34 @@ public class ShooterController implements Controller {
     public synchronized void shoot(int ringCount, double RPM){
         this.ringCount = ringCount;
         if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
-            this.MotorRPM = RPM;
+            MotorRPM = RPM;
             setRPM(MotorRPM);
             sleep(SpinUpDelay);
         }
         //if we are spinning up and not at target speed yet, hit this
         else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
-            sleep(SpinUpDelay);
+            sleep(0.5 * SpinUpDelay);
+            dashboardTelemetry.addLine("Spinner was not spinning at correct velocity.");
         }
 
         shootImpl.start();
+        stop();
     }
 
-    public void shootAuto(ControllerManager controllers){
-        if (controllers.get(FieldConstants.Camera) == null){
-            controllers.add(new CameraController(hardwareMap, dashboardTelemetry), FieldConstants.Camera);
+    public synchronized void powerShot(double RPM){
+        ringCount = 1;
+        if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
+            MotorRPM = RPM;
+            setRPM(MotorRPM);
+            sleep(SpinUpDelay);
+        }
+        //if we are spinning up and not at target speed yet, hit this
+        else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
+            sleep(0.5 * SpinUpDelay);
+            dashboardTelemetry.addLine("Spinner was not spinning at correct velocity.");
         }
 
+        shootImpl.start();
     }
 
     /**
@@ -136,7 +145,7 @@ public class ShooterController implements Controller {
                 retract();
                 sleep(ShootingDelay[i]);
             }
-        } else {
+        } else if (ringCount == 3) {
             bump();
             sleep(RetractDelay);
             retract();
@@ -145,6 +154,18 @@ public class ShooterController implements Controller {
             sleep(RetractDelay);
             retract();
             sleep(Delay2);
+            bump();
+            sleep(RetractDelay);
+            retract();
+        } else if (ringCount == 2){
+            bump();
+            sleep(RetractDelay);
+            retract();
+            sleep(Delay1);
+            bump();
+            sleep(RetractDelay);
+            retract();
+        } else {
             bump();
             sleep(RetractDelay);
             retract();
@@ -179,6 +200,7 @@ public class ShooterController implements Controller {
     }
 
     private void setRPM(double RPM) {
+        MotorRPM = RPM;
         shooter.setMotorEnable();
         shooter.setVelocity(TicksPerSecond(RPM));
     }

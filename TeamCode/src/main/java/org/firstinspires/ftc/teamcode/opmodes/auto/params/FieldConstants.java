@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.params;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class FieldConstants {
@@ -38,7 +37,8 @@ public class FieldConstants {
         public static final Vector2d TargetZoneB = new Vector2d(36,-24);
         public static final Vector2d TargetZoneC = new Vector2d(60,-48);
         public static final Vector2d RingPos = new Vector2d(-24.5 + TapeWidth, -36);
-        public static final Vector2d ShootingPos = new Vector2d(-4, -36);
+        public static final Vector2d GoalShotPos = new Vector2d(0, -36);
+        public static final Vector2d PowerShotPos = new Vector2d(0, -12);
         public static final Vector2d IntakePos = new Vector2d(RingPos.getX() + 9, RingPos.getY());
         public static final Vector2d LeftWobblePos = new Vector2d(-39, RedLeft.StartingPos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-39, RedRight.StartingPos.getY());

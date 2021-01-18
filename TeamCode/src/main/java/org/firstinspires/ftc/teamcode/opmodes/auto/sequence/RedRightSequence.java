@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-//import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.*;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedRight;
+
+//import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 
 public class RedRightSequence extends Sequence {
 
@@ -31,12 +33,12 @@ public class RedRightSequence extends Sequence {
                 break;
         }
         actions.add(() -> startShooter(4800));
-        actions.add(() -> moveToShoot(RedRight.IntermediatePos, RedField.ShootingPos));
-        actions.add(() -> shootRings(3));
+        actions.add(() -> moveToShoot(RedRight.IntermediatePos, RedField.GoalShotPos));
+        actions.add(() -> shootGoal(3));
 
         actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
-        actions.add(() -> moveToShoot(RedField.ShootingPos, 0));
-        actions.add(() -> shootRings(ringCount));
+        actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
+        actions.add(() -> shootGoal(ringCount));
         actions.add(() -> stopShooter());
 
         actions.add(() -> moveLinear(targetZone, 0));

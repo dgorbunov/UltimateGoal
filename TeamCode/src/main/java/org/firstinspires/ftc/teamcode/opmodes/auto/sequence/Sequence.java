@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.opmodes.tele.params.TeleConstants;
+import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -69,7 +69,7 @@ public abstract class Sequence {
             actions.stop();
 
             //Set starting position for TeleOp
-            TeleConstants.StartingPose = GetCurrentPose();
+            MechConstants.StartingPose = GetCurrentPose();
         }
     }
 
@@ -149,7 +149,13 @@ public abstract class Sequence {
         shooter.stop();
     }
 
-    public void shootRings(int numRings) {
+    public void shootGoal(int numRings) {
+        telemetry.addData("Sequence","shootRings: " + numRings);
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        shooter.shoot(numRings, 4700);
+    }
+
+    public void shootPowershot(int numRings) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         shooter.shoot(numRings);
