@@ -275,10 +275,11 @@ public class CameraController implements Controller {
         //
 
         if (Auto.getSequenceSide() != null) {
-            if (Auto.getSequenceSide() == FieldConstants.LeftSide) tfod.setClippingMargins(tfodCropX, tfodCropY, 0, tfodCropY);
-            else tfod.setClippingMargins(0, tfodCropY, tfodCropX, tfodCropY);
+            if (Auto.getSequenceSide() == FieldConstants.LeftSide) tfod.setClippingMargins(0, tfodCropY, tfodCropX, tfodCropY);
+            else tfod.setClippingMargins(tfodCropX, tfodCropY, 0, tfodCropY);
+            //TODO: this was reversed because camera is upside down
         }
-        tfod.setZoom(1.45 , 16.0/9.0);
+        tfod.setZoom(1.50, 16.0/9.0);
 
     }
 

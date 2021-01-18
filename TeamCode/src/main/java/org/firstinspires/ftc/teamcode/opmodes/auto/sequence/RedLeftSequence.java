@@ -30,7 +30,7 @@ public class RedLeftSequence extends Sequence {
                 targetZone = RedField.TargetZoneC;
                 break;
         }
-        actions.add(() -> startShooter(4800));
+//        actions.add(() -> startShooter(4800));
         actions.add(() -> moveToShoot(RedLeft.IntermediatePos, RedField.GoalShotPos));
         actions.add(() -> shootGoal(3));
 
@@ -42,7 +42,7 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> moveLinear(targetZone, 0));
         actions.add(() -> dropWobble());
 
-        actions.add(() -> moveToStart(RedField.RightWobblePos, 0,180));
+        actions.add(() -> moveToWobble(RedField.RightWobbleIntermediate, RedField.RightWobblePos, 180));
         actions.add(() -> pickupWobble());
         actions.add(() -> moveToZone(targetZone, RedRight.IntermediatePos,  180));
         actions.add(() -> dropWobble());

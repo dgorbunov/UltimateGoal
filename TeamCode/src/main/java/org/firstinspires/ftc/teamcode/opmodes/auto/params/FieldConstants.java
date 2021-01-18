@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.params;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 public class FieldConstants {
@@ -32,38 +34,49 @@ public class FieldConstants {
     //Robot Width: 17.95 in (456mm)
     //Robot Length: 17 in (432mm)
 
+    @Config
     public static class RedField {
-        public static final Vector2d TargetZoneA = new Vector2d(12,-48);
-        public static final Vector2d TargetZoneB = new Vector2d(36,-24);
-        public static final Vector2d TargetZoneC = new Vector2d(60,-48);
-        public static final Vector2d RingPos = new Vector2d(-24.5 + TapeWidth, -36);
-        public static final Vector2d GoalShotPos = new Vector2d(0, -36);
-        public static final Vector2d PowerShotPos = new Vector2d(0, -12);
-        public static final Vector2d IntakePos = new Vector2d(RingPos.getX() + 9, RingPos.getY());
-        public static final Vector2d LeftWobblePos = new Vector2d(-39, RedLeft.StartingPos.getY());
+        public static final Vector2d TargetZoneA = new Vector2d(-8,-60);
+        public static final Vector2d TargetZoneB = new Vector2d(16,-36);
+        public static final Vector2d TargetZoneC = new Vector2d(40,-60);
+        public static final Vector2d RingPos = new Vector2d(-24, -36.5);
+        public static final Pose2d GoalShotPos = new Pose2d(-2, -39, Math.toRadians(0));
+        public static final Vector2d PowerShotPos = new Vector2d(-2, -12);
+        public static final Vector2d IntakePos = new Vector2d(RingPos.getX(), RingPos.getY());
+        public static final Vector2d LeftWobblePos = new Vector2d(-36, -23.00);
+        public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 18, LeftWobblePos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-39, RedRight.StartingPos.getY());
+        public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 18, RightWobblePos.getY());
+        public static final Vector2d EndingPosition = new Vector2d (10, -30);
+        public static final double WobbleXOffset = 10;
+        public static final double WobbleBackupDistance = 16;
     }
 
+    @Config
     public static class RedLeft {
         public static final Vector2d StartingPos = new Vector2d(-63, -24 - TapeWidth);
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX(), RedField.RingPos.getY() + 16);
     }
 
+    @Config
     public static class RedRight {
         public static final Vector2d StartingPos = new Vector2d(-63, -48 - TapeWidth);
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX(), RedField.RingPos.getY() - 16);
     }
 
+    @Config
     public static class BlueField {
 
     }
 
+    @Config
     public static class BlueLeft {
         public static final Vector2d StartingPos = new Vector2d(-63, 24 + TapeWidth);
     }
 
+    @Config
     public static class BlueRight {
         public static final Vector2d StartingPos = new Vector2d(-63, 48 + TapeWidth);
     }

@@ -43,6 +43,7 @@ public abstract class Tele extends OpMode {
     Button flywheelButton = new Button();
     Button shootButton = new Button();
     Button driveModeButton = new Button();
+    Button shootManButton = new Button();
 
     protected DrivetrainController drive;
     protected IntakeController intake;
@@ -53,6 +54,8 @@ public abstract class Tele extends OpMode {
     protected CameraController camera;
 
     protected ControllerManager controllers;
+
+    protected boolean autoShoot = false;
 
     MultipleTelemetry data;
 
@@ -95,26 +98,28 @@ public abstract class Tele extends OpMode {
 
 
     public void loop() {
-        driveModeButton.toggleLoop(
-                gameMap.DriveMode(),
-                () -> drive.setWeightedDrivePower(
-                new Pose2d(
-                        DriveFullPower * -gamepad1.left_stick_y,
-                        DriveFullPower * -gamepad1.left_stick_x,
-                        DriveFullPower * -gamepad1.right_stick_x
-                )),
-                () -> drive.setWeightedDrivePower(
-                new Pose2d(
-                        DriveSlowPower * -gamepad1.left_stick_y,
-                        DriveSlowPower * -gamepad1.left_stick_x,
-                        DriveSlowPower * -gamepad1.right_stick_x
-                )
-        ));
+        if (!autoShoot) {
+            driveModeButton.toggleLoop(
+                    gameMap.DriveMode(),
+                    () -> drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    DriveFullPower * -gamepad1.left_stick_y,
+                                    DriveFullPower * -gamepad1.left_stick_x,
+                                    DriveFullPower * -gamepad1.right_stick_x
+                            )),
+                    () -> drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    DriveSlowPower * -gamepad1.left_stick_y,
+                                    DriveSlowPower * -gamepad1.left_stick_x,
+                                    DriveSlowPower * -gamepad1.right_stick_x
+                            )
+                    ));
+        }
 
         drive.update();
 
-//        shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(3, 4700));
         shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
+        shootManButton.runOnce(gameMap.ShootMan(), this::manShoot);
 
         intakeButton.toggle(
                 gameMap.Intake(),
@@ -160,6 +165,7 @@ public abstract class Tele extends OpMode {
 
     protected abstract void autoShoot();
     protected abstract void powerShot();
+    protected abstract void manShoot();
 
     public void stop() {
         telemetry.addLine("Stopping...");

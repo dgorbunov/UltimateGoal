@@ -2,7 +2,6 @@
 
         import com.acmerobotics.dashboard.FtcDashboard;
         import com.acmerobotics.dashboard.config.Config;
-        import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
         import com.qualcomm.robotcore.hardware.DcMotorEx;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -99,6 +98,25 @@ public class ShooterController implements Controller {
         shootImpl.start();
     }
 
+    public synchronized void shootBlocking(int ringCount, double RPM){
+        this.ringCount = ringCount;
+        checkSpeed(RPM);
+
+        stopOnFinish = true;
+        shootImplBlocking();
+//        shootImpl.start();
+        //TODO :fix
+//        try {
+//            shootImpl.join();
+//        } catch (InterruptedException e) {
+//            telemetry.addData(ControllerName, e);
+//        }
+//        telemetry.addData(ControllerName, shootImpl.isAlive());
+//        assert(shootImpl.isAlive());
+
+    }
+
+
     public synchronized void powerShot(double RPM){
         ringCount = 1;
         checkSpeed(RPM);
@@ -125,6 +143,48 @@ public class ShooterController implements Controller {
      **/
     public void spinUp(double MotorRPM){
         setRPM(MotorRPM);
+    }
+
+    private synchronized void shootImplBlocking() {
+        //        telemetryThread.start();
+
+        //FTCDash doesn't support array modification
+        //So we have to resort to this for quick delay modification
+        if (useDelayArray) {
+            for (int i = 0; i < ringCount; i++) {
+                bump();
+                sleep(RetractDelay);
+                retract();
+                sleep(ShootingDelay[i]);
+            }
+        } else if (ringCount == 3) {
+            bump();
+            sleep(RetractDelay);
+            retract();
+            sleep(Delay1);
+            bump();
+            sleep(RetractDelay);
+            retract();
+            sleep(Delay2);
+            bump();
+            sleep(RetractDelay);
+            retract();
+        } else if (ringCount == 2){
+            bump();
+            sleep(RetractDelay);
+            retract();
+            sleep(Delay1);
+            bump();
+            sleep(RetractDelay);
+            retract();
+        } else {
+            bump();
+            sleep(RetractDelay);
+            retract();
+        }
+
+        if (stopOnFinish) stop();
+
     }
 
 

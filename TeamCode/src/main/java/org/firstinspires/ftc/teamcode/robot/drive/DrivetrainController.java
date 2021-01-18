@@ -61,8 +61,8 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 
 @Config
 public class DrivetrainController extends MecanumDrive implements Controller {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.1, 0.75);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, 0.2, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0.2);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(14, 0, 1.25);
 
     public static boolean TESTING = false;
 

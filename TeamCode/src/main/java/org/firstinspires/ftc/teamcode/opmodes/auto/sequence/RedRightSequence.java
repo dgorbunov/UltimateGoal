@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.WobbleBackupDistance;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.WobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedRight;
 
 //import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
@@ -32,24 +34,29 @@ public class RedRightSequence extends Sequence {
                 targetZone = RedField.TargetZoneC;
                 break;
         }
-        actions.add(() -> startShooter(4800));
+//        actions.add(() -> startShooter(RPMGoal));
         actions.add(() -> moveToShoot(RedRight.IntermediatePos, RedField.GoalShotPos));
         actions.add(() -> shootGoal(3));
 
-        actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
-        actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
-        actions.add(() -> shootGoal(ringCount));
+        if (ringCount != 0) {
+            actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
+            actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
+            actions.add(() -> shootGoal(ringCount));
+        }
+
         actions.add(() -> stopShooter());
 
-        actions.add(() -> moveLinear(targetZone, 0));
+        actions.add(() -> moveLinear(targetZone.getX() + WobbleXOffset, targetZone.getY(),0));
         actions.add(() -> dropWobble());
 
-        actions.add(() -> moveToStart(RedField.LeftWobblePos,0,180));
+        actions.add(() -> moveToWobble(RedField.LeftWobbleIntermediate, RedField.LeftWobblePos,180));
         actions.add(() -> pickupWobble());
+
         actions.add(() -> moveLinear(targetZone, 180));
         actions.add(() -> dropWobble());
+        actions.add(() -> backOffFromWobbles(WobbleBackupDistance));
 
-        actions.add(() -> moveToLaunchLine(RedRight.LaunchLine));
+        actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
         actions.add(() -> stop());
 
     }

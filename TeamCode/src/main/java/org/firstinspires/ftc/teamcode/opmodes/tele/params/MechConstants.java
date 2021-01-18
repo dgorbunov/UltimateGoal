@@ -16,18 +16,20 @@ public class MechConstants {
     public static double DriveFullPower = 0.80;
     public static double DriveSlowPower = 0.20;
 
-    public static double RPMGoal = 4400;
-    public static double RPMPowerShot = 3000;
+    public static double RPMGoal = 3650;
+    public static double RPMPowerShot = 3500;
+    public static double PowerShotDelay = 600;
 
+    @Config
     public static class Red {
-        public static double PowerShotInitialAngle = 20;
-        public static double PowerShotAngleIncrement = -10;
+        public static double PowerShotInitialAngle = 9;
+        public static double PowerShotAngleIncrement = -6;
         public static double AutoShootLine = -24.5;
     }
+
+    @Config
     public static class Blue {
-        public static double PowerShotInitialAngle = -5;
-        public static double PowerShotAngleIncrement = 5.0;
-        public static double AutoShootLine = 24.5;
+
     }
 
 
