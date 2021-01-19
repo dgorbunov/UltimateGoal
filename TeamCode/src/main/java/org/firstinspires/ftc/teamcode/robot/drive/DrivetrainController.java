@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -415,6 +416,22 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
 
         setDrivePower(vel);
+    }
+
+    public AngularVelocityConstraint getMaxAngVelConstraint(){
+        return new AngularVelocityConstraint(MAX_ANG_VEL);
+    }
+
+    public MecanumVelocityConstraint getMaxVelConstrain(){
+        return new MecanumVelocityConstraint(MAX_VEL, DriveConstants.TRACK_WIDTH);
+    }
+
+    public MecanumVelocityConstraint getCustomVelConstraint(double velocity){
+        return new MecanumVelocityConstraint(velocity, DriveConstants.TRACK_WIDTH);
+    }
+
+    public ProfileAccelerationConstraint getMaxAccelConstraint(){
+        return new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL);
     }
 
     @NonNull

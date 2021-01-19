@@ -4,17 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
-import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
@@ -260,17 +256,6 @@ public abstract class Sequence {
         return trajectory.build();
     }
 
-    private Trajectory buildLineTrajectory(Pose2d[] positions){
-        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose());
-        for (Pose2d position : positions) {
-            trajectoryBuilder.lineToLinearHeading(position);
-        }
-
-        Trajectory trajectory = trajectoryBuilder.build();
-        return trajectory;
-    }
-
     private Trajectory buildLineTrajectory(Pose2d position){
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
@@ -310,10 +295,10 @@ public abstract class Sequence {
                         //this ugly thing lowers the speed of our driving
                         .lineToLinearHeading(new Pose2d(position, heading),
                                 new MinVelocityConstraint(Arrays.asList(
-                                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                        new MecanumVelocityConstraint(12, DriveConstants.TRACK_WIDTH)
+                                        drive.getMaxAngVelConstraint(),
+                                        drive.getCustomVelConstraint(12)
                                 )
-                                ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                                ), drive.getMaxAccelConstraint())
 
                 .addTemporalMarker(timeDelay, () -> { // This marker runs x # of seconds into the trajectory
                         intake.run(FORWARD);
@@ -329,10 +314,10 @@ public abstract class Sequence {
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
                 .lineTo(pos,
                         new MinVelocityConstraint(Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
-                                new MecanumVelocityConstraint(7.5, DriveConstants.TRACK_WIDTH)
+                                drive.getMaxAngVelConstraint(),
+                                drive.getCustomVelConstraint(7)
                         )
-                        ), new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                        ), drive.getMaxAccelConstraint())
                 .build();
 
 

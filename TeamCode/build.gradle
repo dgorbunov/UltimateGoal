@@ -17,7 +17,7 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.openftc:rev-extensions-2:1.2' //Rev Extensions
     implementation 'com.acmerobotics.roadrunner:core:0.5.3' //RoadRunner
-    implementation 'org.openftc:easyopencv:1.4.3' //EasyOpenCV
+    implementation 'org.openftc:easyopencv:1.4.4' //EasyOpenCV
     implementation 'org.apache.commons:commons-math3:3.6.1' //Math for RR
 
     implementation('com.acmerobotics.dashboard:dashboard:0.3.10') {

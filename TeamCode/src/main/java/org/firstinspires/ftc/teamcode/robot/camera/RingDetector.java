@@ -9,9 +9,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
+@Deprecated
 public class RingDetector extends OpenCvPipeline {
 
     //TODO: Make vision alogirithms into seperate classes

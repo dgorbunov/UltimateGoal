@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+
+import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.PowerShotDelay;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
@@ -33,14 +36,30 @@ public class RedTele extends Tele {
         }
         else {
             shooter.spinUp(RPMPowerShot);
+            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
             Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(FieldConstants.RedField.PowerShotPos, Math.toRadians(Red.PowerShotInitialAngle)))
+                    .lineTo(FieldConstants.RedField.PowerShotPos)
                     .build();
             drive.followTrajectory(trajectory);
+
+            //TODO: TEST THIS
+            Trajectory turn = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(new Pose2d(
+                            drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
+                                    drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement))
+                            ,
+                            new MinVelocityConstraint(Arrays.asList(
+                                    drive.getMaxAngVelConstraint(),
+                                    drive.getCustomVelConstraint(7.5)
+                            )
+                            ), drive.getMaxAccelConstraint())
+                    .build();
+
             for (int i = 0; i < 3; i++) {
                 shooter.powerShot(RPMPowerShot);
+                drive.followTrajectory(turn);
+//                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
                 sleep(PowerShotDelay);
-                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
             }
 
             shooter.stop();

@@ -18,7 +18,7 @@ public class MechConstants {
 
     public static double RPMGoal = 3650;
     public static double RPMPowerShot = 3500;
-    public static double PowerShotDelay = 600;
+    public static double PowerShotDelay = 500;
 
     @Config
     public static class Red {
