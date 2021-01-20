@@ -7,8 +7,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 public class FieldConstants {
 
     /**
-     * Auto Global Constants
+     * Field/Autonomous Constants
      */
+
+    public static boolean useDashboard = true;
 
     public static final String RedAlliance = "Red";
     public static final String BlueAlliance = "Blue";
