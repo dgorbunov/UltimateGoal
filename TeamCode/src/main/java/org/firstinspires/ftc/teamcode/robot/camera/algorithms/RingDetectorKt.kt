@@ -61,7 +61,7 @@ import org.openftc.easyopencv.OpenCvPipeline
  * @param debug If true, all intermediate calculation results (except showing mat operations) will
  * be printed to telemetry (mainly for debug purposes)
  */
-class ContourRingDetector(
+class RingDetectorKt(
         private val telemetry: Telemetry? = null,
         var debug: Boolean = false,
 ): OpenCvPipeline() {

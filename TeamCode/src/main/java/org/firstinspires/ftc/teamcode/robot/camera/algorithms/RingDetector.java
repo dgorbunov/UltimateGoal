@@ -17,9 +17,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetectorJava.ringNames.FOUR;
+import static org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector.ringNames.FOUR;
 
-public class RingDetectorJava extends OpenCvPipeline {
+public class RingDetector extends OpenCvPipeline {
 
     private Telemetry telemetry;
     private boolean debug = false;
@@ -40,12 +40,12 @@ public class RingDetectorJava extends OpenCvPipeline {
         NONE, ONE, FOUR
     }
 
-    public RingDetectorJava(Telemetry telemetry, boolean debug) {
+    public RingDetector(Telemetry telemetry, boolean debug) {
         this.telemetry = telemetry;
         this.debug = debug;
     }
 
-    public RingDetectorJava(Telemetry telemetry) {
+    public RingDetector(Telemetry telemetry) {
         this(telemetry, false);
     }
 

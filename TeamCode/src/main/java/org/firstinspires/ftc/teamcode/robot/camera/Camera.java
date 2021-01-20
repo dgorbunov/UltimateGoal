@@ -21,15 +21,16 @@
 
 package org.firstinspires.ftc.teamcode.robot.camera;
 
+import androidx.annotation.Nullable;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.OpenCVInterface;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VuforiaLocalization;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VuforiaLocalizer;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
 /**
@@ -46,12 +47,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 @TeleOp
 public class Camera implements Controller {
 
-    HardwareMap hardwareMap;
-    Telemetry telemetry;
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
 
-    VuforiaLocalizer vuforia = null;
-    OpenCVInterface openCV;
-    VuforiaLocalization vuforiaLocalization;
+    private org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer vuforia = null;
+    private OpenCVInterface openCV;
+    private VuforiaLocalizer vuforiaLocalizer;
+
+    private boolean useLocalizer = false;
 
     public Camera(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
@@ -71,10 +74,10 @@ public class Camera implements Controller {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
 
-        vuforiaLocalization = new VuforiaLocalization(hardwareMap, telemetry, viewportContainerIds);
-        openCV = new OpenCVInterface(vuforiaLocalization.getVuforia(), vuforiaLocalization.getParameters(), viewportContainerIds, telemetry);
+        vuforiaLocalizer = new VuforiaLocalizer(hardwareMap, telemetry, viewportContainerIds, useLocalizer);
+        openCV = new OpenCVInterface(vuforiaLocalizer.getVuforia(), vuforiaLocalizer.getParameters(), viewportContainerIds, telemetry);
 
-        vuforiaLocalization.init();
+        vuforiaLocalizer.init();
         openCV.init();
     }
 
@@ -86,19 +89,20 @@ public class Camera implements Controller {
         return openCV.getRingCountStr();
     }
 
+    @Nullable
     public Pose2d getRobotPosition() {
-        return vuforiaLocalization.getRobotPosition();
+        return vuforiaLocalizer.getRobotPosition();
     }
 
     @Override
     public void start() {
-        vuforiaLocalization.start();
+        vuforiaLocalizer.start();
         openCV.start();
     }
 
     @Override
     public void stop() {
-        vuforiaLocalization.stop();
+        vuforiaLocalizer.stop();
         openCV.stop();
     }
 }

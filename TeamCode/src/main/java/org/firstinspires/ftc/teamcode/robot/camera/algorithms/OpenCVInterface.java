@@ -13,7 +13,7 @@ public class OpenCVInterface implements Controller{
 
     private OpenCvCamera openCvPassthrough;
     private Telemetry telemetry;
-    private RingDetectorJava ContourRingDetector;
+    private RingDetector ContourRingDetector;
 
     public OpenCVInterface(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -33,7 +33,7 @@ public class OpenCVInterface implements Controller{
                 //TODO: Test GPU Acceleration
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
                 openCvPassthrough.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-                openCvPassthrough.setPipeline(new ContourRingDetector(telemetry, true));
+                openCvPassthrough.setPipeline(new RingDetectorKt(telemetry, true));
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters
                 // are entirely ignored when using Vuforia passthrough mode. However, they are left
