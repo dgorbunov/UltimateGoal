@@ -30,6 +30,7 @@ public class OpenCVInterface implements Controller{
                 // mode, because Vuforia often chooses high resolutions (such as 720p) which can be
                 // very CPU-taxing to rotate in software. GPU acceleration has been observed to cause
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
+                //TODO: Test GPU Acceleration
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
                 openCvPassthrough.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
                 openCvPassthrough.setPipeline(new ContourRingDetector(telemetry, true));

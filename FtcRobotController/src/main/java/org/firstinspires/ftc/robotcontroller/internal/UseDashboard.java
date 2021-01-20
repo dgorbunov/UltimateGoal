@@ -5,6 +5,6 @@ public class UseDashboard {
     /**
      * Configures FTCDashboard on/off for competitions
      */
-    public static boolean USE_DASHBOARD = true;
+    public static boolean DISABLE_DASHBOARD = false;
 
 }

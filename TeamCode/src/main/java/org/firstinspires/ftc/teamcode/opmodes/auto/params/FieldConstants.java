@@ -10,8 +10,6 @@ public class FieldConstants {
      * Field/Autonomous Constants
      */
 
-    public static boolean useDashboard = true;
-
     public static final String RedAlliance = "Red";
     public static final String BlueAlliance = "Blue";
     public static final String LeftSide = "Left";

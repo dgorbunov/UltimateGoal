@@ -27,9 +27,16 @@ public class RedTele extends Tele {
     protected void autoShoot() {
         autoShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
+            //TODO: try turn and linear move
             shooter.spinUp(RPMGoal);
             Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(FieldConstants.RedField.GoalShotPos)
+                    .lineToLinearHeading(FieldConstants.RedField.GoalShotPos,
+                            new MinVelocityConstraint(Arrays.asList(
+                                    drive.getMaxAngVelConstraint(),
+                                    drive.getCustomVelConstraint(12)
+                            )
+                            ), drive.getMaxAccelConstraint())
+
                     .build();
             drive.followTrajectory(trajectory);
             shooter.shoot(3);

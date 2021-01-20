@@ -46,7 +46,7 @@ public class RingDetectorJava extends OpenCvPipeline {
     }
 
     public RingDetectorJava(Telemetry telemetry) {
-        this.telemetry = telemetry;
+        this(telemetry, false);
     }
 
     public int getRingCount() {
@@ -92,7 +92,7 @@ public class RingDetectorJava extends OpenCvPipeline {
             Rect maxRect = new Rect();
             for (MatOfPoint c : contours) {
                 MatOfPoint2f copy = new MatOfPoint2f(c.toArray());
-                Rect rect = Imgproc.boundingRect(copy); //TODO: this might crash, no varargs in c.ToArray, rect might not be declared right
+                Rect rect = Imgproc.boundingRect(copy);
 
                 double w = rect.width;
                 // checking if the rectangle is below the horizon
