@@ -28,6 +28,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.OpenCVInterface;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VuforiaLocalization;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
 /**
@@ -48,7 +50,7 @@ public class Camera implements Controller {
     Telemetry telemetry;
 
     VuforiaLocalizer vuforia = null;
-    OpenCVDetector ringDetector;
+    OpenCVInterface openCV;
     VuforiaLocalization vuforiaLocalization;
 
     public Camera(HardwareMap hardwareMap, Telemetry telemetry){
@@ -70,14 +72,18 @@ public class Camera implements Controller {
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
 
         vuforiaLocalization = new VuforiaLocalization(hardwareMap, telemetry, viewportContainerIds);
-        ringDetector = new OpenCVDetector(vuforiaLocalization.getVuforia(), vuforiaLocalization.getParameters(), viewportContainerIds, telemetry);
+        openCV = new OpenCVInterface(vuforiaLocalization.getVuforia(), vuforiaLocalization.getParameters(), viewportContainerIds, telemetry);
 
         vuforiaLocalization.init();
-        ringDetector.init();
+        openCV.init();
     }
 
-    public double getRingCount(){
-        return ringDetector.getRingCount();
+    public int getRingCount(){
+        return openCV.getRingCount();
+    }
+
+    public String getRingCountStr() {
+        return openCV.getRingCountStr();
     }
 
     public Pose2d getRobotPosition() {
@@ -87,12 +93,12 @@ public class Camera implements Controller {
     @Override
     public void start() {
         vuforiaLocalization.start();
-        ringDetector.start();
+        openCV.start();
     }
 
     @Override
     public void stop() {
         vuforiaLocalization.stop();
-        ringDetector.stop();
+        openCV.stop();
     }
 }

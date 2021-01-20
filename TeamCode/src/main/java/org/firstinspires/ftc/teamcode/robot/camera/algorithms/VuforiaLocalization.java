@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.camera;
+package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
 import androidx.annotation.Nullable;
 

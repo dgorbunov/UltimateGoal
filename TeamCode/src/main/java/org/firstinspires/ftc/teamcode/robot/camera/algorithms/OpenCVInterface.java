@@ -1,25 +1,21 @@
-package org.firstinspires.ftc.teamcode.robot.camera;
+package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-public class OpenCVDetector extends OpenCvPipeline implements Controller{
+public class OpenCVInterface implements Controller{
 
-    OpenCvCamera openCvPassthrough;
-    Telemetry telemetry;
+    private OpenCvCamera openCvPassthrough;
+    private Telemetry telemetry;
+    private RingDetectorJava ContourRingDetector;
 
-    public OpenCVDetector(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry ) {
+    public OpenCVInterface(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         // Create a Vuforia passthrough "virtual camera"
@@ -36,7 +32,7 @@ public class OpenCVDetector extends OpenCvPipeline implements Controller{
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
                 openCvPassthrough.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-                openCvPassthrough.setPipeline(new OpenCVDetector());
+                openCvPassthrough.setPipeline(new ContourRingDetector(telemetry, true));
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters
                 // are entirely ignored when using Vuforia passthrough mode. However, they are left
@@ -48,34 +44,12 @@ public class OpenCVDetector extends OpenCvPipeline implements Controller{
         });
     }
 
-    private OpenCVDetector() {
-
-    }
-
     public int getRingCount() {
-        return 0;
-        //TODO: Implement
+        return ContourRingDetector.getRingCount();
     }
 
-    @Override
-    public Mat processFrame(Mat input) {
-        Imgproc.rectangle(
-                input,
-                new Point(
-                        input.cols()/4,
-                        input.rows()/4),
-                new Point(
-                        input.cols()*(3f/4f),
-                        input.rows()*(3f/4f)),
-                new Scalar(255,0,0,255), 4);
-
-        return input;
-    }
-
-    public void printStats() {
-        telemetry.addData("Passthrough FPS", openCvPassthrough.getFps());
-        telemetry.addData("Frame count", openCvPassthrough.getFrameCount());
-        telemetry.update();
+    public String getRingCountStr() {
+        return ContourRingDetector.getRingCountStr();
     }
 
     @Override
