@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -33,10 +32,11 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Config
 public abstract class Tele extends OpMode {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
-    GamepadMappings gameMap = new GamepadMappings();
+    GamepadMappings gameMap;
     Button intakeButton = new Button();
+    //TODO: test, make all gameMap buttons Booleans
     Button vertIntakeButton = new Button();
     Button wobbleArmButton = new Button();
     Button wobbleGripButton = new Button();
@@ -82,7 +82,8 @@ public abstract class Tele extends OpMode {
 
         drive.setPoseEstimate(MechConstants.StartingPose);
 
-        gameMap.setGamepads(gamepad1, gamepad2);
+//        gameMap.setGamepads(gamepad1, gamepad2);
+        gameMap = new GamepadMappings(gamepad1, gamepad2);
 
         telemetry.clear();
         telemetry.addLine("Initialized");
@@ -105,27 +106,13 @@ public abstract class Tele extends OpMode {
             if (!manShoot) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
-                        () -> drive.setWeightedDrivePower(
-                                new Pose2d(
-                                        DriveFullPower * -gamepad1.left_stick_y,
-                                        DriveFullPower * -gamepad1.left_stick_x,
-                                        DriveFullPower * -gamepad1.right_stick_x
-                                )),
-                        () -> drive.setWeightedDrivePower(
-                                new Pose2d(
-                                        DriveSlowPower * -gamepad1.left_stick_y,
-                                        DriveSlowPower * -gamepad1.left_stick_x,
-                                        DriveSlowPower * -gamepad1.right_stick_x
-                                )
-                        ));
+                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower)
+                );
+
             } else {
                 if (!shooter.shootingState) manShoot = false;
-                drive.setWeightedDrivePower(
-                        new Pose2d(
-                                DriveSlowPower * -gamepad1.left_stick_y,
-                                DriveSlowPower * -gamepad1.left_stick_x,
-                                DriveSlowPower * -gamepad1.right_stick_x
-                        ));
+                drive.driveFieldCentric(gamepad1, DriveSlowPower);
                 driveModeButton.resetToggle();
             }
         }

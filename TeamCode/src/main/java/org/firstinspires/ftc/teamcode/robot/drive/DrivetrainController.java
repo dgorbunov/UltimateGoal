@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -29,6 +30,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -416,6 +418,37 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
 
         setDrivePower(vel);
+    }
+
+    public void driveWithGamepad(Gamepad gamepad, double power){
+        setWeightedDrivePower(
+                new Pose2d(
+                        power * -gamepad.left_stick_y,
+                        power * -gamepad.left_stick_x,
+                        power * -gamepad.right_stick_x
+                ));
+    }
+
+    public void driveFieldCentric(Gamepad gamepad, double power) {
+        // Read pose
+        Pose2d poseEstimate = getPoseEstimate();
+
+        // Create a vector from the gamepad x/y inputs
+        // Then, rotate that vector by the inverse of that heading
+        Vector2d input = new Vector2d(
+                -gamepad.left_stick_y,
+                -gamepad.left_stick_x
+        ).rotated(-poseEstimate.getHeading());
+
+        // Pass in the rotated input + right stick value for rotation
+        // Rotation is not part of the rotated input thus must be passed in separately
+        setWeightedDrivePower(
+                new Pose2d(
+                        power * input.getX(),
+                        power * input.getY(),
+                        power * -gamepad.right_stick_x
+                )
+        );
     }
 
     public AngularVelocityConstraint getMaxAngVelConstraint(){

@@ -11,6 +11,15 @@ public class GamepadMappings {
     Gamepad gamepad1;
     Gamepad gamepad2;
 
+    public GamepadMappings(Gamepad gamepad1, Gamepad gamepad2) {
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
+    }
+
+    public GamepadMappings() {
+
+    }
+
     public void setGamepads(Gamepad gamepad1, Gamepad gamepad2){
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
@@ -28,7 +37,7 @@ public class GamepadMappings {
     public boolean StartFlywheel() {
         return gamepad1.b && !gamepad1.start;
     }
-    public boolean Intake() {
+    public Boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;
     }
