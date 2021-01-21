@@ -43,6 +43,8 @@ public class RingDetector extends OpenCvPipeline {
     public RingDetector(Telemetry telemetry, boolean debug) {
         this.telemetry = telemetry;
         this.debug = debug;
+        ret = new Mat();
+        mat = new Mat();
     }
 
     public RingDetector(Telemetry telemetry) {
@@ -63,7 +65,6 @@ public class RingDetector extends OpenCvPipeline {
         // must release at the start of function since this is the variable being returned
 
         ret = new Mat(); // resetting pointer held in ret
-        mat = new Mat();
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);

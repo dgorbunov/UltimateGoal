@@ -1,21 +1,22 @@
-package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
+package org.firstinspires.ftc.teamcode.robot.camera.libs;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-public class OpenCVInterface implements Controller{
+public class OpenCVController implements Controller{
 
     private OpenCvCamera openCvPassthrough;
     private Telemetry telemetry;
     private RingDetector ContourRingDetector;
 
-    public OpenCVInterface(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
+    public OpenCVController(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         // Create a Vuforia passthrough "virtual camera"

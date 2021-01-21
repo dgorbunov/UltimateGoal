@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.OpenCVInterface;
+import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,12 +38,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 @Config
-@Deprecated
 public class CameraController implements Controller {
 
     Telemetry telemetry;
     HardwareMap hardwareMap;
-    OpenCVInterface ringDetector;
+    OpenCVController ringDetector;
 
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/UltimateGoal.tflite"; //For OpenRC, loaded from internal storage to reduce APK size
     public static final String LABEL_FIRST_ELEMENT = "Quad";

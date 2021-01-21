@@ -102,8 +102,7 @@ public abstract class Sequence {
     public void moveToZone(Vector2d targetZone, Vector2d intermediatePos, double targetHeading) throws IllegalArgumentException {
         telemetry.addData("Sequence", "moveToZone");
         turn(targetHeading);
-//        followTrajectoryAsync(buildSplineTrajectory(intermediatePos, initialHeading, targetHeading));
-//        followTrajectoryAsync(buildSplineTrajectory(targetZone, initialHeading, targetHeading));
+
 
         Pose2d positions[] = new Pose2d[] {
                 new Pose2d(intermediatePos, targetHeading),
@@ -222,13 +221,6 @@ public abstract class Sequence {
             trajectory.splineToConstantHeading(position, Math.toRadians(targetHeading));
         }
 
-        return trajectory.build();
-    }
-
-    private Trajectory buildStrafeTrajectory(double strafe) {
-        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
-        trajectory.strafeLeft(strafe);
         return trajectory.build();
     }
 

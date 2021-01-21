@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
+package org.firstinspires.ftc.teamcode.robot.camera.libs;
 
 import androidx.annotation.Nullable;
 
@@ -27,7 +27,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.INTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-public class VuforiaLocalizer implements Controller {
+public class VuforiaController implements Controller {
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -63,7 +63,7 @@ public class VuforiaLocalizer implements Controller {
 
     private VuforiaTrackables targetsUltimateGoal;
 
-    private VuforiaLocalizer(HardwareMap hardwareMap, Telemetry telemetry, int[] viewportContainerIds) {
+    private VuforiaController(HardwareMap hardwareMap, Telemetry telemetry, int[] viewportContainerIds) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
@@ -78,7 +78,7 @@ public class VuforiaLocalizer implements Controller {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
-    public VuforiaLocalizer(HardwareMap hardwareMap, Telemetry telemetry, int[] viewportContainerIds, boolean useLocalizer) {
+    public VuforiaController(HardwareMap hardwareMap, Telemetry telemetry, int[] viewportContainerIds, boolean useLocalizer) {
         this(hardwareMap, telemetry, viewportContainerIds);
         this.useLocalizer = useLocalizer;
     }

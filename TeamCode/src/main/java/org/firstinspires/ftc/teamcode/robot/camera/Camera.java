@@ -28,15 +28,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.OpenCVInterface;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
+import org.firstinspires.ftc.teamcode.robot.camera.libs.VuforiaController;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
 /**
  * In this sample, we demonstrate how to use EasyOpenCV in
  * Vuforia passthrough mode. In this mode, EasyOpenCV does not
  * take direct control over the camera. Instead, it pulls frames
- * out of a VuforiaLocalizer's frame queue. This allows you to
+ * out of a VuforiaController's frame queue. This allows you to
  * run both OpenCV and Vuforia simultaneously on the same camera.
  * The downside is that you do not get to choose the resolution
  * of frames delivered to your pipeline, and you do not get any
@@ -49,8 +49,8 @@ public class Camera implements Controller {
     private Telemetry telemetry;
 
     private org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer vuforia = null;
-    private OpenCVInterface openCV;
-    private VuforiaLocalizer vuforiaLocalizer;
+    private OpenCVController openCV;
+    private VuforiaController vuforiaController;
 
     private boolean useLocalizer = false;
 
@@ -72,10 +72,10 @@ public class Camera implements Controller {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
 
-        vuforiaLocalizer = new VuforiaLocalizer(hardwareMap, telemetry, viewportContainerIds, useLocalizer);
-        openCV = new OpenCVInterface(vuforiaLocalizer.getVuforia(), vuforiaLocalizer.getParameters(), viewportContainerIds, telemetry);
+        vuforiaController = new VuforiaController(hardwareMap, telemetry, viewportContainerIds, useLocalizer);
+        openCV = new OpenCVController(vuforiaController.getVuforia(), vuforiaController.getParameters(), viewportContainerIds, telemetry);
 
-        vuforiaLocalizer.init();
+        vuforiaController.init();
         openCV.init();
     }
 
@@ -89,18 +89,18 @@ public class Camera implements Controller {
 
     @Nullable
     public Pose2d getRobotPosition() {
-        return vuforiaLocalizer.getRobotPosition();
+        return vuforiaController.getRobotPosition();
     }
 
     @Override
     public void start() {
-        vuforiaLocalizer.start();
+        vuforiaController.start();
         openCV.start();
     }
 
     @Override
     public void stop() {
-        vuforiaLocalizer.stop();
+        vuforiaController.stop();
         openCV.stop();
     }
 }
