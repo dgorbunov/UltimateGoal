@@ -56,6 +56,7 @@ public abstract class Tele extends OpMode {
     protected ControllerManager controllers;
 
     protected boolean autoShoot = false;
+    protected boolean manShoot = false;
 
     MultipleTelemetry data;
 
@@ -98,22 +99,35 @@ public abstract class Tele extends OpMode {
 
 
     public void loop() {
+        //lock out the gamepad during automatic shooting
         if (!autoShoot) {
-            driveModeButton.toggleLoop(
-                    gameMap.DriveMode(),
-                    () -> drive.setWeightedDrivePower(
-                            new Pose2d(
-                                    DriveFullPower * -gamepad1.left_stick_y,
-                                    DriveFullPower * -gamepad1.left_stick_x,
-                                    DriveFullPower * -gamepad1.right_stick_x
-                            )),
-                    () -> drive.setWeightedDrivePower(
-                            new Pose2d(
-                                    DriveSlowPower * -gamepad1.left_stick_y,
-                                    DriveSlowPower * -gamepad1.left_stick_x,
-                                    DriveSlowPower * -gamepad1.right_stick_x
-                            )
-                    ));
+            //automatically go to slow mode during manual shooting
+            if (!manShoot) {
+                driveModeButton.toggleLoop(
+                        gameMap.DriveMode(),
+                        () -> drive.setWeightedDrivePower(
+                                new Pose2d(
+                                        DriveFullPower * -gamepad1.left_stick_y,
+                                        DriveFullPower * -gamepad1.left_stick_x,
+                                        DriveFullPower * -gamepad1.right_stick_x
+                                )),
+                        () -> drive.setWeightedDrivePower(
+                                new Pose2d(
+                                        DriveSlowPower * -gamepad1.left_stick_y,
+                                        DriveSlowPower * -gamepad1.left_stick_x,
+                                        DriveSlowPower * -gamepad1.right_stick_x
+                                )
+                        ));
+            } else {
+                if (!shooter.shootingState) manShoot = false;
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                DriveSlowPower * -gamepad1.left_stick_y,
+                                DriveSlowPower * -gamepad1.left_stick_x,
+                                DriveSlowPower * -gamepad1.right_stick_x
+                        ));
+                driveModeButton.resetToggle();
+            }
         }
 
         drive.update();

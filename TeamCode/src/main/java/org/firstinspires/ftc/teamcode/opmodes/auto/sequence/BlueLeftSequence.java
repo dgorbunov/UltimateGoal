@@ -12,7 +12,7 @@ public class BlueLeftSequence extends Sequence {
         super(controllers, tel);
         startPose = new Pose2d(
                 FieldConstants.BlueLeft.StartingPos,
-                Math.toRadians(0)); // TODO: rotate 180?
+                Math.toRadians(0));
     }
 
     protected void makeActions() {

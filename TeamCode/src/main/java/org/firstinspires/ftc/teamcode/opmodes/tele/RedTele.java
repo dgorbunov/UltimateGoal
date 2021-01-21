@@ -51,7 +51,7 @@ public class RedTele extends Tele {
                     .build();
             drive.followTrajectory(trajectory);
 
-            //TODO: TEST THIS
+            //TODO: TEST THIS, finish powershot!
             Trajectory turn = drive.trajectoryBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(
                             drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
@@ -93,8 +93,10 @@ public class RedTele extends Tele {
 
     @Override
     protected void manShoot() {
+        manShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             shooter.shoot(3, RPMGoal);
+            //TODO: make sure manShoot boolean works
         }
         else {
             powerShotCount++;

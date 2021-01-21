@@ -22,9 +22,10 @@ public class ShooterController implements Controller {
     public static volatile double Delay1 = 250;
     public static volatile double Delay2 = 250;
 
-
     public static double BumpPosition = 0.6;
     public static double RetractPosition = 0.35;
+
+    public boolean shootingState;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
@@ -58,7 +59,6 @@ public class ShooterController implements Controller {
 
     @Override
     public void init() {
-
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
 
@@ -82,6 +82,7 @@ public class ShooterController implements Controller {
             shooter.setPower(0);
             shooter.setMotorDisable();
             bumper.setPosition(RetractPosition);
+            shootingState = false;
     }
 
 
@@ -91,6 +92,7 @@ public class ShooterController implements Controller {
     }
 
     public synchronized void shoot(int ringCount, double RPM){
+        shootingState = true;
         this.ringCount = ringCount;
         checkSpeed(RPM);
 
