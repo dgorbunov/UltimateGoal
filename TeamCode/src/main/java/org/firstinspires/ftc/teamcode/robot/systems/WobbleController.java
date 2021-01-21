@@ -22,7 +22,7 @@ public class WobbleController implements Controller {
     public static double ArmDropPos = 0.18;
     public static double ArmPickupPos = 0.625;
     public static double GripInitPos = GripGrabPos; //0.55
-    public static double ArmInitPos = ArmPickupPos; //0.85
+    public static double ArmInitPos = 0.8; //0.85
 
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -44,6 +44,7 @@ public class WobbleController implements Controller {
 
     @Override
     public void start() {
+        wobbleArm.setPosition(ArmPickupPos);
 
     }
 
@@ -59,17 +60,16 @@ public class WobbleController implements Controller {
     public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
         wobbleArm.setPosition(ArmDropPos);
-        sleep(500);
-        wobbleGrip.setPosition(ArmPickupPos);
+        sleep(275);
+        wobbleGrip.setPosition(GripReleasePos);
     }
 
     // TODO: pickup wobble
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);
-        sleep(250);
+        sleep(275);
         wobbleArm.setPosition(ArmPickupPos);
-        sleep(500);
     }
 
     public void grab(){

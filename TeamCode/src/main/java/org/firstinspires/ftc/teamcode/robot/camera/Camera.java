@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode.robot.camera;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -44,7 +43,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
  * sort of manual control over sensor parameters such as exposure,
  * gain, ISO, or frame rate.
  */
-@TeleOp
 public class Camera implements Controller {
 
     private HardwareMap hardwareMap;

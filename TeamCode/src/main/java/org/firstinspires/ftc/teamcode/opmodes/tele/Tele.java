@@ -33,7 +33,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Config
 public abstract class Tele extends OpMode {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
     GamepadMappings gameMap = new GamepadMappings();
     Button intakeButton = new Button();

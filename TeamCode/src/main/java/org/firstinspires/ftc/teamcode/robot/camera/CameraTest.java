@@ -18,6 +18,7 @@ public class CameraTest extends OpMode {
 
     public void init_loop() {
         telemetry.addLine(camera.getRingCountStr());
+        telemetry.update();
     }
 
     public void start() {

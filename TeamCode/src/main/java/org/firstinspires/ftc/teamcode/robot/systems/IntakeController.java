@@ -19,7 +19,7 @@ public class IntakeController implements Controller {
 
     public static double ArmStartPos = 0.262;
     public static double ArmDropPos = 0.6;
-    public static double IntakePower = 0.8;
+    public static double IntakePower = 0.9;
     public static DcMotorEx.Direction IntakeDirection = DcMotorEx.Direction.FORWARD;
     public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
 

@@ -31,7 +31,8 @@ public class RedLeftSequence extends Sequence {
                 break;
         }
 //        actions.add(() -> startShooter(4800));
-        actions.add(() -> moveToShoot(RedLeft.IntermediatePos, RedField.GoalShotPos));
+//        actions.add(() -> moveToShoot(RedLeft.IntermediatePos, RedField.GoalShotPos));
+        //TODO: fix
         actions.add(() -> shootGoal(3));
 
         actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,8 +30,9 @@ public class RedTele extends Tele {
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             //TODO: try turn and linear move
             shooter.spinUp(RPMGoal);
+            drive.turn(FieldConstants.RedField.GoalShotPos.getHeading());
             Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(FieldConstants.RedField.GoalShotPos,
+                    .lineTo(new Vector2d(FieldConstants.RedField.GoalShotPos.getX(), FieldConstants.RedField.GoalShotPos.getY()),
                             new MinVelocityConstraint(Arrays.asList(
                                     drive.getMaxAngVelConstraint(),
                                     drive.getCustomVelConstraint(12)

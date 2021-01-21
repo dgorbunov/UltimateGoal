@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
@@ -34,14 +35,20 @@ public class RedRightSequence extends Sequence {
                 targetZone = RedField.TargetZoneC;
                 break;
         }
-//        actions.add(() -> startShooter(RPMGoal));
-        actions.add(() -> moveToShoot(RedRight.IntermediatePos, RedField.GoalShotPos));
+        actions.add(() -> moveToShoot(RedRight.IntermediatePos, new Vector2d(RedField.GoalShotPos.getX(),RedField.GoalShotPos.getY()), 0));
         actions.add(() -> shootGoal(3));
 
-        if (ringCount != 0) {
+        if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
             actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
-            actions.add(() -> shootGoal(ringCount));
+            actions.add(() -> shootGoal(1));
+        }
+
+        if (ringCount == 4) {
+            actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
+            actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
+            actions.add(() -> stopIntake());
+            actions.add(() -> shootGoal(3));
         }
 
         actions.add(() -> stopShooter());
@@ -56,7 +63,9 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> dropWobble());
         actions.add(() -> backOffFromWobbles(WobbleBackupDistance));
 
-        actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+        if (ringCount == 4) {
+            actions.add(() -> moveToLaunchLine(RedField.EndingPositionFour));
+        } else actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
         actions.add(() -> stop());
 
     }

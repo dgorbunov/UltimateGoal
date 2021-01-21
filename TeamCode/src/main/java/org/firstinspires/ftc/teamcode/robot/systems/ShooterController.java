@@ -133,7 +133,7 @@ public class ShooterController implements Controller {
         }
         //if we are spinning up and not at target speed yet, hit this
         else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
-            sleep(0.5 * SpinUpDelay);
+            sleep(0.2 * SpinUpDelay);
             telemetry.addLine("Spinner was not spinning at correct velocity.");
         }
     }

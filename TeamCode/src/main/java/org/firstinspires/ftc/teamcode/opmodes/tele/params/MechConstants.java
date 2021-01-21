@@ -16,7 +16,7 @@ public class MechConstants {
     public static double DriveFullPower = 0.80;
     public static double DriveSlowPower = 0.20;
 
-    public static double RPMGoal = 3650;
+    public static double RPMGoal = 3800;
     public static double RPMPowerShot = 3500;
     public static double PowerShotDelay = 500;
 

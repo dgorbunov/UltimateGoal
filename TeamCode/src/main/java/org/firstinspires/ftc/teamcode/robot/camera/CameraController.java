@@ -133,6 +133,11 @@ public class CameraController implements Controller {
 //    }
 
     public void stopTFOD(){
+        Thread thread = new Thread(this::stopTensorFlow);
+        thread.start();
+    }
+
+    private void stopTensorFlow() {
         tfod.deactivate();
     }
 
@@ -260,7 +265,7 @@ public class CameraController implements Controller {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
@@ -277,11 +282,11 @@ public class CameraController implements Controller {
         //
 
         if (Auto.getSequenceSide() != null) {
-            if (Auto.getSequenceSide() == FieldConstants.LeftSide) tfod.setClippingMargins(0, tfodCropY, tfodCropX, tfodCropY);
-            else tfod.setClippingMargins(tfodCropX, tfodCropY, 0, tfodCropY);
+            if (Auto.getSequenceSide() == FieldConstants.LeftSide) tfod.setClippingMargins(100, 215, 350, 0);
+            else tfod.setClippingMargins(100, 215, 350, 0);
             //TODO: this was reversed because camera is upside down
         }
-        tfod.setZoom(1.50, 16.0/9.0);
+        tfod.setZoom(1.8, 16.0/9.0);
 
     }
 
