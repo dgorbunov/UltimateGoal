@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.util.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Red;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
@@ -106,13 +107,13 @@ public abstract class Tele extends OpMode {
             if (!manShoot) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower)
+                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Red),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Red)
                 );
 
             } else {
                 if (!shooter.shootingState) manShoot = false;
-                drive.driveFieldCentric(gamepad1, DriveSlowPower);
+                drive.driveFieldCentric(gamepad1, DriveSlowPower, Red);
                 driveModeButton.resetToggle();
             }
         }
@@ -126,7 +127,7 @@ public abstract class Tele extends OpMode {
                 gameMap.Intake(),
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
-                () -> intake.stop());
+                () -> intake.stopIntake());
 
         vertIntakeButton.toggle(
                 gameMap.VertIntake(),

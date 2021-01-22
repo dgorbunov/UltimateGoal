@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import java.util.Arrays;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
-import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 public abstract class Sequence {
 
@@ -118,12 +117,12 @@ public abstract class Sequence {
         wobble.dropAuto();
     }
 
-    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double targetHeading) {
-        telemetry.addData("Sequence","moveToStart");
-//        followTrajectoryAsync(buildSplineTrajectory(wobblePos, initialHeading, targetHeading));
-        followTrajectoryAsync(buildBackTrajectory(12));
-        followTrajectoryAsync(buildLinearTrajectory(intermediate, 0));
-        followTrajectoryAsync(buildWobbleTrajectory(wobblePos, targetHeading));
+    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endTangent) {
+        telemetry.addData("Sequence","moveToWobble");
+
+
+        followTrajectoryAsync(buildSplineTrajectory(180, new Pose2d(intermediate, endTangent)));
+        followTrajectoryAsync(buildLineTrajectory(new Pose2d(wobblePos, endTangent), 12));
     }
 
     public void pickupWobble() {
@@ -187,16 +186,14 @@ public abstract class Sequence {
             case (1):
                 telemetry.addData("Sequence", "intake 1 ring");
                 intake.extend();
-                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.25));
-                sleep(100);
+                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.1));
                 intake.stop();
                 break;
 
             case (4):
                 telemetry.addData("Sequence", "intake 4 rings");
                 intake.extend();
-                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.25));
-                sleep(400);
+                followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.1));
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");
@@ -206,7 +203,7 @@ public abstract class Sequence {
 
     public void stopIntake(){
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
-        intake.stop();
+        intake.stopIntake();
     }
 
     public void moveToLaunchLine(Vector2d position) {
@@ -241,10 +238,29 @@ public abstract class Sequence {
         return trajectory.build();
     }
 
+    private Trajectory buildLineLinearHeadingTrajectory(Pose2d pos) {
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
+        trajectory.lineToLinearHeading(pos);
 
-    private Trajectory buildSplineTrajectory(Pose2d[] positions){
+        return trajectory.build();
+    }
+
+
+    private Trajectory buildSplineTrajectory(Pose2d... positions){
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose());
+        for (Pose2d position : positions) {
+            trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
+        }
+
+        Trajectory trajectory = trajectoryBuilder.build();
+        return trajectory;
+    }
+
+    private Trajectory buildSplineTrajectory(double startTangent, Pose2d... positions){
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose(), Math.toRadians(startTangent));
         for (Pose2d position : positions) {
             trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
         }
@@ -269,6 +285,20 @@ public abstract class Sequence {
         trajectory.lineToLinearHeading(position);
 
         return trajectory.build();
+    }
+
+    private Trajectory buildLineTrajectory(Pose2d position, double velocity){
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
+                .lineToLinearHeading(position,
+                        new MinVelocityConstraint(Arrays.asList(
+                                drive.getMaxAngVelConstraint(),
+                                drive.getCustomVelConstraint(velocity)
+                        )
+                        ), drive.getMaxAccelConstraint())
+                .build();
+
+        return trajectory;
     }
 
     private Trajectory buildStrafeTrajectory(Vector2d position){
@@ -299,20 +329,22 @@ public abstract class Sequence {
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
         drive.turn(heading);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                        //this ugly thing lowers the speed of our driving
-                        .lineToLinearHeading(new Pose2d(position, heading),
-                                new MinVelocityConstraint(Arrays.asList(
-                                        drive.getMaxAngVelConstraint(),
-                                        drive.getCustomVelConstraint(9)
-                                )
-                                ), drive.getMaxAccelConstraint())
-
                 .addTemporalMarker(timeDelay, () -> { // This marker runs x # of seconds into the trajectory
-                        intake.run(FORWARD);
+                    intake.run(FORWARD);
                 })
+                        //this ugly thing lowers the speed of our driving
+                .lineToLinearHeading(new Pose2d(position, heading),
+                        new MinVelocityConstraint(Arrays.asList(
+                                drive.getMaxAngVelConstraint(),
+                                drive.getCustomVelConstraint(15)
+                        )
+                        ), drive.getMaxAccelConstraint())
+
                 .build();
         return trajectory;
     }
+
+
 
     private Trajectory buildWobbleTrajectory(Vector2d pos, double heading) {
         //slower version of buildLinearTrajectory

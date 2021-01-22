@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
@@ -64,8 +65,8 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 
 @Config
 public class DrivetrainController extends MecanumDrive implements Controller {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0.2);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(14, 0, 1.25);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(14, 0, 1.5); //10, 0, 0.8
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 1.25); //8, 0, 1=
 
     public static boolean TESTING = false;
 
@@ -429,16 +430,31 @@ public class DrivetrainController extends MecanumDrive implements Controller {
                 ));
     }
 
-    public void driveFieldCentric(Gamepad gamepad, double power) {
+    public void driveFieldCentric(Gamepad gamepad, double power, FieldConstants.Alliance alliance) {
         // Read pose
         Pose2d poseEstimate = getPoseEstimate();
 
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
-        Vector2d input = new Vector2d(
-                -gamepad.left_stick_y,
-                -gamepad.left_stick_x
-        ).rotated(-poseEstimate.getHeading());
+        Vector2d input;
+        if (alliance != null){
+            if (alliance == FieldConstants.Alliance.Red) {
+                input = new Vector2d(
+                    -gamepad.left_stick_y,
+                    -gamepad.left_stick_x
+                ).rotated(-poseEstimate.getHeading() + Math.toRadians(90));
+            } else {
+                input = new Vector2d(
+                    -gamepad.left_stick_y,
+                    -gamepad.left_stick_x
+                ).rotated(-poseEstimate.getHeading() + Math.toRadians(-90));
+            }
+        } else {
+            input = new Vector2d(
+                    -gamepad.left_stick_y,
+                    -gamepad.left_stick_x
+            ).rotated(-poseEstimate.getHeading()); //bottom field perspective
+        }
 
         // Pass in the rotated input + right stick value for rotation
         // Rotation is not part of the rotated input thus must be passed in separately

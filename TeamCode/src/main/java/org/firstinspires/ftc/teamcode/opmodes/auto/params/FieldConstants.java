@@ -15,6 +15,14 @@ public class FieldConstants {
     public static final String LeftSide = "Left";
     public static final String RightSide = "Right";
 
+    public enum Alliance {
+        Red, Blue
+    }
+
+    public enum Side {
+        Left, Right
+    }
+
     public static final String AllTrajectories = "all";
 
     public static final String NoRings = "None";
@@ -41,7 +49,7 @@ public class FieldConstants {
         public static final Vector2d TargetZoneC = new Vector2d(41,-63);
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Pose2d GoalShotPos = new Pose2d(-2, -39, Math.toRadians(0));
-        public static final Vector2d PowerShotPos = new Vector2d(-2, -12);
+        public static final Pose2d PowerShotPos = new Pose2d(-2, -12, Math.toRadians(9));
         public static final Vector2d IntakePos = new Vector2d(RingPos.getX(), RingPos.getY());
         public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 4, RingPos.getY());
         public static final Vector2d LeftWobblePos = new Vector2d(-37.5, -23.00);

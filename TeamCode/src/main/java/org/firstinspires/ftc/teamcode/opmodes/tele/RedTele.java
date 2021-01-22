@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +9,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 
 import java.util.Arrays;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.PowerShotDelay;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
@@ -29,13 +29,13 @@ public class RedTele extends Tele {
         autoShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             //TODO: try turn and linear move
-            shooter.spinUp(RPMGoal);
-            drive.turn(FieldConstants.RedField.GoalShotPos.getHeading());
+//            shooter.spinUp(RPMGoal);
+            drive.turn(GoalShotPos.getHeading());
             Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineTo(new Vector2d(FieldConstants.RedField.GoalShotPos.getX(), FieldConstants.RedField.GoalShotPos.getY()),
+                    .lineToLinearHeading(GoalShotPos,
                             new MinVelocityConstraint(Arrays.asList(
                                     drive.getMaxAngVelConstraint(),
-                                    drive.getCustomVelConstraint(12)
+                                    drive.getCustomVelConstraint(20)
                             )
                             ), drive.getMaxAccelConstraint())
 
@@ -44,14 +44,19 @@ public class RedTele extends Tele {
             shooter.shoot(3);
         }
         else {
-            shooter.spinUp(RPMPowerShot);
-            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
+//            shooter.spinUp(RPMPowerShot);
+//            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
             Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineTo(FieldConstants.RedField.PowerShotPos)
+                    .lineToLinearHeading(FieldConstants.RedField.PowerShotPos,
+                            new MinVelocityConstraint(Arrays.asList(
+                                    drive.getMaxAngVelConstraint(),
+                                    drive.getCustomVelConstraint(20)
+                            )
+                            ), drive.getMaxAccelConstraint())
                     .build();
             drive.followTrajectory(trajectory);
 
-            //TODO: TEST THIS, finish powershot!
+            //TODO: TEST THIS, finish powershot! try turn
             Trajectory turn = drive.trajectoryBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(
                             drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
@@ -96,7 +101,6 @@ public class RedTele extends Tele {
         manShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             shooter.shoot(3, RPMGoal);
-            //TODO: make sure manShoot boolean works
         }
         else {
             powerShotCount++;

@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 @Autonomous(group = "drive")
 public class BackAndForth extends LinearOpMode {
 
-    public static double DISTANCE = 50;
+    public static double DISTANCE = 65;
 
     @Override
     public void runOpMode() throws InterruptedException {

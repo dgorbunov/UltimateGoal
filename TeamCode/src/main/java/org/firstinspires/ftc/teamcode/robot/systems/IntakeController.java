@@ -44,7 +44,7 @@ public class IntakeController implements Controller {
 
     @Override
     public void start() {
-        arm.setPosition(ArmStartPos);
+
     }
 
     public void extend() {
@@ -53,6 +53,11 @@ public class IntakeController implements Controller {
 
     @Override
     public void stop() {
+        intake.setPower(0);
+        arm.setPosition(ArmStartPos);
+    }
+
+    public void stopIntake() {
         intake.setPower(0);
     }
 

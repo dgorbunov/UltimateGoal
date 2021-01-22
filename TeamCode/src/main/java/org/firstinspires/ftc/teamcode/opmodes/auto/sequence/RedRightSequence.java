@@ -51,7 +51,7 @@ public class RedRightSequence extends Sequence {
             actions.add(() -> shootGoal(3));
         }
 
-        actions.add(() -> stopShooter());
+//        actions.add(() -> stopShooter());
 
         actions.add(() -> moveLinear(targetZone.getX() + WobbleXOffset, targetZone.getY(),0));
         actions.add(() -> dropWobble());

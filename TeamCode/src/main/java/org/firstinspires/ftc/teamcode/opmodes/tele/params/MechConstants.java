@@ -13,16 +13,15 @@ public class MechConstants {
      */
     public static Pose2d StartingPose = new Pose2d(0.50,-36,0);
 
-    public static double DriveFullPower = 0.80;
-    public static double DriveSlowPower = 0.20;
+    public static double DriveFullPower = 0.85;
+    public static double DriveSlowPower = 0.25;
 
     public static double RPMGoal = 3800;
     public static double RPMPowerShot = 3500;
-    public static double PowerShotDelay = 500;
+    public static double PowerShotDelay = 250;
 
     @Config
     public static class Red {
-        public static double PowerShotInitialAngle = 9;
         public static double PowerShotAngleIncrement = -6;
         public static double AutoShootLine = -24.5;
     }
