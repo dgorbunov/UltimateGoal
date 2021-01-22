@@ -59,13 +59,13 @@ public abstract class Tele extends OpMode {
     protected boolean autoShoot = false;
     protected boolean manShoot = false;
 
-    MultipleTelemetry data;
+    MultipleTelemetry multiTelemetry;
 
     public void init() {
         //TODO: how do you make this just telemetry?
-        data = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
-        telemetry.addLine("Initializing...");
+        multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
+        multiTelemetry.addLine("Initializing...");
 
         DrivetrainController.TESTING = false;
 
@@ -86,8 +86,8 @@ public abstract class Tele extends OpMode {
 //        gameMap.setGamepads(gamepad1, gamepad2);
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
-        telemetry.clear();
-        telemetry.addLine("Initialized");
+        multiTelemetry.clear();
+        multiTelemetry.addLine("Initialized");
     }
 
     public void init_loop() {
@@ -162,7 +162,7 @@ public abstract class Tele extends OpMode {
             vertIntakeButton.resetToggle();
         }
 
-        telemetry.addLine(hub.getFormattedCurrentDraw());
+        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
     }
 
     protected abstract void autoShoot();
@@ -170,12 +170,12 @@ public abstract class Tele extends OpMode {
     protected abstract void manShoot();
 
     public void stop() {
-        telemetry.addLine("Stopping...");
+        multiTelemetry.addLine("Stopping...");
 
         controllers.stop();
 
-        telemetry.clear();
-        telemetry.addLine("Stopped");
+        multiTelemetry.clear();
+        multiTelemetry.addLine("Stopped");
     }
 
 }

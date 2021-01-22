@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -31,20 +33,23 @@ public class Auto extends OpMode {
     protected final static Object lock = new Object();
     protected String sequenceName;
     protected static String sequenceSide;
+    
+    private MultipleTelemetry multiTelemetry;
 
     @Override
     public void init() {
-        telemetry.addLine("Initializing...");
+        multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        multiTelemetry.addLine("Initializing...");
 
         //Do not change anything here!
-        controllers = new ControllerManager(telemetry);
-        controllers.make(hardwareMap, telemetry);
+        controllers = new ControllerManager(multiTelemetry);
+        controllers.make(hardwareMap, multiTelemetry);
 
         makeSequences();
         synchronized (lock) {
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
-                telemetry.addLine("No sequence found!");
+                multiTelemetry.addLine("No sequence found!");
                 return;
             }
         }
@@ -54,7 +59,7 @@ public class Auto extends OpMode {
         // Initialize all controllers
         controllers.init();
 
-        telemetry.addLine("Initialized");
+        multiTelemetry.addLine("Initialized");
     }
 
     @Override
@@ -69,15 +74,15 @@ public class Auto extends OpMode {
         camera.stopTFOD();
 
             try {
-                telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
+                multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
                 currentSequence.init(ringCount);
 
-                telemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
+                multiTelemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
                 // execute runs async
                 currentSequence.execute();
             } catch (Exception e) {
-                telemetry.addLine("Exception while executing sequence: " + e.toString());
+                multiTelemetry.addLine("Exception while executing sequence: " + e.toString());
             }
     }
 
@@ -118,19 +123,19 @@ public class Auto extends OpMode {
         synchronized (lock) {
             sequences.put(makeSequenceName(
                     FieldConstants.RedAlliance, FieldConstants.LeftSide),
-                    new RedLeftSequence(controllers, telemetry));
+                    new RedLeftSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
                     FieldConstants.RedAlliance, FieldConstants.RightSide),
-                    new RedRightSequence(controllers, telemetry));
+                    new RedRightSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
                     FieldConstants.BlueAlliance, FieldConstants.LeftSide),
-                    new BlueLeftSequence(controllers, telemetry));
+                    new BlueLeftSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
                     FieldConstants.BlueAlliance, FieldConstants.RightSide),
-                    new BlueRightSequence(controllers, telemetry));
+                    new BlueRightSequence(controllers, multiTelemetry));
         }
     }
 
@@ -150,20 +155,20 @@ public class Auto extends OpMode {
     private void computeRingCount() {
         CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
         if (camera == null) {
-            telemetry.addLine("Camera not initialized");
+            multiTelemetry.addLine("Camera not initialized");
             return;
         }
 
         String strNumRings = camera.rankRings();
-        telemetry.addLine("Camera rankRings returned: " + strNumRings);
+        multiTelemetry.addLine("Camera rankRings returned: " + strNumRings);
 
 //        int ringCountOpenCV = camera.countRingsOpenCV();
-//        telemetry.addData("OpenCV returned rings", ringCountOpenCV);
+//        multiTelemetry.addData("OpenCV returned rings", ringCountOpenCV);
 
         int rings = camera.ringsToInt(strNumRings);
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1);
-            telemetry.addData("Camera ringsToInt returned: ", ringCount);
+            multiTelemetry.addData("Camera ringsToInt returned: ", ringCount);
         }
     }
 }
