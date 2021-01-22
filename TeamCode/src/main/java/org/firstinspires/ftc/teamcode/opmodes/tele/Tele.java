@@ -33,11 +33,10 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Config
 public abstract class Tele extends OpMode {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
     GamepadMappings gameMap;
     Button intakeButton = new Button();
-    //TODO: test, make all gameMap buttons Booleans
     Button vertIntakeButton = new Button();
     Button wobbleArmButton = new Button();
     Button wobbleGripButton = new Button();
@@ -59,10 +58,9 @@ public abstract class Tele extends OpMode {
     protected boolean autoShoot = false;
     protected boolean manShoot = false;
 
-    MultipleTelemetry multiTelemetry;
+    protected MultipleTelemetry multiTelemetry;
 
     public void init() {
-        //TODO: how do you make this just telemetry?
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
         multiTelemetry.addLine("Initializing...");

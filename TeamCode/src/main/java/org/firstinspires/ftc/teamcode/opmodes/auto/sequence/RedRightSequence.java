@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.WobbleBackupDistance;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.WobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedRight;
 
@@ -34,6 +33,14 @@ public class RedRightSequence extends Sequence {
             case 4:
                 targetZone = RedField.TargetZoneC;
                 break;
+            default:
+                try {
+                    double x = targetZone.getX();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    telemetry.addLine(e.toString());
+                    telemetry.update();
+                }
         }
         actions.add(() -> moveToShoot(RedRight.IntermediatePos, new Vector2d(RedField.GoalShotPos.getX(),RedField.GoalShotPos.getY()), 0));
         actions.add(() -> shootGoal(3));
@@ -51,8 +58,6 @@ public class RedRightSequence extends Sequence {
             actions.add(() -> shootGoal(3));
         }
 
-//        actions.add(() -> stopShooter());
-
         actions.add(() -> moveLinear(targetZone.getX() + WobbleXOffset, targetZone.getY(),0));
         actions.add(() -> dropWobble());
 
@@ -60,12 +65,17 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> pickupWobble());
 
         actions.add(() -> moveLinear(targetZone, 180));
+        //TODO: make this all compound spline moves instead of turn + line
         actions.add(() -> dropWobble());
-        actions.add(() -> backOffFromWobbles(WobbleBackupDistance));
 
         if (ringCount == 4) {
             actions.add(() -> moveToLaunchLine(RedField.EndingPositionFour));
-        } else actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+        } else if (ringCount == 1){
+            actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+        } else {
+            actions.add(() -> strafe(new Vector2d(RedField.EndingPosition.getX() - 24, RedField.EndingPosition.getY())));
+            actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+        }
         actions.add(() -> stop());
 
     }

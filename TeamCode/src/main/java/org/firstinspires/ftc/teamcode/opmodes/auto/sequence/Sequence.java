@@ -94,7 +94,8 @@ public abstract class Sequence {
     }
 
     public void moveLinear(double x, double y, double targetHeading) {
-        followTrajectoryAsync(buildLinearTrajectory(new Vector2d(x, y), targetHeading));
+        turn(targetHeading);
+        followTrajectoryAsync(buildLineTrajectory(new Vector2d(x, y)));
     }
 
 
@@ -117,12 +118,16 @@ public abstract class Sequence {
         wobble.dropAuto();
     }
 
-    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endTangent) {
+    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endHeading) {
         telemetry.addData("Sequence","moveToWobble");
 
 
-        followTrajectoryAsync(buildSplineTrajectory(180, new Pose2d(intermediate, endTangent)));
-        followTrajectoryAsync(buildLineTrajectory(new Pose2d(wobblePos, endTangent), 12));
+//        followTrajectoryAsync(buildSplineTrajectory(180, new Pose2d(intermediate, endTangent)));
+        //TODO: test this, could move from spline to line with linear heading
+        //followTrajectoryAsync(splineToSplineHeading(180, 180, new Pose2d(intermediate, 180)));
+        followTrajectoryAsync(buildSplineTrajectory(180, new Pose2d(intermediate, 180)));
+        turn(180);
+        followTrajectoryAsync(buildLineTrajectory(new Pose2d(wobblePos, 180), 9));
     }
 
     public void pickupWobble() {
@@ -139,9 +144,7 @@ public abstract class Sequence {
                 position
         };
 
-//        followTrajectoryAsync(buildLineTrajectory(positions));
         followTrajectoryAsync(buildSplineTrajectoryConstantHeading(positions, targetHeading));
-        //TODO: fix, path continuity exception
     }
 
     public void moveToShoot(Pose2d position, double heading) {
@@ -168,6 +171,11 @@ public abstract class Sequence {
     public void backOffFromWobbles (double distance) {
         telemetry.addData("Sequence", "back off from wobbles");
         followTrajectoryAsync(buildBackTrajectory(distance));
+    }
+
+    public void strafe (Vector2d position) {
+        telemetry.addData("Sequence", "back off from wobbles");
+        followTrajectoryAsync(strafeTrajectory(position));
     }
 
     public void shootPowershot(int numRings) {
@@ -221,6 +229,14 @@ public abstract class Sequence {
         return trajectory.build();
     }
 
+    private Trajectory strafeTrajectory (Vector2d position){
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
+        trajectory.strafeTo(position);
+
+        return trajectory.build();
+    }
+
     private Trajectory buildBackTrajectory(double inches) {
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
@@ -254,8 +270,7 @@ public abstract class Sequence {
             trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
         }
 
-        Trajectory trajectory = trajectoryBuilder.build();
-        return trajectory;
+        return trajectoryBuilder.build();
     }
 
     private Trajectory buildSplineTrajectory(double startTangent, Pose2d... positions){
@@ -265,11 +280,18 @@ public abstract class Sequence {
             trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
         }
 
-        Trajectory trajectory = trajectoryBuilder.build();
-        return trajectory;
+        return trajectoryBuilder.build();
     }
 
-    private Trajectory buildConstantSplineTrajectory(Vector2d[] positions, double heading){
+    private Trajectory splineToSplineHeading(double startTangent, double endTangent, Pose2d position){
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectoryBuilder = drive.trajectoryBuilder(GetCurrentPose(), Math.toRadians(startTangent));
+        trajectoryBuilder.splineToSplineHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())), Math.toRadians(endTangent));
+
+        return trajectoryBuilder.build();
+    }
+
+    private Trajectory splineToConstantHeading(Vector2d[] positions, double heading){
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
         for (Vector2d position : positions) {
@@ -287,10 +309,18 @@ public abstract class Sequence {
         return trajectory.build();
     }
 
+    private Trajectory buildLineTrajectory(Vector2d position){
+        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
+        TrajectoryBuilder trajectory = drive.trajectoryBuilder(GetCurrentPose());
+        trajectory.lineTo(position);
+
+        return trajectory.build();
+    }
+
     private Trajectory buildLineTrajectory(Pose2d position, double velocity){
         DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .lineToLinearHeading(position,
+                .lineToLinearHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())),
                         new MinVelocityConstraint(Arrays.asList(
                                 drive.getMaxAngVelConstraint(),
                                 drive.getCustomVelConstraint(velocity)
@@ -301,17 +331,9 @@ public abstract class Sequence {
         return trajectory;
     }
 
-    private Trajectory buildStrafeTrajectory(Vector2d position){
-        DrivetrainController drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
-        Trajectory trajectory = drive.trajectoryBuilder(GetCurrentPose())
-                .strafeTo(position)
-                .build();
-        return trajectory;
-    }
-
     private void followTrajectoryAsync(Trajectory trajectory){
         if (trajectory == null) {
-            telemetry.addData("Sequence", "moveToZone: invalid trajectory");
+            telemetry.addData("Sequence", "invalid trajectory");
             throw new IllegalArgumentException("Invalid trajectory");
         }
 

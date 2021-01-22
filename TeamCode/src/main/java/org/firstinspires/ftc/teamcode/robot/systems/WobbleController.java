@@ -60,15 +60,16 @@ public class WobbleController implements Controller {
     public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
         wobbleArm.setPosition(ArmDropPos);
-        sleep(275);
+        sleep(300);
         wobbleGrip.setPosition(GripReleasePos);
+        sleep(200);
     }
 
     // TODO: pickup wobble
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);
-        sleep(275);
+        sleep(300);
         wobbleArm.setPosition(ArmPickupPos);
     }
 

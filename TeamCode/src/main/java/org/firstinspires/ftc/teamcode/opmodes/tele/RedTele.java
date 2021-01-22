@@ -41,7 +41,7 @@ public class RedTele extends Tele {
 
                     .build();
             drive.followTrajectory(trajectory);
-            shooter.shoot(3);
+            shooter.shoot(3, RPMGoal);
         }
         else {
 //            shooter.spinUp(RPMPowerShot);
