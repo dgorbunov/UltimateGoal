@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
@@ -34,11 +33,13 @@ public class Auto extends OpMode {
     protected String sequenceName;
     protected static String sequenceSide;
     
-    private MultipleTelemetry multiTelemetry;
+    //private MultipleTelemetry multiTelemetry;
+    private Telemetry multiTelemetry;
 
     @Override
     public void init() {
-        multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        multiTelemetry = telemetry;
+        // multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.addLine("Initializing...");
 
         //Do not change anything here!

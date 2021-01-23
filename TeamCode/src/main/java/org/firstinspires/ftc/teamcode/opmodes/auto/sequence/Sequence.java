@@ -195,7 +195,6 @@ public abstract class Sequence {
                 telemetry.addData("Sequence", "intake 1 ring");
                 intake.extend();
                 followTrajectoryAsync(buildIntakeTrajectory(position, heading, 0.1));
-                intake.stop();
                 break;
 
             case (4):
