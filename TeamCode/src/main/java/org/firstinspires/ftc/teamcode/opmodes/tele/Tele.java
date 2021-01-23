@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,8 +58,10 @@ public abstract class Tele extends OpMode {
 
     protected boolean autoShoot = false;
     protected boolean manShoot = false;
+    private double loopTime;
 
     protected MultipleTelemetry multiTelemetry;
+    private NanoClock clock = NanoClock.system();
 
     public void init() {
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -81,7 +84,6 @@ public abstract class Tele extends OpMode {
 
         drive.setPoseEstimate(MechConstants.StartingPose);
 
-//        gameMap.setGamepads(gamepad1, gamepad2);
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
         multiTelemetry.clear();
@@ -99,6 +101,7 @@ public abstract class Tele extends OpMode {
 
 
     public void loop() {
+        loopTime = clock.seconds();
         //lock out the gamepad during automatic shooting
         if (!autoShoot) {
             //automatically go to slow mode during manual shooting
@@ -161,6 +164,7 @@ public abstract class Tele extends OpMode {
         }
 
         multiTelemetry.addLine(hub.getFormattedCurrentDraw());
+        multiTelemetry.addData("Loop Time",clock.seconds() - loopTime);
     }
 
     protected abstract void autoShoot();
