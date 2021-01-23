@@ -41,6 +41,7 @@ public class RedRightSequence extends Sequence {
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakePos, 0));
             actions.add(() -> moveToShoot(RedField.GoalShotPos, 0));
+            actions.add(() -> stopIntake());
             actions.add(() -> shootGoal(1));
         }
 

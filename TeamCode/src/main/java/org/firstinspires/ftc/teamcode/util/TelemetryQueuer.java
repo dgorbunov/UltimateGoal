@@ -7,14 +7,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class TelemetryQueuer{
+public class TelemetryQueuer {
 
     /**
      * Manages pushing telemetry out when using multiple threads
      * All telemetry is sent out here on one thread
      */
 
-    //TODO: finish, implement telemtry. Refactor all telemetry to this class?
+    //TODO: finish, implement telemetry. Refactor all telemetry to this class?
 
     Telemetry telemetry;
     FtcDashboard dashboard;
