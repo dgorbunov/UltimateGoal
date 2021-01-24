@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tele;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -33,11 +34,10 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Config
 public abstract class Tele extends OpMode {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
     GamepadMappings gameMap;
     Button intakeButton = new Button();
-    //TODO: test, make all gameMap buttons Booleans
     Button vertIntakeButton = new Button();
     Button wobbleArmButton = new Button();
     Button wobbleGripButton = new Button();
@@ -58,11 +58,12 @@ public abstract class Tele extends OpMode {
 
     protected boolean autoShoot = false;
     protected boolean manShoot = false;
+    private double loopTime;
 
-    MultipleTelemetry multiTelemetry;
+    protected MultipleTelemetry multiTelemetry;
+    private NanoClock clock = NanoClock.system();
 
     public void init() {
-        //TODO: how do you make this just telemetry?
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
         multiTelemetry.addLine("Initializing...");
@@ -83,7 +84,6 @@ public abstract class Tele extends OpMode {
 
         drive.setPoseEstimate(MechConstants.StartingPose);
 
-//        gameMap.setGamepads(gamepad1, gamepad2);
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
         multiTelemetry.clear();
@@ -101,6 +101,7 @@ public abstract class Tele extends OpMode {
 
 
     public void loop() {
+        loopTime = clock.seconds();
         //lock out the gamepad during automatic shooting
         if (!autoShoot) {
             //automatically go to slow mode during manual shooting
@@ -163,6 +164,7 @@ public abstract class Tele extends OpMode {
         }
 
         multiTelemetry.addLine(hub.getFormattedCurrentDraw());
+        multiTelemetry.addData("Loop Time",clock.seconds() - loopTime);
     }
 
     protected abstract void autoShoot();

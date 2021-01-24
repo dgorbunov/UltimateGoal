@@ -124,7 +124,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         this.hardwareMap = hardwareMap;
 
         dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
+        dashboard.setTelemetryTransmissionInterval(50);
 
         clock = NanoClock.system();
 

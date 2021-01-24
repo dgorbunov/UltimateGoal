@@ -44,22 +44,22 @@ public class FieldConstants {
 
     @Config
     public static class RedField {
-        public static final Vector2d TargetZoneA = new Vector2d(-8,-60);
-        public static final Vector2d TargetZoneB = new Vector2d(16,-38);
-        public static final Vector2d TargetZoneC = new Vector2d(41,-63);
+        public static final Vector2d TargetZoneA = new Vector2d(-7,-61);
+        public static final Vector2d TargetZoneB = new Vector2d(17,-38);
+        public static final Vector2d TargetZoneC = new Vector2d(42,-61);
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Pose2d GoalShotPos = new Pose2d(-2, -39, Math.toRadians(0));
         public static final Pose2d PowerShotPos = new Pose2d(-2, -12, Math.toRadians(9));
         public static final Vector2d IntakePos = new Vector2d(RingPos.getX(), RingPos.getY());
         public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 4, RingPos.getY());
         public static final Vector2d LeftWobblePos = new Vector2d(-37.5, -23.00);
-        public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 6, LeftWobblePos.getY());
+        public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 8, LeftWobblePos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-39, RedRight.StartingPos.getY());
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 10, RightWobblePos.getY());
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (10, TargetZoneC.getY());
-        public static final double WobbleXOffset = 7;
-        public static final double WobbleBackupDistance = 13;
+        public static final double WobbleXOffset = 10;
+        public static final double WobbleBackupDistance = 15;
     }
 
     @Config

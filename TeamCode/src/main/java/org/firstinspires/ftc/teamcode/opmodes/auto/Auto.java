@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -53,6 +51,7 @@ public class Auto extends OpMode {
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
                 multiTelemetry.addLine("No sequence found!");
+                multiTelemetry.update();
                 return;
             }
         }
@@ -78,14 +77,17 @@ public class Auto extends OpMode {
 
             try {
                 multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
+                multiTelemetry.update();
                 currentSequence.init(ringCount);
 
                 multiTelemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
+                multiTelemetry.update();
 
                 // execute runs async
                 currentSequence.execute();
             } catch (Exception e) {
                 multiTelemetry.addLine("Exception while executing sequence: " + e.toString());
+                multiTelemetry.update();
             }
     }
 
@@ -98,7 +100,7 @@ public class Auto extends OpMode {
     public void stop() {
         synchronized (lock) {
             if (currentSequence != null) currentSequence.stop();
-            controllers.stop(); //TODO: stop drivetrain with mode = idle
+            controllers.stop();
         }
     }
 
@@ -159,11 +161,13 @@ public class Auto extends OpMode {
         CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
         if (camera == null) {
             multiTelemetry.addLine("Camera not initialized");
+            multiTelemetry.update();
             return;
         }
 
         String strNumRings = camera.rankRings();
         multiTelemetry.addLine("Camera rankRings returned: " + strNumRings);
+        multiTelemetry.update();
 
 //        int ringCountOpenCV = camera.countRingsOpenCV();
 //        multiTelemetry.addData("OpenCV returned rings", ringCountOpenCV);
@@ -172,6 +176,7 @@ public class Auto extends OpMode {
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1);
             multiTelemetry.addData("Camera ringsToInt returned: ", ringCount);
+            multiTelemetry.update();
         }
     }
 }

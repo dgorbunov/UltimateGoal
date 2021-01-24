@@ -132,8 +132,7 @@ public class CameraController implements Controller {
 //    }
 
     public void stopTFOD(){
-        Thread thread = new Thread(this::stopTensorFlow);
-        thread.start();
+       new Thread(this::stopTensorFlow).start();
     }
 
     private void stopTensorFlow() {
