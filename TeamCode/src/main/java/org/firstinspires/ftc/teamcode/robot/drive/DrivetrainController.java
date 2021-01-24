@@ -77,6 +77,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     public static double OMEGA_WEIGHT = 1;
 
     public static int POSE_HISTORY_LIMIT = 100;
+    protected Pose2d defaultStartPose = new Pose2d(0, 0, 0);
 
     public static String ControllerName;
 
@@ -201,18 +202,20 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         setLocalizer(new ThreeWheelLocalizer(hardwareMap));
         /** If using two wheel,
          *  See also {@link #getRawExternalHeading()}. */
+
+        setPoseEstimate(defaultStartPose);
     }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, velConstraint, accelConstraint);
-    }
+    public void followTrajectoryAsync(Trajectory trajectory){
+        if (trajectory == null) {
+            telemetry.addData("Sequence", "moveToZone: invalid trajectory");
+            throw new IllegalArgumentException("Invalid trajectory");
+        }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, velConstraint, accelConstraint);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
+        followTrajectoryAsync(trajectory);
+        waitForIdle();
+        //although this may look equivalent to followTrajectory it is non-blocking
+        //because sequences run on a separate thread, drive methods do not
     }
 
     public void turnAsync(double angle) {
@@ -242,7 +245,6 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
     @Override
     public void init() {
-
     }
 
     @Override
