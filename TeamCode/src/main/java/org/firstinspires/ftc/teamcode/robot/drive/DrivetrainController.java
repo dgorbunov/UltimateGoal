@@ -206,21 +206,6 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         setPoseEstimate(defaultStartPose);
     }
 
-    // TODO: remove, used by tuning only
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, velConstraint, accelConstraint);
-    }
-
-    // TODO: remove, used by tuning only
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, velConstraint, accelConstraint);
-    }
-
-    // TODO: remove, used by tuning only
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
-    }
-
     public void turnAsync(double angle) {
         if (telemetry != null) {
             telemetry.addData( "MecanumDrivetrainController", "turnAsync: " + angle);
@@ -274,19 +259,6 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
-/*
-    public void followTrajectoryAsync(Trajectory trajectory){
-        if (trajectory == null) {
-            telemetry.addData("Sequence", "moveToZone: invalid trajectory");
-            throw new IllegalArgumentException("Invalid trajectory");
-        }
-
-        followTrajectoryAsync(trajectory);
-        waitForIdle();
-        //although this may look equivalent to followTrajectory it is non-blocking
-        //because sequences run on a separate thread, drive methods do not
-    }
-    */
 
     public Pose2d getLastError() {
         switch (mode) {
