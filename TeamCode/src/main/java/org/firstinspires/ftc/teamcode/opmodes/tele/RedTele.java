@@ -6,10 +6,12 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper;
 
 import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.PowerShotDelay;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
@@ -31,55 +33,30 @@ public class RedTele extends Tele {
             //TODO: try turn and linear move
 //            shooter.spinUp(RPMGoal);
             drive.turn(GoalShotPos.getHeading());
-            Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(GoalShotPos,
-                            new MinVelocityConstraint(Arrays.asList(
-                                    drive.getMaxAngVelConstraint(),
-                                    drive.getCustomVelConstraint(20)
-                            )
-                            ), drive.getMaxAccelConstraint())
-
-                    .build();
-            drive.followTrajectory(trajectory);
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
             shooter.shoot(3, RPMGoal);
         }
         else {
 //            shooter.spinUp(RPMPowerShot);
 //            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
-            Trajectory trajectory = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(FieldConstants.RedField.PowerShotPos,
-                            new MinVelocityConstraint(Arrays.asList(
-                                    drive.getMaxAngVelConstraint(),
-                                    drive.getCustomVelConstraint(20)
-                            )
-                            ), drive.getMaxAccelConstraint())
-                    .build();
-            drive.followTrajectory(trajectory);
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, PowerShotPos, 20));
 
             //TODO: TEST THIS, finish powershot! try turn
-            Trajectory turn = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(
-                            drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
-                                    drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement))
-                            ,
-                            new MinVelocityConstraint(Arrays.asList(
-                                    drive.getMaxAngVelConstraint(),
-                                    drive.getCustomVelConstraint(7.5)
-                            )
-                            ), drive.getMaxAccelConstraint())
-                    .build();
+            Pose2d targetPose = new Pose2d(
+                    drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
+                    drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement));
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, targetPose, 20));
 
             for (int i = 0; i < 3; i++) {
                 shooter.powerShot(RPMPowerShot);
-                drive.followTrajectory(turn);
-//                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
+                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
                 sleep(PowerShotDelay);
             }
 
             shooter.stop();
         }
-        autoShoot = false;
 
+        autoShoot = false;
     }
 
     @Override
