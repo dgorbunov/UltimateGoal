@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.drive.tuning;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -23,7 +24,7 @@ public class StraightTest extends LinearOpMode {
         DrivetrainController drive = new DrivetrainController(hardwareMap);
         ThreeWheelLocalizer odometry = new ThreeWheelLocalizer(hardwareMap);
 
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+        Trajectory trajectory = new TrajectoryBuilder(new Pose2d(), DrivetrainController.getMaxAngVelConstraint(), DrivetrainController.getMaxAccelConstraint())
                 .forward(DISTANCE)
                 .build();
 
