@@ -34,7 +34,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Config
 public abstract class Tele extends OpMode {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
     GamepadMappings gameMap;
     Button intakeButton = new Button();
@@ -101,7 +101,7 @@ public abstract class Tele extends OpMode {
 
 
     public void loop() {
-        loopTime = clock.seconds();
+        loopTime = clock.seconds() * 1000;
         //lock out the gamepad during automatic shooting
         if (!autoShoot) {
             //automatically go to slow mode during manual shooting
@@ -164,7 +164,7 @@ public abstract class Tele extends OpMode {
         }
 
         multiTelemetry.addLine(hub.getFormattedCurrentDraw());
-        multiTelemetry.addData("Loop Time",clock.seconds() - loopTime);
+        multiTelemetry.addData("Loop Time",clock.seconds() * 1000 - loopTime + " ms");
     }
 
     protected abstract void autoShoot();

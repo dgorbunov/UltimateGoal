@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 /**
  * Wraps a motor instance to provide corrected velocity counts and allow reversing without changing the corresponding
- * slot's motor direction
+ * slot's motor direction. Switched to MovingStatistics to prevent overflow/spikes in data.
  */
 public class Encoder{
     private final static int CPS_STEP = 0x10000;

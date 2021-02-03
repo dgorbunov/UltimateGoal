@@ -20,7 +20,8 @@ public class IntakeController implements Controller {
 
     public static double ArmStartPos = 0.262;
     public static double ArmDropPos = 0.6;
-    public static double IntakePower = 0.9;
+    public static double IntakePower = 0.6;
+    public static double Intake2Power = 0.6;
     public static DcMotorEx.Direction IntakeDirection = DcMotorEx.Direction.FORWARD;
     public static DcMotorEx.Direction Intake2Direction = DcMotorEx.Direction.FORWARD;
     public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
@@ -68,11 +69,11 @@ public class IntakeController implements Controller {
         telemetry.addData(ControllerName, "Intaking");
         if (Direction == DcMotorSimple.Direction.FORWARD) {
             intake.setPower(IntakePower);
-            intake2.setPower(IntakePower);
+            intake2.setPower(Intake2Power);
         }
         else {
             intake.setPower(-IntakePower);
-            intake2.setPower(-IntakePower);
+            intake2.setPower(-Intake2Power);
         }
     }
 }

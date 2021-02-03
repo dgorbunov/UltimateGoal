@@ -16,15 +16,6 @@ public class GamepadMappings {
         this.gamepad2 = gamepad2;
     }
 
-    public GamepadMappings() {
-
-    }
-
-    public void setGamepads(Gamepad gamepad1, Gamepad gamepad2){
-        this.gamepad1 = gamepad1;
-        this.gamepad2 = gamepad2;
-    }
-
     public boolean DriveMode() {
         return gamepad1.right_bumper;
     }

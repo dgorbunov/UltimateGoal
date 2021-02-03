@@ -6,12 +6,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 @Config
 public class MechConstants {
 
+    public static Pose2d StartingPose = new Pose2d(0.50,-36,0);
     /**
      * Set by Sequence
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()
-     * TODO: write to a file
      */
-    public static Pose2d StartingPose = new Pose2d(0.50,-36,0);
+
 
     public static double DriveFullPower = 0.85;
     public static double DriveSlowPower = 0.25;

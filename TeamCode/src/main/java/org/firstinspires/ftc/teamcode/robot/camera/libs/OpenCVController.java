@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetectorKt;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -34,7 +35,7 @@ public class OpenCVController implements Controller{
                 //TODO: Test GPU Acceleration
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
                 openCvPassthrough.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-                openCvPassthrough.setPipeline(new RingDetector(telemetry, true));
+                openCvPassthrough.setPipeline(new RingDetectorKt(telemetry, true)); //TODO: test java implementation
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters
                 // are entirely ignored when using Vuforia passthrough mode. However, they are left
@@ -66,7 +67,7 @@ public class OpenCVController implements Controller{
 
     @Override
     public void stop() {
-//        openCvPassthrough.stopStreaming(); //TODO: this? or stop camera async
+        openCvPassthrough.stopStreaming(); //TODO: this? or stop camera async
         FtcDashboard.getInstance().stopCameraStream();
     }
 

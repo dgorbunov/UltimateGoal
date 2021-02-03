@@ -17,7 +17,7 @@ public class VertIntakeController implements Controller{
     public static String ControllerName;
 
     public static DcMotorEx.Direction Direction = DcMotorEx.Direction.FORWARD;
-    public static double VertIntakePower;
+    public static double VertIntakePower = 0.75;
 
     public VertIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -47,6 +47,5 @@ public class VertIntakeController implements Controller{
         if (Direction == DcMotorSimple.Direction.FORWARD) vIntake.setPower(VertIntakePower);
         else vIntake.setPower(-VertIntakePower);
         telemetry.addData(ControllerName, "V. Intake Running");
-        vIntake.setPower(VertIntakePower);
     }
 }
