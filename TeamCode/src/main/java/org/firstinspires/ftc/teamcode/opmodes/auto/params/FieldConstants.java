@@ -15,13 +15,8 @@ public class FieldConstants {
     public static final String LeftSide = "Left";
     public static final String RightSide = "Right";
 
-    public enum Alliance {
-        Red, Blue
-    }
-
-    public enum Side {
-        Left, Right
-    }
+    public enum Alliance { Red, Blue }
+    public enum Side { Left, Right }
 
     public static final String AllTrajectories = "all";
 

@@ -1,16 +1,16 @@
-        package org.firstinspires.ftc.teamcode.robot.systems;
+package org.firstinspires.ftc.teamcode.robot.systems;
 
-        import com.acmerobotics.dashboard.FtcDashboard;
-        import com.acmerobotics.dashboard.config.Config;
-        import com.qualcomm.robotcore.hardware.DcMotorEx;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.HardwareMap;
-        import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
-        import org.firstinspires.ftc.robotcore.external.Telemetry;
-        import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.Controller;
 
-        import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @Config
 public class ShooterController implements Controller {
@@ -39,7 +39,6 @@ public class ShooterController implements Controller {
     public static double MotorRPM = 0;
 
     public static volatile double targetTicksPerSec;
-
 
     private DcMotorEx shooter;
     private Servo bumper;

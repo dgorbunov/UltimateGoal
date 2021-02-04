@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.deprecated.Camera;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 @Disabled // will not show up on driver station
 @Autonomous(name="Auto", group="Iterative Opmode")
-@Config //for FTCDash
 public class Auto extends OpMode {
 
     // Maps case-insensitive name to a sequence
@@ -31,18 +29,18 @@ public class Auto extends OpMode {
     private Sequence currentSequence;
     protected final static Object lock = new Object();
     protected String sequenceName;
-    protected static String sequenceSide;
+    public static FieldConstants.Side side;
+    public static FieldConstants.Alliance alliance;
     
     //private MultipleTelemetry multiTelemetry;
     private Telemetry multiTelemetry;
 
     @Override
     public void init() {
-        multiTelemetry = telemetry;
+        multiTelemetry = telemetry; //TODO: fix telemetry
         // multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.addLine("Initializing...");
 
-        //Do not change anything here!
         controllers = new ControllerManager(multiTelemetry);
         controllers.make(hardwareMap, multiTelemetry);
 
@@ -55,8 +53,7 @@ public class Auto extends OpMode {
                 return;
             }
         }
-
-        sequenceSide = getSequenceSide(currentSequence);
+//        sequenceSide = getSequenceSide(currentSequence);
 
         // Initialize all controllers
         controllers.init();
@@ -72,8 +69,6 @@ public class Auto extends OpMode {
     @Override
     public void start() { //code to run once when play is hit
         controllers.start();
-        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
-        camera.stopTFOD();
 
             try {
                 multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
@@ -116,30 +111,39 @@ public class Auto extends OpMode {
         }
     }
 
+    @Deprecated
     protected String makeSequenceName(String alliance, String side) {
         return (alliance + side).toLowerCase();
     }
 
-    public static String getSequenceSide() {
-        return sequenceSide;
+    protected String makeSequenceName(FieldConstants.Alliance alliance, FieldConstants.Side side) {
+        return (alliance.toString() + side.toString()).toLowerCase();
+    }
+
+    public static String getSide() {
+        return side.toString();
+    }
+
+    public static FieldConstants.Alliance getAlliance() {
+        return alliance;
     }
 
     private void makeSequences() {
         synchronized (lock) {
             sequences.put(makeSequenceName(
-                    FieldConstants.RedAlliance, FieldConstants.LeftSide),
+                    FieldConstants.Alliance.Red, FieldConstants.Side.Left),
                     new RedLeftSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
-                    FieldConstants.RedAlliance, FieldConstants.RightSide),
+                    FieldConstants.Alliance.Red, FieldConstants.Side.Right),
                     new RedRightSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
-                    FieldConstants.BlueAlliance, FieldConstants.LeftSide),
+                    FieldConstants.Alliance.Blue, FieldConstants.Side.Left),
                     new BlueLeftSequence(controllers, multiTelemetry));
 
             sequences.put(makeSequenceName(
-                    FieldConstants.BlueAlliance, FieldConstants.RightSide),
+                    FieldConstants.Alliance.Blue, FieldConstants.Side.Right),
                     new BlueRightSequence(controllers, multiTelemetry));
         }
     }
@@ -152,13 +156,14 @@ public class Auto extends OpMode {
         return sequence.getClass().getSimpleName();
     }
 
+    @Deprecated
     private String getSequenceSide(Sequence sequence){
         if (getSequenceName(sequence).contains(FieldConstants.LeftSide)) return FieldConstants.LeftSide;
         return FieldConstants.RightSide;
     }
 
     private void computeRingCount() {
-        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
+        Camera camera = controllers.get(Camera.class, FieldConstants.Camera);
         if (camera == null) {
             multiTelemetry.addLine("Camera not initialized");
             multiTelemetry.update();

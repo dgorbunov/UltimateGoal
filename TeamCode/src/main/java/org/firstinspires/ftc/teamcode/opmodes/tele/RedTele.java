@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper;
-
-import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
@@ -24,6 +21,7 @@ public class RedTele extends Tele {
 
     public RedTele() {
         super();
+        Auto.alliance = FieldConstants.Alliance.Red;
     }
 
     @Override

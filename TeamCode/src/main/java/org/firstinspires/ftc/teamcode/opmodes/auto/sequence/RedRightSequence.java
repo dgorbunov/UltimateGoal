@@ -42,6 +42,9 @@ public class RedRightSequence extends Sequence {
                     telemetry.update();
                 }
         }
+
+        //TODO: shoot from start!
+        //TODO: shoot at intake position
         actions.add(() -> moveToShoot(RedRight.IntermediatePos, new Vector2d(RedField.GoalShotPos.getX(),RedField.GoalShotPos.getY()), 0));
         actions.add(() -> shootGoal(3));
 

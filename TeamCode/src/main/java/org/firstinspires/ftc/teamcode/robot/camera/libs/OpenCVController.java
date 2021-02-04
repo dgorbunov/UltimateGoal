@@ -4,9 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetectorKt;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.WobbleDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -15,7 +16,8 @@ public class OpenCVController implements Controller{
 
     private OpenCvCamera openCvPassthrough;
     private Telemetry telemetry;
-    private RingDetector ContourRingDetector;
+    private RingDetector ringDetector;
+    private WobbleDetector wobbleDetector;
 
     public OpenCVController(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -34,8 +36,9 @@ public class OpenCVController implements Controller{
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
                 //TODO: Test GPU Acceleration
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                openCvPassthrough.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-                openCvPassthrough.setPipeline(new RingDetectorKt(telemetry, true)); //TODO: test java implementation
+                ringDetector = new RingDetector(telemetry, true);
+                wobbleDetector = new WobbleDetector(telemetry, true, Auto.getAlliance());
+                openCvPassthrough.setPipeline(ringDetector); //TODO: test java implementation
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters
                 // are entirely ignored when using Vuforia passthrough mode. However, they are left
@@ -48,12 +51,14 @@ public class OpenCVController implements Controller{
     }
 
     public int getRingCount() {
-        return ContourRingDetector.getRingCount();
+        return ringDetector.getRingCount();
     }
 
     public String getRingCountStr() {
-        return ContourRingDetector.getRingCountStr();
+        return ringDetector.getRingCountStr();
     }
+
+    public double getWobbleDisplacement() { return wobbleDetector.getDisplacement(); }
 
     @Override
     public void init() {
@@ -62,7 +67,7 @@ public class OpenCVController implements Controller{
 
     @Override
     public void start() {
-
+        openCvPassthrough.setPipeline(wobbleDetector); //TODO: test
     }
 
     @Override

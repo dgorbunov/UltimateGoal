@@ -29,13 +29,13 @@ public class ControllerManager implements Controller{
     }
 
     public void make(HardwareMap hardwareMap, Telemetry telemetry){
+        add(new CameraController(hardwareMap, telemetry), FieldConstants.Camera);
         add(new DrivetrainController(hardwareMap, telemetry), FieldConstants.Drive);
         add(new HubController(hardwareMap, telemetry), FieldConstants.Hub);
         add(new IntakeController(hardwareMap, telemetry), FieldConstants.Intake);
         add(new VertIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
         add(new ShooterController(hardwareMap, telemetry), FieldConstants.Shooter);
         add(new WobbleController(hardwareMap, telemetry), FieldConstants.Wobble);
-        add(new CameraController(hardwareMap, telemetry), FieldConstants.Camera);
     }
 
     public void add(Controller controller, String controllerName) {

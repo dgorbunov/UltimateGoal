@@ -10,7 +10,7 @@ public class Actions {
     protected Queue<Runnable> actions = new LinkedList<>();
     private Telemetry telemetry;
     private volatile boolean shouldRun;
-    protected final Object theLock = new Object();
+    protected final Object lock = new Object();
 
     public Actions(Telemetry tel) {
         this.telemetry = tel;
@@ -18,20 +18,20 @@ public class Actions {
     }
 
     public Object add(Runnable action) {
-        synchronized (theLock) {
+        synchronized (lock) {
             this.actions.add(action);
             return action;
         }
     }
 
     public boolean remove(Object token) {
-        synchronized (theLock) {
+        synchronized (lock) {
             return this.actions.remove((Runnable)token);
         }
     }
 
     public void run() {
-        synchronized (theLock) {
+        synchronized (lock) {
             //telemetry.addData("Actions", "Running actions on thread: " + Thread.currentThread().getId());
             Iterator<Runnable> iterator = actions.iterator();
             while (iterator.hasNext() && shouldRun) {

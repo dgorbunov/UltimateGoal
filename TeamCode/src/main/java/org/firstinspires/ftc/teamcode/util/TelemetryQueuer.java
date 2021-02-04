@@ -12,7 +12,7 @@ public class TelemetryQueuer {
      * All telemetry is sent out here on one thread
      */
 
-    //TODO: finish, implement telemewtry. Refactor all telemetry to this class?
+    //TODO: finish, implement telemetry. Refactor all telemetry to this class?
 
     private MultipleTelemetry telemetry;
     private FtcDashboard dashboard;

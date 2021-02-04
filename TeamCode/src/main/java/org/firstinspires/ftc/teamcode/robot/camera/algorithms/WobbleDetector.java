@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,18 +17,22 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector.ringNames.FOUR;
-
-public class RingDetector extends OpenCvPipeline {
+public class WobbleDetector extends OpenCvPipeline {
 
     private Telemetry telemetry;
     private boolean debug = false;
+    private FieldConstants.Alliance alliance; //Blue or Red
 
-    private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
-    private static Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
+    //TODO: Calibrate colors
+    private static final Scalar lowerRed = new Scalar(0.0, 141.0, 0.0);
+    private static Scalar upperRed = new Scalar(255.0, 230.0, 95.0);
+    private static final Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
+    private static Scalar upperBlue = new Scalar(255.0, 230.0, 95.0);
+
+    //TODO: test horizon
     private int CAMERA_WIDTH = 720;
-    private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
-    private static double MIN_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
+    private static double HORIZON = 0; //(100.0 / 320.0) * CAMERA_WIDTH;
+    private static double MAX_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
     private static double ASPECT_RATIO_THRES = 0.7;
 
     private int ringCount = 0;
@@ -40,23 +44,20 @@ public class RingDetector extends OpenCvPipeline {
         NONE, ONE, FOUR
     }
 
-    public RingDetector(Telemetry telemetry, boolean debug) {
+    public WobbleDetector(Telemetry telemetry, boolean debug, FieldConstants.Alliance alliance) {
         this.telemetry = telemetry;
+        this.alliance = alliance;
         this.debug = debug;
         ret = new Mat();
         mat = new Mat();
     }
 
-    public RingDetector(Telemetry telemetry) {
-        this(telemetry, false);
+    public WobbleDetector(Telemetry telemetry, FieldConstants.Alliance alliance) {
+        this(telemetry, false, alliance);
     }
 
-    public int getRingCount() {
+    public double getDisplacement() {
         return ringCount;
-    }
-
-    public String getRingCountStr() {
-        return ringCountStr;
     }
 
     @Override
@@ -70,16 +71,17 @@ public class RingDetector extends OpenCvPipeline {
             /**converting from RGB color space to YCrCb color space**/
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
-            /**checking if any pixel is within the orange bounds to make a black and white mask**/
+            /**isolate colors in selected alliance color range**/
             Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
-            Core.inRange(mat, lowerOrange, upperOrange, mask);
+            if (alliance == FieldConstants.Alliance.Red) {
+                Core.inRange(mat, lowerRed, upperRed, mask);
+            } else Core.inRange(mat, lowerBlue, upperBlue, mask);
 
             /**applying to input and putting it on ret in black or yellow**/
             Core.bitwise_and(input, input, ret, mask);
 
             /**applying GaussianBlur to reduce noise when finding contours**/
             Imgproc.GaussianBlur(mask, mask, new Size(5.0, 15.0), 0.00);
-
 
             /**finding contours on mask**/
             List<MatOfPoint> contours = new ArrayList();
@@ -98,6 +100,8 @@ public class RingDetector extends OpenCvPipeline {
 
                 double w = rect.width;
                 // checking if the rectangle is below the horizon
+
+                //TODO: switch to min, but within a reasonable range to remove noise
                 if (w > maxWidth && rect.y + rect.height > HORIZON) {
                     maxWidth = w;
                     maxRect = rect;
@@ -106,10 +110,10 @@ public class RingDetector extends OpenCvPipeline {
                 copy.release(); // releasing the buffer of the copy of the contour, since after use, it is no longer needed
             }
 
-            /**drawing widest bounding rectangle to ret in blue**/
-            Imgproc.rectangle(ret, maxRect, new Scalar(0.0, 0.0, 255.0), 4);
+            /**drawing widest bounding rectangle to ret in pink**/
+            Imgproc.rectangle(ret, maxRect, new Scalar(255, 0, 255), 5);
 
-            /** drawing a red line to show the horizon (any above the horizon is not checked to be a ring stack **/
+            /** drawing a red line to show the horizon (any above the horizon is not checked) **/
             Imgproc.line(
                     ret,
                     new Point(.0, HORIZON),
@@ -118,34 +122,14 @@ public class RingDetector extends OpenCvPipeline {
 
             if (debug) telemetry.addData("Vision: maxW", maxWidth);
 
-            /** checking if widest width is greater than equal to minimum width
+            /** checking if widest width is LESS than equal to maximum width
              * using Java ternary expression to set height variable
              *
-             * height = maxWidth >= MIN_WIDTH ? aspectRatio > BOUND_RATIO ? FOUR : ONE : ZERO
              **/
 
-            if (maxWidth >= MIN_CONTOUR_WIDTH) {
-                double aspectRatio = (double)maxRect.height / (double)maxRect.width;
-
-                if(debug) telemetry.addData("Vision: Aspect Ratio", aspectRatio);
-
-                /** checks if aspectRatio is greater than ASPECT_RATIO_THRES
-                 * to determine whether stack is ONE or FOUR
-                 */
-                if (aspectRatio > ASPECT_RATIO_THRES) {
-                    ringCount = 4; // FOUR
-                    ringCountStr = FOUR.toString();
-                }
-                else {
-                    ringCount = 1; // ONE
-                    ringCountStr = ringNames.ONE.toString();
-                }
-            } else {
-                ringCount = 0; // ZERO
-                ringCountStr = ringNames.NONE.toString();
-            }
-
-            if (debug) telemetry.addData("Vision: Height", ringCountStr);
+            //TODO: use aspect ratio to calculate probable location
+            double aspectRatio = (double)maxRect.height / (double)maxRect.width;
+            if(debug) telemetry.addData("Vision: Aspect Ratio", aspectRatio);
 
             // releasing all mats after use
             mat.release();
