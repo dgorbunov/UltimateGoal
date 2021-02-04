@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.deprecated.Camera;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
@@ -13,6 +12,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -163,24 +163,20 @@ public class Auto extends OpMode {
     }
 
     private void computeRingCount() {
-        Camera camera = controllers.get(Camera.class, FieldConstants.Camera);
+        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
         if (camera == null) {
             multiTelemetry.addLine("Camera not initialized");
             multiTelemetry.update();
             return;
         }
 
-        String strNumRings = camera.rankRings();
-        multiTelemetry.addLine("Camera rankRings returned: " + strNumRings);
-        multiTelemetry.update();
+        String strNumRings = camera.getRingCountStr();
+        multiTelemetry.addLine("Camera returned rings: " + strNumRings);
 
-//        int ringCountOpenCV = camera.countRingsOpenCV();
-//        multiTelemetry.addData("OpenCV returned rings", ringCountOpenCV);
-
-        int rings = camera.ringsToInt(strNumRings);
+        int rings = camera.getRingCount();
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1);
-            multiTelemetry.addData("Camera ringsToInt returned: ", ringCount);
+            multiTelemetry.addData("Camera returned rings", ringCount);
             multiTelemetry.update();
         }
     }

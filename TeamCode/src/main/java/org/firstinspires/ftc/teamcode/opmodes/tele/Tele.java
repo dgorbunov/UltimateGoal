@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -9,11 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.deprecated.Camera;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -31,7 +30,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
-@Config
 public abstract class Tele extends OpMode {
 
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
@@ -52,7 +50,7 @@ public abstract class Tele extends OpMode {
     protected VertIntakeController vertIntake;
     protected WobbleController wobble;
     protected HubController hub;
-    protected Camera camera;
+    protected CameraController camera;
 
     protected ControllerManager controllers;
 

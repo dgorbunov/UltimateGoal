@@ -12,7 +12,13 @@ import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
-import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.*;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildBackTrajectory;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildIntakeTrajectory;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildLineTrajectory;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildLinearTrajectory;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildSplineTrajectory;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildSplineTrajectoryConstantHeading;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildStrafeTrajectory;
 
 public abstract class Sequence {
 
@@ -34,7 +40,6 @@ public abstract class Sequence {
     }
 
     public void init(int ringCount) {
-        //TODO: move this before init, don't block
         synchronized (lock) {
             telemetry.addData("Sequence", "ringCount: " +ringCount + " start pose: " + startPose.toString());
             this.ringCount = ringCount;
