@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
@@ -23,7 +24,6 @@ import org.firstinspires.ftc.teamcode.util.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Red;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
@@ -53,13 +53,13 @@ public abstract class Tele extends OpMode {
     protected CameraController camera;
 
     protected ControllerManager controllers;
+    protected MultipleTelemetry multiTelemetry;
+    private NanoClock clock = NanoClock.system();
 
     protected boolean autoShoot = false;
     protected boolean manShoot = false;
     private double loopTime;
-
-    protected MultipleTelemetry multiTelemetry;
-    private NanoClock clock = NanoClock.system();
+    protected int powerShotCt = 0;
 
     public void init() {
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -68,8 +68,8 @@ public abstract class Tele extends OpMode {
 
         DrivetrainController.TESTING = false;
 
-        controllers = new ControllerManager(telemetry);
-        controllers.make(hardwareMap, telemetry);
+        controllers = new ControllerManager(multiTelemetry);
+        controllers.make(hardwareMap, multiTelemetry);
 
         drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         hub = controllers.get(HubController.class, FieldConstants.Hub);
@@ -100,26 +100,28 @@ public abstract class Tele extends OpMode {
 
     public void loop() {
         loopTime = clock.seconds() * 1000;
+
         //lock out the gamepad during automatic shooting
         if (!autoShoot) {
             //automatically go to slow mode during manual shooting
             if (!manShoot) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Red),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Red)
+                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.alliance),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.alliance)
                 );
 
             } else {
                 if (!shooter.shootingState) manShoot = false;
-                drive.driveFieldCentric(gamepad1, DriveSlowPower, Red);
+                drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.alliance);
                 driveModeButton.resetToggle();
             }
         }
-
         drive.update();
 
-        shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
+        if (!autoShoot) {
+            shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
+        }
         shootManButton.runOnce(gameMap.ShootMan(), this::manShoot);
 
         intakeButton.toggle(
@@ -162,7 +164,7 @@ public abstract class Tele extends OpMode {
         }
 
         multiTelemetry.addLine(hub.getFormattedCurrentDraw());
-        multiTelemetry.addData("Loop Time",clock.seconds() * 1000 - loopTime + " ms");
+        multiTelemetry.addData("Loop Time",Math.round(clock.seconds() * 1000 - loopTime) + " ms");
     }
 
     protected abstract void autoShoot();

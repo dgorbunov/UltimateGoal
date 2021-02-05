@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.deprecated;
+package org.firstinspires.ftc.teamcode.util.deprecated;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;

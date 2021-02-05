@@ -26,4 +26,5 @@ public class BlueTele extends Tele {
     protected void manShoot() {
 
     }
+
 }

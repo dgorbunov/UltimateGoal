@@ -17,7 +17,6 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @TeleOp(name="RedTele", group="Iterative Opmode")
 public class RedTele extends Tele {
-    private int powerShotCount = 0;
 
     public RedTele() {
         super();
@@ -29,6 +28,38 @@ public class RedTele extends Tele {
         autoShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             //TODO: try turn and linear move
+            //TODO: try switching to async
+//            shooter.spinUp(RPMGoal);
+            drive.turn(GoalShotPos.getHeading());
+            drive.followTrajectoryAsync(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
+            new Thread(this::waitingToShoot).start();
+        }
+        else {
+//            shooter.spinUp(RPMPowerShot);
+//            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, PowerShotPos, 20));
+
+            //TODO: TEST THIS, finish powershot! try turn
+            Pose2d targetPose = new Pose2d(
+                    drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
+                    drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement));
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, targetPose, 20));
+
+            for (int i = 0; i < 3; i++) {
+                shooter.powerShot(RPMPowerShot);
+                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
+                sleep(PowerShotDelay);
+            }
+
+            shooter.stop();
+        }
+    }
+
+    public void autoShootBlocking() {
+        autoShoot = true;
+        if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
+            //TODO: try turn and linear move
+            //TODO: try switching to async
 //            shooter.spinUp(RPMGoal);
             drive.turn(GoalShotPos.getHeading());
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
@@ -78,12 +109,21 @@ public class RedTele extends Tele {
             shooter.shoot(3, RPMGoal);
         }
         else {
-            powerShotCount++;
+            powerShotCt++;
             shooter.powerShot(RPMPowerShot);
-            if (powerShotCount >= 3) {
+            if (powerShotCt >= 3) {
                 shooter.stop();
-                powerShotCount = 0;
+                powerShotCt = 0;
             }
         }
     }
+
+    private void waitingToShoot() {
+        while (drive.isBusy()) {
+            //do nothing
+        }
+        shooter.shoot(3, RPMGoal);
+        autoShoot = false;
+    }
+
 }

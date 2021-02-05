@@ -17,8 +17,8 @@ public class HubController implements Controller {
 
     int[] statusColor = {75,255,0};
     int[] errorColor = {255,0,0};
-    private int delay = 10;
-    private int step = 25;
+    private int delay = 20;
+    private int step = 15;
 
     Thread initThread = new Thread(this::initFade);
 

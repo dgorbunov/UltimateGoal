@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.deprecated;
+package org.firstinspires.ftc.teamcode.util.deprecated;
 
 import androidx.annotation.Nullable;
 
