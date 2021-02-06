@@ -72,7 +72,7 @@ public class WobbleDetector extends OpenCvPipeline {
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
             /**isolate colors in selected alliance color range**/
-            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
+            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in, 1 channel
             if (alliance == FieldConstants.Alliance.Red) {
                 Core.inRange(mat, lowerRed, upperRed, mask);
             } else Core.inRange(mat, lowerBlue, upperBlue, mask);

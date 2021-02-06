@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.ScalarConverter;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -24,7 +25,9 @@ public class RingDetector extends OpenCvPipeline {
     private Telemetry telemetry;
     private boolean debug = false;
 
-    private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
+    private static Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
+    private static Scalar lowerOrangeRGB = new Scalar(201, 116, 75);
+    private static Scalar upperOrangeRGB = new Scalar(255, 220, 0);
     private static Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
     private int CAMERA_WIDTH = 720;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
@@ -45,6 +48,11 @@ public class RingDetector extends OpenCvPipeline {
         this.debug = debug;
         ret = new Mat();
         mat = new Mat();
+
+        lowerOrange = ScalarConverter.RGB2YCrCb(lowerOrangeRGB);
+        upperOrange = ScalarConverter.RGB2YCrCb(upperOrangeRGB);
+        telemetry.addData("lower orange", lowerOrange.toString());
+        telemetry.addData("upper orange", upperOrange.toString());
     }
 
     public RingDetector(Telemetry telemetry) {
