@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.ScalarConverter;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -26,8 +25,10 @@ public class RingDetector extends OpenCvPipeline {
     private boolean debug = false;
 
     private static Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
-    private static Scalar lowerOrangeRGB = new Scalar(201, 116, 75);
-    private static Scalar upperOrangeRGB = new Scalar(255, 220, 0);
+//    private static Scalar lowerOrangeRGB = new Scalar(100.0, 0.0, 0.0);
+//    private static Scalar upperOrangeRGB = new Scalar(255.0, 255.0, 100.0);
+    private static Scalar lowerOrangeHSV = new Scalar(15,50,50);
+    private static Scalar upperOrangeHSV = new Scalar(45,100,100);
     private static Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
     private int CAMERA_WIDTH = 720;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
@@ -49,10 +50,10 @@ public class RingDetector extends OpenCvPipeline {
         ret = new Mat();
         mat = new Mat();
 
-        lowerOrange = ScalarConverter.RGB2YCrCb(lowerOrangeRGB);
-        upperOrange = ScalarConverter.RGB2YCrCb(upperOrangeRGB);
-        telemetry.addData("lower orange", lowerOrange.toString());
-        telemetry.addData("upper orange", upperOrange.toString());
+//        lowerOrange = ScalarConverter.RGB2YCrCb(lowerOrangeRGB);
+//        upperOrange = ScalarConverter.RGB2YCrCb(upperOrangeRGB);
+//        telemetry.addData("lower orange", lowerOrange.toString());
+//        telemetry.addData("upper orange", upperOrange.toString());
     }
 
     public RingDetector(Telemetry telemetry) {
@@ -76,7 +77,7 @@ public class RingDetector extends OpenCvPipeline {
         ret = new Mat(); // resetting pointer held in ret
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
             Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
