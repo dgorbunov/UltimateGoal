@@ -10,9 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Deprecated
-public class RingDetector extends OpenCvPipeline {
-
-    //TODO: Make vision alogirithms into seperate classes
+public class OldRingDetector extends OpenCvPipeline {
 
     OpenCvCamera webcam;
     Telemetry telemetry;
@@ -38,7 +36,7 @@ public class RingDetector extends OpenCvPipeline {
     Mat upperCrop = new Mat();
     Mat lowerCrop = new Mat();
 
-    public RingDetector(OpenCvCamera webcam, Telemetry telemetry) {
+    public OldRingDetector(OpenCvCamera webcam, Telemetry telemetry) {
         this.webcam = webcam;
         this.telemetry = telemetry;
     }

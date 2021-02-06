@@ -25,11 +25,8 @@ public class RingDetector extends OpenCvPipeline {
     private boolean debug = false;
 
     private static Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
-//    private static Scalar lowerOrangeRGB = new Scalar(100.0, 0.0, 0.0);
-//    private static Scalar upperOrangeRGB = new Scalar(255.0, 255.0, 100.0);
-    private static Scalar lowerOrangeHSV = new Scalar(15,50,50);
-    private static Scalar upperOrangeHSV = new Scalar(45,100,100);
     private static Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
+
     private int CAMERA_WIDTH = 720;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MIN_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
@@ -49,11 +46,6 @@ public class RingDetector extends OpenCvPipeline {
         this.debug = debug;
         ret = new Mat();
         mat = new Mat();
-
-//        lowerOrange = ScalarConverter.RGB2YCrCb(lowerOrangeRGB);
-//        upperOrange = ScalarConverter.RGB2YCrCb(upperOrangeRGB);
-//        telemetry.addData("lower orange", lowerOrange.toString());
-//        telemetry.addData("upper orange", upperOrange.toString());
     }
 
     public RingDetector(Telemetry telemetry) {

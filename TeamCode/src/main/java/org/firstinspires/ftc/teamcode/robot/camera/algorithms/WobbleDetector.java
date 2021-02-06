@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.opencv.core.Core;
@@ -17,6 +19,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.util.ColorConverter.ConvertColor;
+
 public class WobbleDetector extends OpenCvPipeline {
 
     private Telemetry telemetry;
@@ -24,25 +28,18 @@ public class WobbleDetector extends OpenCvPipeline {
     private FieldConstants.Alliance alliance; //Blue or Red
 
     //TODO: Calibrate colors
-    private static final Scalar lowerRed = new Scalar(50, 200.0, 50.0);
+    private static Scalar lowerRed = new Scalar(50, 200.0, 50.0);
     private static Scalar upperRed = new Scalar(120, 255.0, 120.0);
-    private static final Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
+    private static Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
     private static Scalar upperBlue = new Scalar(255.0, 230.0, 95.0);
 
-    //TODO: test horizon
     private int CAMERA_WIDTH = 720;
     private static double HORIZON = 0; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MAX_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
     private static double ASPECT_RATIO_THRES = 0.7;
 
-    private int ringCount = 0;
-    private String ringCountStr = "";
     private Mat mat;
     private Mat ret;
-
-    public static enum ringNames {
-        NONE, ONE, FOUR
-    }
 
     public WobbleDetector(Telemetry telemetry, boolean debug, FieldConstants.Alliance alliance) {
         this.telemetry = telemetry;
@@ -50,6 +47,11 @@ public class WobbleDetector extends OpenCvPipeline {
         this.debug = debug;
         ret = new Mat();
         mat = new Mat();
+
+        upperRed = ConvertColor(upperRed, Imgproc.COLOR_RGB2YCrCb);
+        lowerRed = ConvertColor(lowerRed, Imgproc.COLOR_RGB2YCrCb);
+        upperBlue = ConvertColor(upperBlue, Imgproc.COLOR_RGB2YCrCb);
+        lowerBlue = ConvertColor(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
     }
 
     public WobbleDetector(Telemetry telemetry, FieldConstants.Alliance alliance) {
@@ -57,12 +59,23 @@ public class WobbleDetector extends OpenCvPipeline {
     }
 
     public double getDisplacement() {
-        return ringCount;
+        //TODO: return center of bounding box
+        return 0;
     }
 
     @Override
     public Mat processFrame(Mat input) {
+        telemetry.addData("upperRed", upperRed);
+        telemetry.addData("upperBlue", upperBlue);
+        telemetry.addData("lowerRed", lowerRed);
+        telemetry.addData("lowerBlue", lowerBlue);
+        RobotLog.d("upperRed",upperRed.toString());
+        RobotLog.d("upperBlue",upperBlue.toString());
+        RobotLog.d("lowerRed",lowerRed.toString());
+        RobotLog.d("lowerBlue",lowerBlue.toString());
+
         CAMERA_WIDTH = input.width();
+        telemetry.addData("CAMERA_WIDTH", CAMERA_WIDTH);
         ret.release(); // releasing mat to release backing buffer
         // must release at the start of function since this is the variable being returned
 

@@ -86,8 +86,10 @@ public abstract class Tele extends OpMode {
 
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
-        multiTelemetry.clear();
-        multiTelemetry.addLine("Initialized");
+        //TODO: test telemetry.DisplayFormat with HTML tags
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        multiTelemetry.addLine("<strong> Initialized </strong>");
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
     }
 
     public void init_loop() {
