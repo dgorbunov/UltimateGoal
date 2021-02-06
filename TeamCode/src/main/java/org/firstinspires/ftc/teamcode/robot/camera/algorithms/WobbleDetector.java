@@ -24,8 +24,8 @@ public class WobbleDetector extends OpenCvPipeline {
     private FieldConstants.Alliance alliance; //Blue or Red
 
     //TODO: Calibrate colors
-    private static final Scalar lowerRed = new Scalar(0.0, 141.0, 0.0);
-    private static Scalar upperRed = new Scalar(255.0, 230.0, 95.0);
+    private static final Scalar lowerRed = new Scalar(50, 200.0, 50.0);
+    private static Scalar upperRed = new Scalar(120, 255.0, 120.0);
     private static final Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
     private static Scalar upperBlue = new Scalar(255.0, 230.0, 95.0);
 
@@ -110,8 +110,8 @@ public class WobbleDetector extends OpenCvPipeline {
                 copy.release(); // releasing the buffer of the copy of the contour, since after use, it is no longer needed
             }
 
-            /**drawing widest bounding rectangle to ret in pink**/
-            Imgproc.rectangle(ret, maxRect, new Scalar(255, 0, 255), 5);
+            /**drawing widest bounding rectangle to ret**/
+            Imgproc.rectangle(ret, maxRect, new Scalar(255, 255, 255), 5);
 
             /** drawing a red line to show the horizon (any above the horizon is not checked) **/
             Imgproc.line(
@@ -142,11 +142,10 @@ public class WobbleDetector extends OpenCvPipeline {
             telemetry.addData("[ERROR]", e.getStackTrace().toString());
 
         }
-        telemetry.update();
 
         /**returns the contour mask combined with original image for context**/
         Mat output = new Mat();
-        Core.add(ret, input, output);
+        Core.addWeighted(ret, 0.65, input, 0.35, 0, output);
         return output;
     }
 }

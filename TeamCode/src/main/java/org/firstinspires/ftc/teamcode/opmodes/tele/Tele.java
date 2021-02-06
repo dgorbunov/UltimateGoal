@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
@@ -67,6 +68,7 @@ public abstract class Tele extends OpMode {
         multiTelemetry.addLine("Initializing...");
 
         DrivetrainController.TESTING = false;
+        OpenCVController.DEFAULT_PIPELINE = OpenCVController.PIPELINE.TELE;
 
         controllers = new ControllerManager(multiTelemetry);
         controllers.make(hardwareMap, multiTelemetry);
@@ -95,6 +97,7 @@ public abstract class Tele extends OpMode {
     public void start() {
         controllers.start();
         intake.extend();
+        multiTelemetry.clear();
     }
 
 
@@ -172,6 +175,7 @@ public abstract class Tele extends OpMode {
     protected abstract void manShoot();
 
     public void stop() {
+        multiTelemetry.clear();
         multiTelemetry.addLine("Stopping...");
 
         controllers.stop();

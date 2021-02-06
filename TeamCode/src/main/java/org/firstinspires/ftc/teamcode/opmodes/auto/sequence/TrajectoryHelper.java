@@ -104,7 +104,7 @@ public class TrajectoryHelper {
 
     public static Trajectory buildLineTrajectory(DrivetrainController drive, Pose2d position, double velocity){
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
-                .lineToLinearHeading(position,
+                .lineToLinearHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())),
                         new MinVelocityConstraint(Arrays.asList(
                                 getMaxAngVelConstraint(),
                                 drive.getCustomVelConstraint(velocity)

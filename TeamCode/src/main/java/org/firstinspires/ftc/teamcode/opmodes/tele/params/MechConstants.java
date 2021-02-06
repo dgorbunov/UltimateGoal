@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.tele.params;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+
 @Config
 public class MechConstants {
 
-    public static Pose2d StartingPose = new Pose2d(0.50,-36,0);
+    public static Pose2d StartingPose = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
     /**
      * Set by Sequence
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()

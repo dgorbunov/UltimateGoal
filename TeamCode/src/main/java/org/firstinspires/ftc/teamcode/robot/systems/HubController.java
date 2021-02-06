@@ -21,6 +21,9 @@ public class HubController implements Controller {
     private int step = 15;
 
     Thread initThread = new Thread(this::initFade);
+    Thread statusThread = new Thread(this::statusBlink);
+    Thread initBlinkThread = new Thread(this::initBlink);
+
 
     public HubController (HardwareMap hardwareMap, Telemetry telemetry, boolean twoHubs){
         this.twoHubs = twoHubs;
@@ -46,19 +49,24 @@ public class HubController implements Controller {
 
     @Override
     public void init() {
-        initThread.start();
+//        initThread.start();
+//        initBlinkThread.start();
     }
 
     @Override
     public void start() {
-        initThread.interrupt();
+//        initThread.interrupt();
+//        initBlinkThread.interrupt();
+//        statusThread.start();
     }
 
     @Override
     public void stop() {
-        if (initThread.isAlive()) initThread.interrupt();
+//        if (initBlinkThread.isAlive()) initBlinkThread.interrupt();
+//        if (statusThread.isAlive()) statusThread.interrupt();
 
-        setColor(errorColor, controlHub, expansionHub);
+
+//        setColor(errorColor, controlHub, expansionHub);
     }
 
     private void statusBlink() {
@@ -70,12 +78,21 @@ public class HubController implements Controller {
         }
     }
 
-    private void initFade(){
+    private void initBlink() {
         while (true) {
-            fadeImpl(new int[] {0,0,0}, new int[] {255,255,255}, step, delay);
-            sleep(500);
-            fadeImpl(new int[] {255,255,255}, new int[] {0,0,0}, step, delay);
-            sleep(500);
+            setColor(statusColor, controlHub, expansionHub);
+            sleep(800);
+            setColor(new int[] {0,0,0}, controlHub, expansionHub);
+            sleep(800);
+        }
+    }
+
+    private void initFade(){
+        while (!initThread.isInterrupted()) { //or while (true)?
+//            fadeImpl(new int[] {0,0,0}, new int[] {255,255,255}, step, delay);
+//            sleep(500);
+//            fadeImpl(new int[] {255,255,255}, new int[] {0,0,0}, step, delay);
+//            sleep(500);
         }
     }
 

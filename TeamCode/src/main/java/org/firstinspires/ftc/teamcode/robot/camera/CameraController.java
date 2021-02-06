@@ -93,7 +93,7 @@ public class CameraController implements Controller {
 
     @Override
     public void stop() {
-        vuforiaController.stop();
         openCV.stop();
+        vuforiaController.stop();
     }
 }

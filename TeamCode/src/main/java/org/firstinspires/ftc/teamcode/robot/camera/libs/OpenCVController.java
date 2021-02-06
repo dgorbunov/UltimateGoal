@@ -12,12 +12,20 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import static org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController.PIPELINE.*;
+
 public class OpenCVController implements Controller{
 
     private OpenCvCamera openCvPassthrough;
     private Telemetry telemetry;
     private RingDetector ringDetector;
     private WobbleDetector wobbleDetector;
+
+    public enum PIPELINE {
+        AUTO, TELE
+    }
+
+    public static PIPELINE DEFAULT_PIPELINE = AUTO;
 
     public OpenCVController(VuforiaLocalizer vuforia, VuforiaLocalizer.Parameters paramaters, int[] viewportContainerIds, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -34,11 +42,15 @@ public class OpenCVController implements Controller{
                 // mode, because Vuforia often chooses high resolutions (such as 720p) which can be
                 // very CPU-taxing to rotate in software. GPU acceleration has been observed to cause
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
-                //TODO: Test GPU Acceleration
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                ringDetector = new RingDetector(telemetry, true);
+
                 wobbleDetector = new WobbleDetector(telemetry, true, Auto.getAlliance());
-                openCvPassthrough.setPipeline(ringDetector); //TODO: test java implementation
+                if (DEFAULT_PIPELINE == AUTO) {
+                    ringDetector = new RingDetector(telemetry, true);
+                    openCvPassthrough.setPipeline(ringDetector);
+                } else {
+                    openCvPassthrough.setPipeline(wobbleDetector);
+                }
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters
                 // are entirely ignored when using Vuforia passthrough mode. However, they are left
@@ -67,12 +79,12 @@ public class OpenCVController implements Controller{
 
     @Override
     public void start() {
-        openCvPassthrough.setPipeline(wobbleDetector); //TODO: test
+        if (DEFAULT_PIPELINE == AUTO) openCvPassthrough.setPipeline(wobbleDetector);
     }
 
     @Override
     public void stop() {
-        openCvPassthrough.stopStreaming(); //TODO: this? or stop camera async
+//        openCvPassthrough.stopStreaming(); //TODO: this is crashing
         FtcDashboard.getInstance().stopCameraStream();
     }
 

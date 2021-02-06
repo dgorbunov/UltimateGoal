@@ -71,16 +71,17 @@ public abstract class Sequence {
             actions.stop();
 
             //Set starting position for TeleOp
-            MechConstants.StartingPose = drive.getPoseEstimate();
+            if (drive != null) MechConstants.StartingPose = drive.getPoseEstimate();
+            else telemetry.addLine("Drive is null - stop pressed before start");
         }
     }
 
     public void moveLinear(Vector2d posititon, double targetHeading) {
-        drive.followTrajectoryAsync(buildLinearTrajectory(drive, posititon, targetHeading));
+        drive.followTrajectory(buildLinearTrajectory(drive, posititon, targetHeading));
     }
 
     public void moveLinear(double x, double y, double targetHeading) {
-        drive.followTrajectoryAsync(buildLinearTrajectory(drive, new Vector2d(x, y), targetHeading));
+        drive.followTrajectory(buildLinearTrajectory(drive, new Vector2d(x, y), targetHeading));
     }
 
 
@@ -93,7 +94,7 @@ public abstract class Sequence {
                 new Pose2d(targetZone, targetHeading),
         };
 
-        drive.followTrajectoryAsync(buildSplineTrajectory(drive, positions));
+        drive.followTrajectory(buildSplineTrajectory(drive, positions));
     }
 
     public void dropWobble() {
@@ -105,8 +106,8 @@ public abstract class Sequence {
     public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endTangent) {
         telemetry.addData("Sequence","moveToWobble");
 
-        drive.followTrajectoryAsync(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
-        drive.followTrajectoryAsync(buildLineTrajectory(drive, new Pose2d(wobblePos, endTangent), 12));
+        drive.followTrajectory(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
+        drive.followTrajectory(buildLineTrajectory(drive,  new Pose2d(wobblePos, endTangent), 12));
     }
 
     public void pickupWobble() {
@@ -123,14 +124,14 @@ public abstract class Sequence {
                 position
         };
 
-//        drive.followTrajectoryAsync(buildLineTrajectory(positions));
-        drive.followTrajectoryAsync(buildSplineTrajectoryConstantHeading(drive, positions, targetHeading));
+//        drive.followTrajectory(buildLineTrajectory(positions));
+        drive.followTrajectory(buildSplineTrajectoryConstantHeading(drive, positions, targetHeading));
         //TODO: fix, path continuity exception
     }
 
     public void moveToShoot(Pose2d position, double heading) {
         telemetry.addData("Sequence", "moveToShoot");
-        drive.followTrajectoryAsync(TrajectoryHelper.buildLineTrajectory(drive, position));
+        drive.followTrajectory(TrajectoryHelper.buildLineTrajectory(drive, position));
     }
 
     public void startShooter(double RPM){
@@ -151,12 +152,12 @@ public abstract class Sequence {
 
     public void backOffFromWobbles (double distance) {
         telemetry.addData("Sequence", "back off from wobbles");
-        drive.followTrajectoryAsync(buildBackTrajectory(drive, distance));
+        drive.followTrajectory(buildBackTrajectory(drive, distance));
     }
 
     public void strafe (Vector2d position) {
         telemetry.addData("Sequence", "back off from wobbles");
-        drive.followTrajectoryAsync(buildStrafeTrajectory(drive, position));
+        drive.followTrajectory(buildStrafeTrajectory(drive, position));
     }
 
     public void shootPowershot(int numRings) {
@@ -176,13 +177,13 @@ public abstract class Sequence {
             case (1):
                 telemetry.addData("Sequence", "intake 1 ring");
                 intake.extend();
-                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, intake, position, heading, 0.1));
+                drive.followTrajectory(buildIntakeTrajectory(drive, intake, position, heading, 0.1));
                 break;
 
             case (4):
                 telemetry.addData("Sequence", "intake 4 rings");
                 intake.extend();
-                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, intake, position, heading, 0.1));
+                drive.followTrajectory(buildIntakeTrajectory(drive, intake, position, heading, 0.1));
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");
@@ -196,7 +197,7 @@ public abstract class Sequence {
 
     public void moveToLaunchLine(Vector2d position) {
         telemetry.addData("Sequence","moveToLaunchLine" );
-        drive.followTrajectoryAsync(buildLineTrajectory(drive, new Pose2d(position, 0)));
+        drive.followTrajectory(buildLineTrajectory(drive, new Pose2d(position, 0)));
     }
 
     private void turn(double heading){

@@ -158,11 +158,10 @@ public class RingDetector extends OpenCvPipeline {
             telemetry.addData("[ERROR]", e.getStackTrace().toString());
 
         }
-        telemetry.update();
 
         /**returns the contour mask combined with original image for context**/
         Mat output = new Mat();
-        Core.add(ret, input, output);
+        Core.addWeighted(ret, 0.65, input, 0.35, 0, output);
         return output;
     }
 }

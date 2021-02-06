@@ -123,6 +123,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
         this.hardwareMap = hardwareMap;
 
+        ControllerName = getClass().getSimpleName();
+
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(50);
 
@@ -247,7 +249,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             telemetry.addData("DrivetrainController", "stop");
         }
 
-        mode = Mode.IDLE; //return out of the current thread
+        mode = Mode.IDLE;
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {

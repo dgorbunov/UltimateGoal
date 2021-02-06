@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,8 @@ public class Auto extends OpMode {
         multiTelemetry = telemetry; //TODO: fix telemetry
         // multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.addLine("Initializing...");
+
+        OpenCVController.DEFAULT_PIPELINE = OpenCVController.PIPELINE.AUTO;
 
         controllers = new ControllerManager(multiTelemetry);
         controllers.make(hardwareMap, multiTelemetry);
@@ -72,7 +75,6 @@ public class Auto extends OpMode {
 
             try {
                 multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
-                multiTelemetry.update();
                 currentSequence.init(ringCount);
 
                 multiTelemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
