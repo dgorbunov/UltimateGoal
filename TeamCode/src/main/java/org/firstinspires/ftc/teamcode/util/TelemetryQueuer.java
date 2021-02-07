@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
-public class TelemetryQueuer{
+import org.firstinspires.ftc.teamcode.robot.Controller;
+
+public class TelemetryQueuer implements Controller {
 
     //TODO: extends multipletelemetry, controller?
     //https://stackoverflow.com/questions/9754076/which-html-tags-are-supported-by-android-textview
@@ -27,7 +27,22 @@ public class TelemetryQueuer{
     }
 
     public void queue(String info){
-        Log.i("Telemetry: ", info);
         telemetry.addLine(info);
+        android.util.Log.i("telemetry: ", info);
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
     }
 }
