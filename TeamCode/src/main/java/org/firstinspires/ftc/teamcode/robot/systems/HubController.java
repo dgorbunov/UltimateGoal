@@ -20,10 +20,29 @@ public class HubController implements Controller {
     private int delay = 20;
     private int step = 15;
 
-    Thread initThread = new Thread(this::initFade);
-    Thread statusThread = new Thread(this::statusBlink);
-    Thread initBlinkThread = new Thread(this::initBlink);
+    // Thread initThread = new Thread(this::initFade);
+    Thread blinkThread;
 
+    class BlinkThread extends Thread {
+        long delayInMs;
+        BlinkThread(long delayInMs) {
+            this.delayInMs = delayInMs;
+        }
+
+        public void run() {
+            int[] noColor = new int[] {0,0,0};
+            while (true) {
+                try {
+                    setColor(statusColor, controlHub, expansionHub);
+                    sleep(delayInMs);
+                    setColor(noColor, controlHub, expansionHub);
+                    sleep(delayInMs);
+                }
+                catch (InterruptedException e) {
+                }
+            }
+        }
+    }
 
     public HubController (HardwareMap hardwareMap, Telemetry telemetry, boolean twoHubs){
         this.twoHubs = twoHubs;
@@ -32,6 +51,8 @@ public class HubController implements Controller {
 
         this.telemetry = telemetry;
         ControllerName = getClass().getSimpleName();
+
+        blinkThread = new BlinkThread(800);
     }
 
     public HubController (HardwareMap hardwareMap, Telemetry telemetry) {
@@ -50,13 +71,14 @@ public class HubController implements Controller {
     @Override
     public void init() {
 //        initThread.start();
-//        initBlinkThread.start();
+        blinkThread.start();
     }
 
     @Override
     public void start() {
 //        initThread.interrupt();
-//        initBlinkThread.interrupt();
+        blinkThread.interrupt();
+        blinkThread = null;
 //        statusThread.start();
     }
 
@@ -88,12 +110,12 @@ public class HubController implements Controller {
     }
 
     private void initFade(){
-        while (!initThread.isInterrupted()) { //or while (true)?
+//        while (!initThread.isInterrupted()) { //or while (true)?
 //            fadeImpl(new int[] {0,0,0}, new int[] {255,255,255}, step, delay);
 //            sleep(500);
 //            fadeImpl(new int[] {255,255,255}, new int[] {0,0,0}, step, delay);
 //            sleep(500);
-        }
+//        }
     }
 
     private void fadeImpl(int[] current, int[] target, double step, int delay) {

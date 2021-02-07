@@ -20,8 +20,10 @@ public class ScalarConverter {
 
         Imgproc.cvtColor(in, out, Imgproc.COLOR_RGB2YCrCb);
 
-        return new Scalar(out.get(0,0)[0], out.get(0,0)[1], out.get(0,0)[2]);
+        //Scalar res = new Scalar(out.get(0,0)[0], out.get(0,0)[1], out.get(0,0)[2]);
+        in.release();
+        out.release();
+
+        return res;
     }
-
-
 }
