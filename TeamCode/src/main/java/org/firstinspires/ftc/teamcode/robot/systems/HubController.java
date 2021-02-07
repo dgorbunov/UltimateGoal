@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.util.Sleep;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
@@ -21,25 +22,26 @@ public class HubController implements Controller {
     private int step = 15;
 
     // Thread initThread = new Thread(this::initFade);
-    Thread blinkThread;
+    BlinkThread blinkThread;
 
     class BlinkThread extends Thread {
-        long delayInMs;
+        private long delayInMs;
+        private volatile boolean shoudRun = true;
         BlinkThread(long delayInMs) {
             this.delayInMs = delayInMs;
         }
 
+        public void stopRunning() {
+            shoudRun = false;
+        }
+
         public void run() {
             int[] noColor = new int[] {0,0,0};
-            while (true) {
-                try {
-                    setColor(statusColor, controlHub, expansionHub);
-                    sleep(delayInMs);
-                    setColor(noColor, controlHub, expansionHub);
-                    sleep(delayInMs);
-                }
-                catch (InterruptedException e) {
-                }
+            while (shoudRun) {
+                setColor(statusColor, controlHub, expansionHub);
+                Sleep.sleep(delayInMs);
+                setColor(noColor, controlHub, expansionHub);
+                Sleep.sleep(delayInMs);
             }
         }
     }
@@ -77,7 +79,7 @@ public class HubController implements Controller {
     @Override
     public void start() {
 //        initThread.interrupt();
-        blinkThread.interrupt();
+        blinkThread.stopRunning();
         blinkThread = null;
 //        statusThread.start();
     }
