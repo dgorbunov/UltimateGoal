@@ -33,7 +33,7 @@ if __name__ == '__main__' :
      
     # load the image and setup the mouse callback function
     global img
-    files = glob.glob('images/image.jpg')
+    files = glob.glob('images/img*.jpg')
     files.sort()
     img = cv2.imread(files[0])
     img = cv2.resize(img,(400,400))
