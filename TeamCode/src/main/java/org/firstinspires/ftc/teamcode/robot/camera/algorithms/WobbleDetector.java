@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.util.ColorConverter;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -18,8 +19,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.teamcode.util.ColorConverter.ConvertColor;
 
 public class WobbleDetector extends OpenCvPipeline {
 
@@ -48,10 +47,10 @@ public class WobbleDetector extends OpenCvPipeline {
         ret = new Mat();
         mat = new Mat();
 
-        upperRed = ConvertColor(upperRed, Imgproc.COLOR_RGB2YCrCb);
-        lowerRed = ConvertColor(lowerRed, Imgproc.COLOR_RGB2YCrCb);
-        upperBlue = ConvertColor(upperBlue, Imgproc.COLOR_RGB2YCrCb);
-        lowerBlue = ConvertColor(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
+        upperRed = ColorConverter.convert(upperRed, Imgproc.COLOR_RGB2YCrCb);
+        lowerRed = ColorConverter.convert(lowerRed, Imgproc.COLOR_RGB2YCrCb);
+        upperBlue = ColorConverter.convert(upperBlue, Imgproc.COLOR_RGB2YCrCb);
+        lowerBlue = ColorConverter.convert(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
     }
 
     public WobbleDetector(Telemetry telemetry, FieldConstants.Alliance alliance) {
