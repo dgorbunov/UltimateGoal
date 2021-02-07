@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.util.ColorConverter;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -27,58 +26,63 @@ public class WobbleDetector extends OpenCvPipeline {
     private FieldConstants.Alliance alliance; //Blue or Red
 
     //TODO: Calibrate colors
-    private static Scalar lowerRed = new Scalar(50, 200.0, 50.0);
-    private static Scalar upperRed = new Scalar(120, 255.0, 120.0);
+    private static Scalar lowerRed = new Scalar(35, 170, 90);
+    private static Scalar upperRed = new Scalar(150, 255, 110);
     private static Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
     private static Scalar upperBlue = new Scalar(255.0, 230.0, 95.0);
 
-    private int CAMERA_WIDTH = 720;
+    private int CAMERA_WIDTH = 800;
     private static double HORIZON = 0; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MAX_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
-    private static double ASPECT_RATIO_THRES = 0.7;
+    private static double MIN_ASPECT_RATIO = 1.2;
 
-    private Mat mat;
-    private Mat ret;
+    private double centerX;
+    private double centerY;
 
     public WobbleDetector(Telemetry telemetry, boolean debug, FieldConstants.Alliance alliance) {
         this.telemetry = telemetry;
         this.alliance = alliance;
         this.debug = debug;
-        ret = new Mat();
-        mat = new Mat();
 
-        upperRed = ColorConverter.convert(upperRed, Imgproc.COLOR_RGB2YCrCb);
-        lowerRed = ColorConverter.convert(lowerRed, Imgproc.COLOR_RGB2YCrCb);
-        upperBlue = ColorConverter.convert(upperBlue, Imgproc.COLOR_RGB2YCrCb);
-        lowerBlue = ColorConverter.convert(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
+//        upperRed = ColorConverter.convert(upperRed, Imgproc.COLOR_RGB2YCrCb);
+//        lowerRed = ColorConverter.convert(lowerRed, Imgproc.COLOR_RGB2YCrCb);
+//        upperBlue = ColorConverter.convert(upperBlue, Imgproc.COLOR_RGB2YCrCb);
+//        lowerBlue = ColorConverter.convert(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
+        telemetry.addData("upperRed", upperRed.toString());
+        telemetry.addData("upperBlue", upperBlue.toString());
+        telemetry.addData("lowerRed", lowerRed.toString());
+        telemetry.addData("lowerBlue", lowerBlue.toString());
+        /*
+        Log/d prints:
+        [182.0, 52.0, 73.0, 0.0] upperRed, RGB: 255, 60, 60
+        [161.0, 171.0, 69.0, 0.0] upperBlue, RGB: 255.0, 230.0, 95.0
+        [140.0, 90.0, 113.0, 0.0] lowerRed, RGB: 150, 0, 0
+        [75.0, 134.0, 132.0, 0.0] lowerBlue, RGB: 0.0, 141.0, 0.0
+         */
+        RobotLog.d(upperRed.toString());
+        RobotLog.d(upperBlue.toString());
+        RobotLog.d(lowerRed.toString());
+        RobotLog.d(lowerBlue.toString());
     }
 
     public WobbleDetector(Telemetry telemetry, FieldConstants.Alliance alliance) {
         this(telemetry, false, alliance);
     }
 
-    public double getDisplacement() {
-        //TODO: return center of bounding box
-        return 0;
+    public double getDisplacementFromCenter() {
+        return centerX - getCameraCenterX();
+    }
+
+    public double getCameraCenterX() {
+        return (double)CAMERA_WIDTH/2;
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        telemetry.addData("upperRed", upperRed.toString());
-        telemetry.addData("upperBlue", upperBlue.toString());
-        telemetry.addData("lowerRed", lowerRed.toString());
-        telemetry.addData("lowerBlue", lowerBlue.toString());
-        RobotLog.d("upperRed",upperRed.toString());
-        RobotLog.d("upperBlue",upperBlue.toString());
-        RobotLog.d("lowerRed",lowerRed.toString());
-        RobotLog.d("lowerBlue",lowerBlue.toString());
-
         CAMERA_WIDTH = input.width();
-        telemetry.addData("CAMERA_WIDTH", CAMERA_WIDTH);
-        ret.release(); // releasing mat to release backing buffer
-        // must release at the start of function since this is the variable being returned
 
-        ret = new Mat(); // resetting pointer held in ret
+        Mat ret = new Mat();
+        Mat mat = new Mat();
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
@@ -111,26 +115,29 @@ public class WobbleDetector extends OpenCvPipeline {
                 Rect rect = Imgproc.boundingRect(copy);
 
                 double w = rect.width;
-                // checking if the rectangle is below the horizon
+                double aspectRatio = (double)rect.height / (double)rect.width;
 
                 //TODO: switch to min, but within a reasonable range to remove noise
-                if (w > maxWidth && rect.y + rect.height > HORIZON) {
+                if (w > maxWidth && aspectRatio > MIN_ASPECT_RATIO) {
                     maxWidth = w;
                     maxRect = rect;
                 }
+
                 c.release(); // releasing the buffer of the contour, since after use, it is no longer needed
                 copy.release(); // releasing the buffer of the copy of the contour, since after use, it is no longer needed
             }
 
             /**drawing widest bounding rectangle to ret**/
-            Imgproc.rectangle(ret, maxRect, new Scalar(255, 255, 255), 5);
+            Scalar color;
+            if (alliance == FieldConstants.Alliance.Red) color = new Scalar(0,0,255);
+            else color = new Scalar(255,0,0);
+            Imgproc.rectangle(ret, maxRect, color, 5);
 
-            /** drawing a red line to show the horizon (any above the horizon is not checked) **/
-            Imgproc.line(
-                    ret,
-                    new Point(.0, HORIZON),
-                    new Point(CAMERA_WIDTH, HORIZON),
-                    new Scalar(255.0, .0, 255.0));
+            centerX = maxRect.x + (double)maxRect.width/2;
+            centerY = maxRect.y + (double)maxRect.height/2;
+
+            Point center = new Point(centerX, centerY);
+            Imgproc.drawMarker(ret, center, color, 0, 35);
 
             if (debug) telemetry.addData("Vision: maxW", maxWidth);
 

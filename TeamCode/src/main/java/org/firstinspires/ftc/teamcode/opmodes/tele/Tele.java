@@ -44,6 +44,7 @@ public abstract class Tele extends OpMode {
     Button shootButton = new Button();
     Button driveModeButton = new Button();
     Button shootManButton = new Button();
+    Button wobbleAutoButton = new Button();
 
     protected DrivetrainController drive;
     protected IntakeController intake;
@@ -156,10 +157,15 @@ public abstract class Tele extends OpMode {
                 () -> shooter.spinUp(RPMGoal),
                 ()-> shooter.stop());
 
+        wobbleAutoButton.runOnce(
+                gameMap.WobbleAuto(),
+                () -> drive.alignWithWobble(
+                        camera.getCameraCenterX(),
+                        camera.getWobbleDisplacement()));
+
         if (gameMap.Shoot()){
             flywheelButton.resetToggle();
         }
-
 
         if (gameMap.StopAllIntakes()) {
             intake.stop();
@@ -168,8 +174,8 @@ public abstract class Tele extends OpMode {
             vertIntakeButton.resetToggle();
         }
 
-        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
-        multiTelemetry.addData("Loop Time",Math.round(clock.seconds() * 1000 - loopTime) + " ms");
+//        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
+//        multiTelemetry.addData("Loop Time",Math.round(clock.seconds() * 1000 - loopTime) + " ms");
     }
 
     protected abstract void autoShoot();

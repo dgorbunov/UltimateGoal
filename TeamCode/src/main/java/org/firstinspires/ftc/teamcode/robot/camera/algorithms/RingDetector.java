@@ -24,16 +24,17 @@ public class RingDetector extends OpenCvPipeline {
     private Telemetry telemetry;
     private boolean debug = false;
 
-    private static Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
-    private static Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
+    private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
+    private static final Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
 
-    private int CAMERA_WIDTH = 720;
+    private int CAMERA_WIDTH = 800;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MIN_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
     private static double ASPECT_RATIO_THRES = 0.7;
 
     private int ringCount = 0;
     private String ringCountStr = "";
+
 
     public static enum ringNames {
         NONE, ONE, FOUR
@@ -59,14 +60,12 @@ public class RingDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         CAMERA_WIDTH = input.width();
-        // ret.release(); // releasing mat to release backing buffer
-        // must release at the start of function since this is the variable being returned
 
         Mat ret = new Mat();
-        Mat mat = new Mat(); // resetting pointer held in ret
+        Mat mat = new Mat();
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
             Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in

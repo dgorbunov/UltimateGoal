@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.teamcode.robot.Controller;
@@ -10,8 +12,8 @@ public class TelemetryQueuer implements Controller {
     //https://stackoverflow.com/questions/9754076/which-html-tags-are-supported-by-android-textview
 
     /**
-     * Manages pushing telemetry out when using multiple threads
-     * All telemetry is sent out here on one thread
+     * Queues telemetry to be sent out on one call
+     * Prevents multiple threads from using telemetry
      */
 
     //TODO: finish, implement telemetry. Refactor all telemetry to this class?
@@ -26,9 +28,17 @@ public class TelemetryQueuer implements Controller {
         return telemetry;
     }
 
-    public void queue(String info){
+    public void addData(String info){
         telemetry.addLine(info);
-        android.util.Log.i("telemetry: ", info);
+        Log.i("telemetry: ", info);
+    }
+
+    public void addLine() {
+
+    }
+
+    public void send() {
+        telemetry.update();
     }
 
     @Override

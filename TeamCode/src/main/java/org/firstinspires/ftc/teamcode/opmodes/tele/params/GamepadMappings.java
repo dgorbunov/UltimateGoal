@@ -48,6 +48,9 @@ public class GamepadMappings {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
         return gamepad2.dpad_up || gamepad2.dpad_down;
     };
+    public boolean WobbleAuto() {
+        return gamepad1.left_bumper && gamepad1.right_bumper;
+    };
 
     public enum DriverMode {
         OneDriver, TwoDrivers

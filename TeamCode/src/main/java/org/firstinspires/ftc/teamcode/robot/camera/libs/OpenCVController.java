@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import static org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController.PIPELINE.*;
+import static org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController.PIPELINE.AUTO;
 
 public class OpenCVController implements Controller{
 
@@ -63,14 +63,22 @@ public class OpenCVController implements Controller{
     }
 
     public int getRingCount() {
-        return ringDetector.getRingCount();
+        if (ringDetector != null) return ringDetector.getRingCount();
+        else return -1;
     }
 
     public String getRingCountStr() {
-        return ringDetector.getRingCountStr();
+        if (ringDetector != null) return ringDetector.getRingCountStr();
+        else return null;
     }
 
-    public double getWobbleDisplacement() { return wobbleDetector.getDisplacement(); }
+    public double getWobbleDisplacement() {
+       return wobbleDetector.getDisplacementFromCenter();
+    }
+
+    public double getCameraCenterX() {
+        return wobbleDetector.getCameraCenterX();
+    }
 
     @Override
     public void init() {

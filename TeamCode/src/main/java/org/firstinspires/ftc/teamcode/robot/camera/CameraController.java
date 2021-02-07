@@ -80,6 +80,10 @@ public class CameraController implements Controller {
         return openCV.getRingCountStr();
     }
 
+    public double getWobbleDisplacement() { return openCV.getWobbleDisplacement(); }
+
+    public double getCameraCenterX() { return openCV.getCameraCenterX(); }
+
     @Nullable
     public Pose2d getRobotPosition() {
         return vuforiaController.getRobotPosition();

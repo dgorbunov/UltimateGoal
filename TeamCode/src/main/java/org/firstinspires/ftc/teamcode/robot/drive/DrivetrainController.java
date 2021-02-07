@@ -18,7 +18,6 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -393,6 +392,16 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
     }
 
+    public void alignWithWobble(double target, double displacement) {
+        PIDFController controller = new PIDFController(TRANSLATIONAL_PID);
+        controller.setOutputBounds(-1.0,1.0);
+        controller.setTargetPosition(target);
+        controller.update(displacement);
+        while (controller.getLastError() > 75) {
+            double correction = controller.update(displacement);
+            strafe(correction);
+        }
+    }
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
 
@@ -411,6 +420,10 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
 
         setDrivePower(vel);
+    }
+
+    public void strafe(double power) {
+        setWeightedDrivePower(new Pose2d(-power, 0, 0));
     }
 
     public void driveWithGamepad(Gamepad gamepad, double power){
