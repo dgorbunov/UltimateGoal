@@ -26,23 +26,29 @@ public abstract class Tele extends OpModeBase {
     private double loopTime;
     protected int powerShotCt = 0;
 
+    Tele() {
+        super();
+    }
+
     @Override
     public void init() {
         super.init();
         OpenCVController.DEFAULT_PIPELINE = OpenCVController.PIPELINE.TELE;
         drive.setPoseEstimate(MechConstants.StartingPose);
+
     }
 
+    @Override
     public void init_loop() {
         super.init_loop();
     }
 
+    @Override
     public void start() {
         super.start();
         intake.extend();
     }
-
-
+    @Override
     public void loop() {
         loopTime = systemClock.seconds() * 1000;
 
@@ -121,6 +127,7 @@ public abstract class Tele extends OpModeBase {
     protected abstract void powerShot();
     protected abstract void manShoot();
 
+    @Override
     public void stop() {
         super.stop();
     }

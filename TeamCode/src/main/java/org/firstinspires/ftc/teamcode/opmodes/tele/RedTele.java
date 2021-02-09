@@ -18,7 +18,7 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 @TeleOp(name="RedTele", group="Iterative Opmode")
 public class RedTele extends Tele {
 
-    public RedTele() {
+    RedTele() {
         super();
         Auto.alliance = FieldConstants.Alliance.Red;
     }
