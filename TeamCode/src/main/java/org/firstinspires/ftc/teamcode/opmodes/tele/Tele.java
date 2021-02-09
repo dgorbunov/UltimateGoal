@@ -159,9 +159,7 @@ public abstract class Tele extends OpMode {
 
         wobbleAutoButton.runOnce(
                 gameMap.WobbleAuto(),
-                () -> drive.alignWithWobble(
-                        camera.getCameraCenterX(),
-                        camera.getWobbleDisplacement()));
+                () -> drive.alignWithWobble(camera));
 
         if (gameMap.Shoot()){
             flywheelButton.resetToggle();

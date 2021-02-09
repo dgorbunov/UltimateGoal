@@ -16,8 +16,8 @@ public class VertIntakeController implements Controller{
     private DcMotorEx vIntake;
     public static String ControllerName;
 
-    public static DcMotorEx.Direction Direction = DcMotorEx.Direction.FORWARD;
-    public static double VertIntakePower = 0.75;
+    public static DcMotorEx.Direction Direction = DcMotorEx.Direction.REVERSE;
+    public static double VertIntakePower = 0.4;
 
     public VertIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -27,6 +27,7 @@ public class VertIntakeController implements Controller{
         vIntake = hardwareMap.get(DcMotorEx.class, "vIntake");
 
         vIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vIntake.setDirection(Direction);
     }
 
     @Override

@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
@@ -392,14 +393,20 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
     }
 
-    public void alignWithWobble(double target, double displacement) {
-        PIDFController controller = new PIDFController(TRANSLATIONAL_PID);
-        controller.setOutputBounds(-1.0,1.0);
-        controller.setTargetPosition(target);
-        controller.update(displacement);
-        while (controller.getLastError() > 75) {
-            double correction = controller.update(displacement);
-            strafe(correction);
+    public void alignWithWobble(CameraController camera) {
+        int alignmentThreshold = 100;
+        if (camera != null) {
+            PIDFController controller = new PIDFController(TRANSLATIONAL_PID);
+
+            controller.setOutputBounds(-1.0, 1.0);
+            controller.setTargetPosition(0);
+//            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
+            controller.update(camera.getWobbleDisplacement());
+
+            while (Math.abs(controller.getLastError()) < alignmentThreshold) {
+                double correction = controller.update(camera.getWobbleDisplacement());
+                strafe(correction);
+            }
         }
     }
     public void setWeightedDrivePower(Pose2d drivePower) {

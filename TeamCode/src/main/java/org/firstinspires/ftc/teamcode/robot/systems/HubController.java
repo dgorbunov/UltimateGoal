@@ -71,8 +71,6 @@ public class HubController implements Controller {
 
         this.telemetry = telemetry;
         ControllerName = getClass().getSimpleName();
-
-        hubStatusThread = new HubStatusThread(800);
     }
 
     public HubController (HardwareMap hardwareMap, Telemetry telemetry) {
@@ -90,6 +88,7 @@ public class HubController implements Controller {
 
     @Override
     public void init() {
+        hubStatusThread = new HubStatusThread(750);
         hubStatusThread.mode = Mode.INIT;
         hubStatusThread.start();
     }

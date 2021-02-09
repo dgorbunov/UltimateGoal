@@ -43,8 +43,12 @@ public class RedRightSequence extends Sequence {
                 }
         }
 
-        //TODO: shoot from start!
+        //TODO: minimize movements, shoot from optimal location
         //TODO: shoot at intake position
+        //TODO: minimize local x (global y) movements, stick to left/right side
+        //TODO: spline/lines with linear heading interpolation to minimize turns
+        //TODO: chain trajectories to remove 0.5s delay for correction by RR
+
         actions.add(() -> moveToShoot(RedRight.IntermediatePos, new Vector2d(RedField.GoalShotPos.getX(),RedField.GoalShotPos.getY()), 0));
         actions.add(() -> shootGoal(3));
 
