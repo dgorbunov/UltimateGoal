@@ -16,8 +16,12 @@ public class VertIntakeController implements Controller{
     private DcMotorEx vIntake;
     public static String ControllerName;
 
-    public static DcMotorEx.Direction Direction = DcMotorEx.Direction.REVERSE;
-    public static double VertIntakePower = 0.4;
+    /*
+     * Do not change motor direction to avoid breaking odometry
+     * which uses the same encoder ports
+     * */
+
+    public static double VertIntakePower = -0.4;
 
     public VertIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -27,7 +31,7 @@ public class VertIntakeController implements Controller{
         vIntake = hardwareMap.get(DcMotorEx.class, "vIntake");
 
         vIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vIntake.setDirection(Direction);
+        vIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -44,7 +48,7 @@ public class VertIntakeController implements Controller{
         vIntake.setPower(0);
     }
 
-    public void run(DcMotorSimple.Direction Direction) {
+    public void run(DcMotorEx.Direction Direction) {
         if (Direction == DcMotorSimple.Direction.FORWARD) vIntake.setPower(VertIntakePower);
         else vIntake.setPower(-VertIntakePower);
         telemetry.addData(ControllerName, "V. Intake Running");

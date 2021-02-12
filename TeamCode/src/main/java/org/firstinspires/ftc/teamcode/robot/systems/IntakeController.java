@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -22,8 +23,10 @@ public class IntakeController implements Controller {
     public static double ArmDropPos = 0.6;
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
-    public static DcMotorEx.Direction IntakeDirection = DcMotorEx.Direction.FORWARD;
-    public static DcMotorEx.Direction Intake2Direction = DcMotorEx.Direction.FORWARD;
+    /*
+    * Do not change motor direction to avoid breaking odometry
+    * which uses the same encoder ports
+    * */
     public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -39,10 +42,10 @@ public class IntakeController implements Controller {
         arm = hardwareMap.get(Servo.class, "intake_arm");
         arm.setDirection(ArmDirection);
 
-        arm.setPosition(ArmStartPos);
-        intake.setDirection(IntakeDirection);
-        intake2.setDirection(Intake2Direction);
 
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setPosition(ArmStartPos);
     }
 
     @Override

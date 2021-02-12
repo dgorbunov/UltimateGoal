@@ -29,8 +29,8 @@ public class HubController implements Controller {
 
     class HubStatusThread extends Thread {
         private double sleepDelay;
-        private int fadeDelay = 20;
-        private int step = 15;
+        private int fadeDelay = 15;
+        private int step = 20;
         private volatile boolean shouldRun = true;
         private Mode mode = Mode.STATUS;
 
@@ -60,11 +60,13 @@ public class HubController implements Controller {
                     setColor(errorColor, controlHub, expansionHub);
                 }
             }
+            //kill Thread when !shouldRun
+            killStatusThread();
 
         }
     }
 
-    public HubController (HardwareMap hardwareMap, Telemetry telemetry, boolean twoHubs){
+    public HubController (HardwareMap hardwareMap, Telemetry telemetry, boolean twoHubs) {
         this.twoHubs = twoHubs;
         controlHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
         if (twoHubs) expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub");
@@ -98,11 +100,19 @@ public class HubController implements Controller {
         hubStatusThread.mode = Mode.STATUS;
     }
 
+    public void killStatusThread() {
+        hubStatusThread.interrupt();
+        hubStatusThread = null;
+    }
+
     @Override
     public void stop() {
-        hubStatusThread.mode = Mode.ERROR;
+        try {
+            hubStatusThread.mode = Mode.ERROR;
+        } catch (Exception e) {
+            telemetry.addLine(e.toString());
+        }
         hubStatusThread.stopRunning();
-        hubStatusThread = null;
     }
 
 

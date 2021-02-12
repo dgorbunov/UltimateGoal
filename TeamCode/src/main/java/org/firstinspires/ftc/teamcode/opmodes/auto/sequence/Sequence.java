@@ -36,16 +36,16 @@ public abstract class Sequence {
     public Sequence(ControllerManager controllers, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.controllers = controllers;
-        this.actions = new Actions(this.telemetry);
+        this.actions = new Actions();
     }
 
     public void init(int ringCount) {
         synchronized (lock) {
-            telemetry.addData("Sequence", "ringCount: " +ringCount + " start pose: " + startPose.toString());
+            telemetry.addData("Sequence", "ringCount: " + ringCount + " start pose: " + startPose.toString());
             this.ringCount = ringCount;
 
             // Reset all actions
-            actions = new Actions(telemetry);
+            actions = new Actions();
             makeActions();
 
             // Define our start pose

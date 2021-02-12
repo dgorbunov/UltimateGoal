@@ -12,8 +12,7 @@ public class Actions {
     private volatile boolean shouldRun;
     protected final Object lock = new Object();
 
-    public Actions(Telemetry tel) {
-        this.telemetry = tel;
+    public Actions() {
         this.shouldRun = true;
     }
 

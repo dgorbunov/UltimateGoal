@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
@@ -12,8 +11,6 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
-import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +18,7 @@ import java.util.Optional;
 
 @Disabled // will not show up on driver station
 @Autonomous(name="Auto", group="Iterative Opmode")
-public class Auto extends OpMode {
+public class Auto extends OpModeBase {
 
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<>();
@@ -32,20 +29,10 @@ public class Auto extends OpMode {
     protected String sequenceName;
     public static FieldConstants.Side side;
     public static FieldConstants.Alliance alliance;
-    
-    //private MultipleTelemetry multiTelemetry;
-    private Telemetry multiTelemetry;
 
     @Override
     public void init() {
-        multiTelemetry = telemetry; //TODO: fix telemetry
-        // multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        multiTelemetry.addLine("Initializing...");
-
-        OpenCVController.DEFAULT_PIPELINE = OpenCVController.PIPELINE.AUTO;
-
-        controllers = new ControllerManager(multiTelemetry);
-        controllers.make(hardwareMap, multiTelemetry);
+        super.init(OPMODE.Auto);
 
         makeSequences();
         synchronized (lock) {
@@ -56,22 +43,17 @@ public class Auto extends OpMode {
                 return;
             }
         }
-//        sequenceSide = getSequenceSide(currentSequence);
 
-        // Initialize all controllers
-        controllers.init();
-
-        multiTelemetry.addLine("Initialized");
     }
 
     @Override
     public void init_loop() {
-        computeRingCount();
+        getRingCount();
     }
 
     @Override
     public void start() { //code to run once when play is hit
-        controllers.start();
+        super.start();
 
             try {
                 multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
@@ -97,7 +79,7 @@ public class Auto extends OpMode {
     public void stop() {
         synchronized (lock) {
             if (currentSequence != null) currentSequence.stop();
-            controllers.stop();
+            super.stop();
         }
     }
 
@@ -158,26 +140,18 @@ public class Auto extends OpMode {
         return sequence.getClass().getSimpleName();
     }
 
-    @Deprecated
-    private String getSequenceSide(Sequence sequence){
-        if (getSequenceName(sequence).contains(FieldConstants.LeftSide)) return FieldConstants.LeftSide;
-        return FieldConstants.RightSide;
-    }
-
-    private void computeRingCount() {
-        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
+    private void getRingCount() {
         if (camera == null) {
             multiTelemetry.addLine("Camera not initialized");
             multiTelemetry.update();
             return;
         }
 
-        String strNumRings = camera.getRingCountStr();
-        multiTelemetry.addLine("Camera returned rings: " + strNumRings);
+        multiTelemetry.addData("Camera returned rings", camera.getRingCountStr());
 
         int rings = camera.getRingCount();
         synchronized (lock) {
-            ringCount = Optional.ofNullable(rings).orElse(-1);
+            ringCount = Optional.ofNullable(rings).orElse(-1); //if null return -1
             multiTelemetry.addData("Camera returned rings", ringCount);
             multiTelemetry.update();
         }

@@ -114,7 +114,6 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
     public DrivetrainController(HardwareMap hardwareMap, Telemetry telemetry) {
         this(hardwareMap);
-        this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
 
@@ -235,6 +234,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
     @Override
     public void init() {
+
     }
 
     @Override
@@ -394,16 +394,16 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     }
 
     public void alignWithWobble(CameraController camera) {
-        int alignmentThreshold = 100;
+        int alignmentThreshold = 40;
         if (camera != null) {
-            PIDFController controller = new PIDFController(TRANSLATIONAL_PID);
+            PIDFController controller = new PIDFController(TRANSLATIONAL_PID, kV,kA, kStatic);
 
             controller.setOutputBounds(-1.0, 1.0);
             controller.setTargetPosition(0);
 //            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
             controller.update(camera.getWobbleDisplacement());
 
-            while (Math.abs(controller.getLastError()) < alignmentThreshold) {
+            while (Math.abs(controller.getLastError()) > alignmentThreshold) {
                 double correction = controller.update(camera.getWobbleDisplacement());
                 strafe(correction);
             }

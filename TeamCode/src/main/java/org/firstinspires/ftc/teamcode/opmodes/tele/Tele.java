@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
-import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -26,16 +25,15 @@ public abstract class Tele extends OpModeBase {
     private double loopTime;
     protected int powerShotCt = 0;
 
-    Tele() {
+    public Tele() {
         super();
     }
 
     @Override
     public void init() {
-        super.init();
-        OpenCVController.DEFAULT_PIPELINE = OpenCVController.PIPELINE.TELE;
-        drive.setPoseEstimate(MechConstants.StartingPose);
+        super.init(OPMODE.Tele);
 
+        drive.setPoseEstimate(MechConstants.StartingPose);
     }
 
     @Override
@@ -60,22 +58,23 @@ public abstract class Tele extends OpModeBase {
             if (!manShoot) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.alliance),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.alliance)
+                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
                 );
 
             } else {
                 if (!shooter.shootingState) manShoot = false;
-                drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.alliance);
+                drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
                 driveModeButton.resetToggle();
             }
         }
+
         drive.update();
 
         if (!autoShoot) {
             shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
+            shootManButton.runOnce(gameMap.ShootMan(), this::manShoot);
         }
-        shootManButton.runOnce(gameMap.ShootMan(), this::manShoot);
 
         intakeButton.toggle(
                 gameMap.Intake(),
