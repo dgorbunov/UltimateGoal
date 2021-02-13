@@ -403,9 +403,16 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 //            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
             controller.update(camera.getWobbleDisplacement());
 
-            while (Math.abs(controller.getLastError()) > alignmentThreshold) {
-                double correction = controller.update(camera.getWobbleDisplacement());
-                strafe(correction);
+            final int attempts = 25;
+            for (int i = 0; i < attempts; i++) {
+                if (Math.abs(controller.getLastError()) > alignmentThreshold) {
+                    double correction = controller.update(camera.getWobbleDisplacement());
+                    strafe(correction);
+                }
+                // TODO: break
+                // else {
+                //   break;
+                // }
             }
         }
     }

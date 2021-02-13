@@ -22,8 +22,7 @@ public class Button {
         if (buttonState) {
             if (!pressed) {
                 pressed = true;
-                Thread thread = new Thread(methods[index]);
-                thread.start();
+                new Thread(methods[index]).start();
                 index ++;
                 if (index == methods.length) {
                     index = 0;
@@ -46,7 +45,7 @@ public class Button {
             }
         } else pressed = false;
 
-        methods[index].run();
+        new Thread(methods[index]).start();
     }
 
     /**
@@ -56,8 +55,7 @@ public class Button {
         if (buttonState) {
             if (!pressed) {
                 pressed = true;
-                Thread thread = new Thread(method);
-                thread.start();
+                new Thread(method).start();
             }
         } else pressed = false;
     }
