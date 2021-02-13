@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.WobbleDetector;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -31,7 +32,8 @@ public abstract class Tele extends OpModeBase {
 
     @Override
     public void init() {
-        super.init(OPMODE.Tele);
+        OPMODE_TYPE = OPMODE.Tele;
+        super.init();
 
         drive.setPoseEstimate(MechConstants.StartingPose);
     }
@@ -73,7 +75,7 @@ public abstract class Tele extends OpModeBase {
 
         if (!autoShoot) {
             shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
-            shootManButton.runOnce(gameMap.ShootMan(), this::manShoot);
+            shootManButton.runOnce(gameMap.ShootMan(), this::manualShoot);
         }
 
         intakeButton.toggle(
@@ -118,13 +120,14 @@ public abstract class Tele extends OpModeBase {
             vertIntakeButton.resetToggle();
         }
 
-//        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
-//        multiTelemetry.addData("Loop Time",Math.round(clock.seconds() * 1000 - loopTime) + " ms");
+        multiTelemetry.addData("Vision: Aspect Ratio", WobbleDetector.getAspectRatio());
+        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
+        multiTelemetry.addData("Loop Time",Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
 
     protected abstract void autoShoot();
     protected abstract void powerShot();
-    protected abstract void manShoot();
+    protected abstract void manualShoot();
 
     @Override
     public void stop() {

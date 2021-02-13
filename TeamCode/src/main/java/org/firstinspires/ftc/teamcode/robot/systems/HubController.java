@@ -29,8 +29,8 @@ public class HubController implements Controller {
 
     class HubStatusThread extends Thread {
         private double sleepDelay;
-        private int fadeDelay = 15;
-        private int step = 20;
+        private int fadeDelay = 10;
+        private int step = 5; //steps > 20 can cause performance issues
         private volatile boolean shouldRun = true;
         private Mode mode = Mode.STATUS;
 
@@ -107,11 +107,6 @@ public class HubController implements Controller {
 
     @Override
     public void stop() {
-        try {
-            hubStatusThread.mode = Mode.ERROR;
-        } catch (Exception e) {
-            telemetry.addLine(e.toString());
-        }
         hubStatusThread.stopRunning();
     }
 

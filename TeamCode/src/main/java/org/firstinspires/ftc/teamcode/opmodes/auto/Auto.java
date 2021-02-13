@@ -32,7 +32,8 @@ public class Auto extends OpModeBase {
 
     @Override
     public void init() {
-        super.init(OPMODE.Auto);
+        OPMODE_TYPE = OPMODE.Auto;
+        super.init();
 
         makeSequences();
         synchronized (lock) {

@@ -38,6 +38,7 @@ public class WobbleDetector extends OpenCvPipeline {
 
     private double centerX;
     private double centerY;
+    private static double aspectRatio = 0;
 
     public WobbleDetector(Telemetry telemetry, boolean debug, FieldConstants.Alliance alliance) {
         this.telemetry = telemetry;
@@ -76,6 +77,8 @@ public class WobbleDetector extends OpenCvPipeline {
     public double getCameraCenterX() {
         return (double)CAMERA_WIDTH/2;
     }
+
+    public static double getAspectRatio() { return aspectRatio; }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -147,7 +150,7 @@ public class WobbleDetector extends OpenCvPipeline {
              **/
 
             //TODO: use aspect ratio to calculate probable location
-            double aspectRatio = (double)maxRect.height / (double)maxRect.width;
+            aspectRatio = (double)maxRect.height / (double)maxRect.width;
             if(debug) telemetry.addData("Vision: Aspect Ratio", aspectRatio);
 
             // releasing all mats after use

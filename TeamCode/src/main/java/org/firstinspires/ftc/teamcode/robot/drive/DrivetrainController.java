@@ -62,9 +62,11 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
 
-
 @Config
 public class DrivetrainController extends MecanumDrive implements Controller {
+    public static PIDCoefficients WOBBLE_PID = new PIDCoefficients(0.15, 0, 0.05); //8, 0, 1=
+    public static int WOBBLE_MAX_ITERATIONS = 100;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(14, 0, 1.5); //10, 0, 0.8
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 1.25); //8, 0, 1=
 
@@ -89,6 +91,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
     private FtcDashboard dashboard;
     private NanoClock clock;
+    private TelemetryPacket packet;
 
     private Mode mode;
 
@@ -286,7 +289,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             poseHistory.removeFirst();
         }
 
-        TelemetryPacket packet = new TelemetryPacket();
+        packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
         packet.put("mode", mode);
@@ -298,6 +301,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
+        packet.put("wobbleError", 0);
 
         switch (mode) {
             case IDLE:
@@ -396,23 +400,24 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     public void alignWithWobble(CameraController camera) {
         int alignmentThreshold = 40;
         if (camera != null) {
-            PIDFController controller = new PIDFController(TRANSLATIONAL_PID, kV,kA, kStatic);
+            PIDFController controller = new PIDFController(WOBBLE_PID);
 
-            controller.setOutputBounds(-1.0, 1.0);
+            controller.setOutputBounds(-0.35, 0.35);
             controller.setTargetPosition(0);
+            controller.setTargetAcceleration(10);
 //            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
+            //TODO: graph error
             controller.update(camera.getWobbleDisplacement());
 
-            final int attempts = 25;
+            final int attempts = WOBBLE_MAX_ITERATIONS;
             for (int i = 0; i < attempts; i++) {
                 if (Math.abs(controller.getLastError()) > alignmentThreshold) {
                     double correction = controller.update(camera.getWobbleDisplacement());
-                    strafe(correction);
+                    rotate(-correction);
+                    packet.put("wobbleError", controller.getLastError());
+                    dashboard.sendTelemetryPacket(packet);
                 }
-                // TODO: break
-                // else {
-                //   break;
-                // }
+                 else break;
             }
         }
     }
@@ -437,10 +442,14 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     }
 
     public void strafe(double power) {
-        setWeightedDrivePower(new Pose2d(-power, 0, 0));
+        setWeightedDrivePower(new Pose2d(0, -power, 0));
     }
 
-    public void driveWithGamepad(Gamepad gamepad, double power){
+    public void rotate(double power) {
+        setWeightedDrivePower(new Pose2d(0, 0, -power));
+    }
+
+    public void driveRobotCentric(Gamepad gamepad, double power){
         setWeightedDrivePower(
                 new Pose2d(
                         power * -gamepad.left_stick_y,

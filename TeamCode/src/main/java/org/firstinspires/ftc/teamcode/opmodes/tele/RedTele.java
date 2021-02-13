@@ -29,6 +29,7 @@ public class RedTele extends Tele {
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             //TODO: try turn and linear move
             //TODO: try switching to async
+            //TODO: try stopping robot before executing auto shoot
 //            shooter.spinUp(RPMGoal);
             drive.turn(GoalShotPos.getHeading());
             drive.followTrajectoryAsync(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
@@ -103,7 +104,7 @@ public class RedTele extends Tele {
     }
 
     @Override
-    protected void manShoot() {
+    protected void manualShoot() {
         manShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             shooter.shoot(3, RPMGoal);

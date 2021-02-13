@@ -24,7 +24,7 @@ public class BlueTele extends Tele {
     }
 
     @Override
-    protected void manShoot() {
+    protected void manualShoot() {
 
     }
 

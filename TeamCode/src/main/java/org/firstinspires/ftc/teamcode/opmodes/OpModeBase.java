@@ -54,7 +54,8 @@ public class OpModeBase extends OpMode {
         Tele, Auto
     }
 
-    protected OPMODE OPMODE_TYPE;
+    //default
+    protected OPMODE OPMODE_TYPE = OPMODE.Tele;
 
     @Override
     public void init() {
@@ -82,11 +83,6 @@ public class OpModeBase extends OpMode {
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
         multiTelemetry.addLine("Initialized");
-    }
-
-    public void init(OPMODE mode) {
-        this.OPMODE_TYPE = mode;
-        init();
     }
 
     @Override
