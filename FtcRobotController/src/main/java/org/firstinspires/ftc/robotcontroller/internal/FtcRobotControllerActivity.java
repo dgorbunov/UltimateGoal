@@ -39,6 +39,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.hardware.usb.UsbDevice;
@@ -134,6 +136,9 @@ public class FtcRobotControllerActivity extends Activity
 {
   public static final String TAG = "RCActivity";
   public String getTag() { return TAG; }
+
+  public static String VERSION_NAME;
+  public static int VERSION_CODE;
 
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
   private static final int NUM_GAMEPADS = 2;
@@ -289,6 +294,14 @@ public class FtcRobotControllerActivity extends Activity
 
     context = this;
     utility = new Utility(this);
+
+    try {
+      PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+      VERSION_NAME = pInfo.versionName;
+      VERSION_CODE = pInfo.versionCode;
+    } catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+    }
 
     DeviceNameManagerFactory.getInstance().start(deviceNameStartResult);
 

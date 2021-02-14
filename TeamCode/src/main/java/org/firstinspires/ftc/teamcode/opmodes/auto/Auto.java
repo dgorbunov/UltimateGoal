@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
@@ -10,25 +11,28 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
-import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Disabled // will not show up on driver station
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Blue;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Red;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Left;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Right;
+
+@Disabled
 @Autonomous(name="Auto", group="Iterative Opmode")
 public class Auto extends OpModeBase {
 
     // Maps case-insensitive name to a sequence
     private Map<String, Sequence> sequences = new HashMap<>();
-    private ControllerManager controllers;
-    private int ringCount = -1;
     private Sequence currentSequence;
-    protected final static Object lock = new Object();
     protected String sequenceName;
+    protected final static Object lock = new Object();
     public static FieldConstants.Side side;
     public static FieldConstants.Alliance alliance;
+    private int ringCount = -1;
 
     @Override
     public void init() {
@@ -39,8 +43,7 @@ public class Auto extends OpModeBase {
         synchronized (lock) {
             currentSequence = getSequence(sequenceName);
             if (currentSequence == null) {
-                multiTelemetry.addLine("No sequence found!");
-                multiTelemetry.update();
+                RobotLog.addGlobalWarningMessage("No sequence found");
                 return;
             }
         }
@@ -66,14 +69,12 @@ public class Auto extends OpModeBase {
                 // execute runs async
                 currentSequence.execute();
             } catch (Exception e) {
-                multiTelemetry.addLine("Exception while executing sequence: " + e.toString());
-                multiTelemetry.update();
+                RobotLog.addGlobalWarningMessage("Exception while executing sequence: " + e.toString());
             }
     }
 
     @Override
     public void loop() {
-
     }
 
     @Override
@@ -115,20 +116,16 @@ public class Auto extends OpModeBase {
 
     private void makeSequences() {
         synchronized (lock) {
-            sequences.put(makeSequenceName(
-                    FieldConstants.Alliance.Red, FieldConstants.Side.Left),
+            sequences.put(makeSequenceName(Red, Left),
                     new RedLeftSequence(controllers, multiTelemetry));
 
-            sequences.put(makeSequenceName(
-                    FieldConstants.Alliance.Red, FieldConstants.Side.Right),
+            sequences.put(makeSequenceName(Red, Right),
                     new RedRightSequence(controllers, multiTelemetry));
 
-            sequences.put(makeSequenceName(
-                    FieldConstants.Alliance.Blue, FieldConstants.Side.Left),
+            sequences.put(makeSequenceName(Blue, Left),
                     new BlueLeftSequence(controllers, multiTelemetry));
 
-            sequences.put(makeSequenceName(
-                    FieldConstants.Alliance.Blue, FieldConstants.Side.Right),
+            sequences.put(makeSequenceName(Blue, Right),
                     new BlueRightSequence(controllers, multiTelemetry));
         }
     }
@@ -143,7 +140,7 @@ public class Auto extends OpModeBase {
 
     private void getRingCount() {
         if (camera == null) {
-            multiTelemetry.addLine("Camera not initialized");
+            RobotLog.addGlobalWarningMessage("Camera not initialized");
             multiTelemetry.update();
             return;
         }

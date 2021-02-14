@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 public class BlueRightSequence extends Sequence {
 
-    public BlueRightSequence(ControllerManager controllers, Telemetry tel) {
-        super(controllers, tel);
+    public BlueRightSequence(ControllerManager controllers, Telemetry telemetry) {
+        super(controllers, telemetry);
         startPose = new Pose2d(
                 FieldConstants.BlueRight.StartingPos,
                 Math.toRadians(0));

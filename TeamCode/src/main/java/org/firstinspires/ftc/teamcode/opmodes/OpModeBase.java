@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
@@ -22,8 +22,6 @@ import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
-@TeleOp(name="OpModeBase", group="Iterative Opmode")
-//TODO: Remove annotation?
 @Disabled
 public class OpModeBase extends OpMode {
 
@@ -61,6 +59,8 @@ public class OpModeBase extends OpMode {
     public void init() {
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
+
+        multiTelemetry.addLine("Running Build " + FtcRobotControllerActivity.VERSION_NAME + ", Patch " + FtcRobotControllerActivity.VERSION_CODE);
 
         multiTelemetry.addLine("Initializing...");
 
@@ -112,4 +112,5 @@ public class OpModeBase extends OpMode {
         multiTelemetry.clear();
         multiTelemetry.addLine("Stopped");
     }
+
 }

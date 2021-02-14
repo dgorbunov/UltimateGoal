@@ -44,9 +44,9 @@ public class OpenCVController implements Controller{
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
                 openCvPassthrough.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
 
-                wobbleDetector = new WobbleDetector(telemetry, true, Auto.getAlliance());
+                wobbleDetector = new WobbleDetector(telemetry, false, Auto.getAlliance());
                 if (DEFAULT_PIPELINE == AUTO) {
-                    ringDetector = new RingDetector(telemetry, true);
+                    ringDetector = new RingDetector(telemetry, false);
                     openCvPassthrough.setPipeline(ringDetector);
                 } else {
                     openCvPassthrough.setPipeline(wobbleDetector);

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
-import com.qualcomm.robotcore.util.RobotLog;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.opencv.core.Core;
@@ -44,26 +42,6 @@ public class WobbleDetector extends OpenCvPipeline {
         this.telemetry = telemetry;
         this.alliance = alliance;
         this.debug = debug;
-
-//        upperRed = ColorConverter.convert(upperRed, Imgproc.COLOR_RGB2YCrCb);
-//        lowerRed = ColorConverter.convert(lowerRed, Imgproc.COLOR_RGB2YCrCb);
-//        upperBlue = ColorConverter.convert(upperBlue, Imgproc.COLOR_RGB2YCrCb);
-//        lowerBlue = ColorConverter.convert(lowerBlue, Imgproc.COLOR_RGB2YCrCb);
-        telemetry.addData("upperRed", upperRed.toString());
-        telemetry.addData("upperBlue", upperBlue.toString());
-        telemetry.addData("lowerRed", lowerRed.toString());
-        telemetry.addData("lowerBlue", lowerBlue.toString());
-        /*
-        Log/d prints:
-        [182.0, 52.0, 73.0, 0.0] upperRed, RGB: 255, 60, 60
-        [161.0, 171.0, 69.0, 0.0] upperBlue, RGB: 255.0, 230.0, 95.0
-        [140.0, 90.0, 113.0, 0.0] lowerRed, RGB: 150, 0, 0
-        [75.0, 134.0, 132.0, 0.0] lowerBlue, RGB: 0.0, 141.0, 0.0
-         */
-        RobotLog.d(upperRed.toString());
-        RobotLog.d(upperBlue.toString());
-        RobotLog.d(lowerRed.toString());
-        RobotLog.d(lowerBlue.toString());
     }
 
     public WobbleDetector(Telemetry telemetry, FieldConstants.Alliance alliance) {

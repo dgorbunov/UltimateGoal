@@ -14,8 +14,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 
 public class RedRightSequence extends Sequence {
 
-    public RedRightSequence(ControllerManager controllers, Telemetry tel){
-        super(controllers, tel);
+    public RedRightSequence(ControllerManager controllers, Telemetry telemetry){
+        super(controllers, telemetry);
         startPose = new Pose2d(
                 RedRight.StartingPos,
                 Math.toRadians(0));

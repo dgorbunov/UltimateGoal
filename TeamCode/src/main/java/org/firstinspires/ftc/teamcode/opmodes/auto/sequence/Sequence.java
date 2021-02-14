@@ -103,17 +103,23 @@ public abstract class Sequence {
         wobble.dropAuto();
     }
 
-    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endTangent) {
-        telemetry.addData("Sequence","moveToWobble");
-
-        drive.followTrajectory(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
-        drive.followTrajectory(buildLineTrajectory(drive,  new Pose2d(wobblePos, endTangent), 12));
+    public void dropWobbleSide() {
+        telemetry.addData("Sequence","dropWobbleSide");
+        WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
+        wobble.sideRelease();
     }
 
     public void pickupWobble() {
         telemetry.addData("Sequence", "collectWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
         wobble.pickupAuto();
+    }
+
+    public void moveToWobble(Vector2d intermediate, Vector2d wobblePos, double endTangent) {
+        telemetry.addData("Sequence","moveToWobble");
+
+        drive.followTrajectory(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
+        drive.followTrajectory(buildLineTrajectory(drive,  new Pose2d(wobblePos, endTangent), 12));
     }
 
     public void moveToShoot(Vector2d intermediate, Vector2d position, double targetHeading) {
