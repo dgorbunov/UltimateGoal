@@ -22,7 +22,7 @@ public abstract class Tele extends OpModeBase {
     public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
     protected boolean autoShoot = false;
-    protected boolean manShoot = false;
+    protected boolean manualShoot = false;
     private double loopTime;
     protected int powerShotCt = 0;
 
@@ -50,32 +50,27 @@ public abstract class Tele extends OpModeBase {
     }
     @Override
     public void loop() {
+        super.loop();
         loopTime = systemClock.seconds() * 1000;
 
-        super.loop();
-
-        //lock out the gamepad during automatic shooting
-        if (!autoShoot) {
-            //automatically go to slow mode during manual shooting
-            if (!manShoot) {
-                driveModeButton.toggleLoop(
-                        gameMap.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
-                );
-
-            } else {
-                if (!shooter.shootingState) manShoot = false;
-                drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
-                driveModeButton.resetToggle();
-            }
+        //automatically go to slow mode during shooting
+        if (!manualShoot && !autoShoot) {
+            driveModeButton.toggleLoop(
+                    gameMap.DriveMode(),
+                    () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
+                    () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
+            );
+        }
+        else {
+            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+            driveModeButton.resetToggle();
         }
 
         drive.update();
 
-        if (!autoShoot) {
+        if (!autoShoot && !manualShoot) {
             shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
-            shootManButton.runOnce(gameMap.ShootMan(), this::manualShoot);
+            shootManButton.runOnce(gameMap.ShootManual(), this::manualShoot);
         }
 
         intakeButton.toggle(
@@ -105,9 +100,10 @@ public abstract class Tele extends OpModeBase {
                 () -> shooter.spinUp(RPMGoal),
                 ()-> shooter.stop());
 
-        wobbleAutoButton.runOnce(
+        wobbleAutoButton.toggle(
                 gameMap.WobbleAuto(),
-                () -> drive.alignWithWobble(camera));
+                () -> drive.alignWithWobble(camera),
+                () -> drive.stop());
 
         if (gameMap.Shoot()){
             flywheelButton.resetToggle();

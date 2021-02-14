@@ -18,14 +18,19 @@ public class WobbleController implements Controller {
     private Servo sideWobble;
     public static String ControllerName;
 
-    public static double SideGrabPos = 1;
+    //Side Wobble Dropper
+    public static double SideHoldPos = 1;
     public static double SideReleasePos = 0;
+
+    //Main Wobble Grip
     public static double GripGrabPos = 0.9;
     public static double GripReleasePos = 0.55;
+    public static double GripInitPos = GripGrabPos;
+
+    //Main Wobble Arm (rotate)
     public static double ArmDropPos = 0.18;
     public static double ArmPickupPos = 0.625;
-    public static double GripInitPos = GripGrabPos; //0.55
-    public static double ArmInitPos = 0.8; //0.85
+    public static double ArmInitPos = 0.8; //to be within 18in
 
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -40,11 +45,9 @@ public class WobbleController implements Controller {
         wobbleGrip = hardwareMap.get(Servo.class, "wobble_grip");
         wobbleArm = hardwareMap.get(Servo.class, "wobble_arm");
         sideWobble = hardwareMap.get(Servo.class, "side_wobble");
-//        wobbleGrip.scaleRange();
-//        wobbleArm.scaleRange();
         wobbleGrip.setPosition(GripInitPos);
         wobbleArm.setPosition(ArmInitPos);
-        sideWobble.setPosition(SideGrabPos);
+        sideWobble.setPosition(SideHoldPos);
     }
 
     @Override

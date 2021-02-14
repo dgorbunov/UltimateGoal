@@ -42,6 +42,10 @@ public class HubController implements Controller {
             shouldRun = false;
         }
 
+        public void killThread() {
+            interrupt();
+        }
+
         public void run() {
             while (shouldRun) {
                 if (mode == Mode.STATUS) {
@@ -61,7 +65,7 @@ public class HubController implements Controller {
                 }
             }
             //kill Thread when !shouldRun
-            killStatusThread();
+            killThread();
 
         }
     }
@@ -100,14 +104,9 @@ public class HubController implements Controller {
         hubStatusThread.mode = Mode.STATUS;
     }
 
-    public void killStatusThread() {
-        hubStatusThread.interrupt();
-        hubStatusThread = null;
-    }
-
     @Override
     public void stop() {
-        hubStatusThread.stopRunning();
+        hubStatusThread.shouldRun = false;
     }
 
 

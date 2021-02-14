@@ -147,7 +147,7 @@ public abstract class Sequence {
     public void shootGoal(int numRings) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.shootBlocking(numRings, MechConstants.RPMGoal);
+        shooter.shoot(numRings, MechConstants.RPMGoal);
     }
 
     public void backOffFromWobbles (double distance) {
@@ -160,11 +160,11 @@ public abstract class Sequence {
         drive.followTrajectory(buildStrafeTrajectory(drive, position));
     }
 
-    public void shootPowershot(int numRings) {
-        telemetry.addData("Sequence","shootRings: " + numRings);
-        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.shoot(numRings);
-    }
+//    public void shootPowershot(int numRings) {
+//        telemetry.addData("Sequence","shootRings: " + numRings);
+//        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+//        shooter.shootAsync(numRings);
+//    }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);

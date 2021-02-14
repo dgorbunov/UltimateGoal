@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
@@ -36,7 +37,6 @@ public class ShooterController implements Controller {
     public static String ControllerName;
 
     private volatile int ringCount = 3;
-    public static double MotorRPM = 0;
 
     public static volatile double targetTicksPerSec;
 
@@ -46,9 +46,7 @@ public class ShooterController implements Controller {
     private Telemetry telemetry;
     private boolean stopOnFinish = true;
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Thread telemetryThread = new Thread(this::telemetry);
-    private Thread shootImpl = new Thread(this::shootImpl);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -78,79 +76,86 @@ public class ShooterController implements Controller {
     @Override
     public void stop() {
         //wait until shooting is finished
-            shooter.setPower(0);
-            shooter.setMotorDisable();
-            bumper.setPosition(RetractPosition);
-            shootingState = false;
+        shooter.setPower(0);
+        shooter.setMotorDisable();
+        bumper.setPosition(RetractPosition);
+        shootingState = false;
     }
 
+    class ShooterThread extends Thread {
 
+        double RPM;
+        int ringCount;
 
-    public synchronized void shoot(int ringCount){
-        shoot(ringCount, MotorRPM);
+        ShooterThread(int ringCount, double RPM) {
+            this.ringCount = ringCount;
+            this.RPM = RPM;
+        }
+
+        public void killThread() {
+            interrupt();
+        }
+
+        public void run() {
+            checkSpeed(RPM);
+            bumpRings(ringCount);
+            killThread();
+        }
     }
 
-    public synchronized void shoot(int ringCount, double RPM){
+    public synchronized void shootAsync(int ringCount, double RPM){
         shootingState = true;
-        this.ringCount = ringCount;
-        checkSpeed(RPM);
-
         stopOnFinish = true;
-        shootImpl.start();
+        new ShooterThread(ringCount, RPM).start();
     }
 
-    public synchronized void shootBlocking(int ringCount, double RPM){
-        this.ringCount = ringCount;
-        checkSpeed(RPM);
-
+    public void shoot(int ringCount, double RPM){
+        shootingState = true;
         stopOnFinish = true;
-        shootImplBlocking();
-//        shootImpl.start();
-        //TODO :fix
-//        try {
-//            shootImpl.join();
-//        } catch (InterruptedException e) {
-//            telemetry.addData(ControllerName, e);
-//        }
-//        telemetry.addData(ControllerName, shootImpl.isAlive());
-//        assert(shootImpl.isAlive());
 
+        checkSpeed(RPM);
+        bumpRings(ringCount);
     }
 
 
     public synchronized void powerShot(double RPM){
-        ringCount = 1;
+        stopOnFinish = false;
         checkSpeed(RPM);
 
-        stopOnFinish = false;
-        shootImplBlocking();
+        bumpRings(1);
     }
 
     private synchronized void checkSpeed(double RPM) {
-        if (RPM != MotorRPM || !shooter.isMotorEnabled()) {
-            MotorRPM = RPM;
-            setRPM(MotorRPM);
-            sleep(SpinUpDelay);
+        setRPM(RPM);
+
+        NanoClock systemClock = NanoClock.system();
+        double initialTime = systemClock.seconds();
+        double maxDelay = 4;
+        int i = 0;
+
+       while (systemClock.seconds() - initialTime < maxDelay && (shooter.getVelocity() < 0.97 *  TicksPerSecond(RPM) || shooter.getVelocity() > 1.03 *TicksPerSecond(RPM))){
+            if (i == 0) telemetry.addLine("Waiting for shooter to spin up");
+            i++;
         }
-        //if we are spinning up and not at target speed yet, hit this
-        else if (shooter.getVelocity() < 0.95 * TicksPerSecond(RPM) || shooter.getVelocity() > 1.05*TicksPerSecond(RPM)){
-            sleep(0.2 * SpinUpDelay);
-            telemetry.addLine("Spinner was not spinning at correct velocity.");
-        }
+
+       if (systemClock.seconds() - initialTime > maxDelay) {
+           RobotLog.clearGlobalWarningMsg();
+           RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
+       }
+       //give some buffer
+       sleep(400);
     }
 
     /**
      * Spin up flywheel before shooting to save time
      **/
-    public void spinUp(double MotorRPM){
-        setRPM(MotorRPM);
+    public void spinUp(double RPM){
+        setRPM(RPM);
     }
 
-    private synchronized void shootImplBlocking() {
-        //        telemetryThread.start();
-
-        //FTCDash doesn't support array modification
-        //So we have to resort to this for quick delay modification
+    private void bumpRings(int ringCount){
+        //FTCDash doesn't support quick array modification
+        //So we have to resort to this to tune delays =(
         if (useDelayArray) {
             for (int i = 0; i < ringCount; i++) {
                 bump();
@@ -185,50 +190,6 @@ public class ShooterController implements Controller {
         }
 
         if (stopOnFinish) stop();
-
-    }
-
-
-    private synchronized void shootImpl(){
-//        telemetryThread.start();
-
-        //FTCDash doesn't support array modification
-        //So we have to resort to this for quick delay modification
-        if (useDelayArray) {
-            for (int i = 0; i < ringCount; i++) {
-                bump();
-                sleep(RetractDelay);
-                retract();
-                sleep(ShootingDelay[i]);
-            }
-        } else if (ringCount == 3) {
-            bump();
-            sleep(RetractDelay);
-            retract();
-            sleep(Delay1);
-            bump();
-            sleep(RetractDelay);
-            retract();
-            sleep(Delay2);
-            bump();
-            sleep(RetractDelay);
-            retract();
-        } else if (ringCount == 2){
-            bump();
-            sleep(RetractDelay);
-            retract();
-            sleep(Delay1);
-            bump();
-            sleep(RetractDelay);
-            retract();
-        } else {
-            bump();
-            sleep(RetractDelay);
-            retract();
-        }
-
-        if (stopOnFinish) stop();
-
     }
 
     public synchronized void telemetry(){
@@ -249,13 +210,8 @@ public class ShooterController implements Controller {
     }
 
     private void setRPM(double RPM) {
-        MotorRPM = RPM;
         shooter.setMotorEnable();
-        shooter.setVelocity(TicksPerSecond(MotorRPM));
-    }
-
-    public double getVelocity(){
-        return shooter.getVelocity();
+        shooter.setVelocity(TicksPerSecond(RPM));
     }
 
     private double TicksPerSecond(double RPM){

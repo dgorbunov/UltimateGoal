@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 /**
  * Author: Daniel
  * Easy to use interface for logic operations for booleans
- * Recommended to only use one method per object
+ * Recommended to only use one of these methods per boolean
  */
 
 public class Button {

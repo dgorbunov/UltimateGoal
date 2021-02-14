@@ -26,56 +26,19 @@ public class RedTele extends Tele {
     @Override
     protected void autoShoot() {
         autoShoot = true;
+        drive.stop();
+
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            //TODO: try turn and linear move
-            //TODO: try switching to async
-            //TODO: try stopping robot before executing auto shoot
-//            shooter.spinUp(RPMGoal);
             drive.turn(GoalShotPos.getHeading());
-            drive.followTrajectoryAsync(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
-            new Thread(this::waitingToShoot).start();
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 15));
+            shooter.shootAsync(3, RPMGoal);
         }
         else {
-//            shooter.spinUp(RPMPowerShot);
-//            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, PowerShotPos, 20));
-
-            //TODO: TEST THIS, finish powershot! try turn
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, PowerShotPos, 15));
             Pose2d targetPose = new Pose2d(
                     drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
                     drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement));
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, targetPose, 20));
-
-            for (int i = 0; i < 3; i++) {
-                shooter.powerShot(RPMPowerShot);
-                drive.turn(Math.toRadians(Red.PowerShotAngleIncrement));
-                sleep(PowerShotDelay);
-            }
-
-            shooter.stop();
-        }
-    }
-
-    public void autoShootBlocking() {
-        autoShoot = true;
-        if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            //TODO: try turn and linear move
-            //TODO: try switching to async
-//            shooter.spinUp(RPMGoal);
-            drive.turn(GoalShotPos.getHeading());
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, GoalShotPos, 20));
-            shooter.shoot(3, RPMGoal);
-        }
-        else {
-//            shooter.spinUp(RPMPowerShot);
-//            drive.turn(Math.toRadians(Red.PowerShotInitialAngle));
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, PowerShotPos, 20));
-
-            //TODO: TEST THIS, finish powershot! try turn
-            Pose2d targetPose = new Pose2d(
-                    drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(),
-                    drive.getPoseEstimate().getHeading() + Math.toRadians(Red.PowerShotAngleIncrement));
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, targetPose, 20));
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, targetPose, 15));
 
             for (int i = 0; i < 3; i++) {
                 shooter.powerShot(RPMPowerShot);
@@ -105,7 +68,7 @@ public class RedTele extends Tele {
 
     @Override
     protected void manualShoot() {
-        manShoot = true;
+        manualShoot = true;
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             shooter.shoot(3, RPMGoal);
         }
@@ -117,14 +80,9 @@ public class RedTele extends Tele {
                 powerShotCt = 0;
             }
         }
+        while (shooter.shootingState){ }
+        manualShoot = false;
     }
 
-    private void waitingToShoot() {
-        while (drive.isBusy()) {
-            //do nothing
-        }
-        shooter.shoot(3, RPMGoal);
-        autoShoot = false;
-    }
 
 }

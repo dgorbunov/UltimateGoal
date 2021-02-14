@@ -18,6 +18,7 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -64,7 +65,7 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 
 @Config
 public class DrivetrainController extends MecanumDrive implements Controller {
-    public static PIDCoefficients WOBBLE_PID = new PIDCoefficients(0.15, 0, 0.05); //8, 0, 1=
+    public static PIDCoefficients WOBBLE_PID = new PIDCoefficients(0.2, 0, 0.025); //8, 0, 1=
     public static int WOBBLE_MAX_ITERATIONS = 100;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(14, 0, 1.5); //10, 0, 0.8
@@ -398,29 +399,42 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     }
 
     public void alignWithWobble(CameraController camera) {
-        int alignmentThreshold = 40;
+        //TODO: move to auto, without manual approach
+        int alignmentThreshold = 25;
         if (camera != null) {
             PIDFController controller = new PIDFController(WOBBLE_PID);
 
-            controller.setOutputBounds(-0.35, 0.35);
+            controller.setOutputBounds(-0.4, 0.4);
             controller.setTargetPosition(0);
-            controller.setTargetAcceleration(10);
+            controller.setTargetAcceleration(20);
 //            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
-            //TODO: graph error
             controller.update(camera.getWobbleDisplacement());
 
             final int attempts = WOBBLE_MAX_ITERATIONS;
             for (int i = 0; i < attempts; i++) {
                 if (Math.abs(controller.getLastError()) > alignmentThreshold) {
                     double correction = controller.update(camera.getWobbleDisplacement());
-                    rotate(-correction);
+                    strafe(-correction); //or: rotate()
                     packet.put("wobbleError", controller.getLastError());
                     dashboard.sendTelemetryPacket(packet);
                 }
                  else break;
             }
+            approachWobble(12);
         }
     }
+
+    public void approachWobble(double speed){
+        Trajectory trajectory = new TrajectoryBuilder(getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
+            .forward(24,
+                new MinVelocityConstraint(Arrays.asList(
+                        getMaxAngVelConstraint(),
+                        getCustomVelConstraint(speed))), getMaxAccelConstraint())
+                .build();
+
+        followTrajectoryAsync(trajectory);
+    }
+
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
 

@@ -83,8 +83,8 @@ public class DriveConstants {
      */
 
     //TODO: lower max vel to reduce error buildup
-    public static double MAX_VEL = 52.48;
-    public static double MAX_ACCEL = 52.48;
+    public static double MAX_VEL = 50;
+    public static double MAX_ACCEL = 48;
     public static double MAX_ANG_VEL = Math.toRadians(184.02607784577722);
     public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
 

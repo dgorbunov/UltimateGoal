@@ -22,7 +22,7 @@ public class GamepadMappings {
     public boolean Shoot() {
         return gamepad1.a && !gamepad1.start;
     }
-    public boolean ShootMan() {
+    public boolean ShootManual() {
         return gamepad1.y;
     }
     public boolean StartFlywheel() {
