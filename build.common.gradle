@@ -88,7 +88,7 @@ android {
 
         versionProps.load(new FileInputStream(versionPropsFile))
 
-        if (versionProps['VERSION_PATCH'] != getGitHash()) build = 0 //if we do a commit, reset the build number
+        if (versionProps['VERSION_PATCH'] != getGitHash()) versionProps['VERSION_BUILD'] = 0 //if we do a commit, reset the build number
         def patch = getGitHash()
         def number = 2
         def build = versionProps['VERSION_BUILD'].toInteger() + 1
