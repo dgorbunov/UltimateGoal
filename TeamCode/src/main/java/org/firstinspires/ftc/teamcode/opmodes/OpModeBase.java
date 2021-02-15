@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
@@ -21,6 +20,11 @@ import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 @Disabled
 public class OpModeBase extends OpMode {
@@ -60,7 +64,23 @@ public class OpModeBase extends OpMode {
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
 
-        multiTelemetry.addLine("Running Build " + FtcRobotControllerActivity.VERSION_NAME + ", Patch " + FtcRobotControllerActivity.VERSION_CODE);
+        File version = new File("version.properties");
+
+        if (version.canRead()) {
+            Properties versionProps = new Properties();
+
+            try {
+                versionProps.load(new FileInputStream(version));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String patch = versionProps.getProperty("VERSION_PATCH");
+            String build = versionProps.getProperty("VERSION_BUILD");
+
+            multiTelemetry.addLine("Running Patch " + patch + ", Build " + build);
+
+        }
 
         multiTelemetry.addLine("Initializing...");
 

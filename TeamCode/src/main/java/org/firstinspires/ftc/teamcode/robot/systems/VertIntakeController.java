@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -14,6 +15,9 @@ public class VertIntakeController implements Controller{
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private DcMotorEx vIntake;
+    private CRServo wheel1;
+    private CRServo wheel2;
+
     public static String ControllerName;
 
     /*
@@ -29,6 +33,8 @@ public class VertIntakeController implements Controller{
         ControllerName = getClass().getSimpleName();
 
         vIntake = hardwareMap.get(DcMotorEx.class, "vIntake");
+        wheel1 = hardwareMap.get(CRServo.class, "vIntakeWheel1");
+        wheel2 = hardwareMap.get(CRServo.class, "vIntakeWheel2");
 
         vIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -46,11 +52,15 @@ public class VertIntakeController implements Controller{
     @Override
     public void stop() {
         vIntake.setPower(0);
+        wheel1.setPower(0);
+        wheel2.setPower(0);
     }
 
     public void run(DcMotorEx.Direction Direction) {
         if (Direction == DcMotorSimple.Direction.FORWARD) vIntake.setPower(VertIntakePower);
         else vIntake.setPower(-VertIntakePower);
+        wheel1.setPower(1);
+        wheel2.setPower(1);
         telemetry.addData(ControllerName, "V. Intake Running");
     }
 }
