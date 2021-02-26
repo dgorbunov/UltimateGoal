@@ -19,8 +19,8 @@ public class WobbleController implements Controller {
     public static String ControllerName;
 
     //Side Wobble Dropper
-    public static double SideHoldPos = 1;
-    public static double SideReleasePos = 0;
+    public static double SideHoldPos = 0.25;
+    public static double SideReleasePos = 0.7;
 
     //Main Wobble Grip
     public static double GripGrabPos = 0.9;
@@ -53,7 +53,6 @@ public class WobbleController implements Controller {
     @Override
     public void start() {
         wobbleArm.setPosition(ArmPickupPos);
-
     }
 
     @Override
@@ -62,7 +61,6 @@ public class WobbleController implements Controller {
         wobbleArm.setPosition(ArmInitPos);
     }
 
-    // TODO: drop wobble
     public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
         wobbleArm.setPosition(ArmDropPos);
@@ -71,7 +69,6 @@ public class WobbleController implements Controller {
         sleep(200);
     }
 
-    // TODO: pickup wobble
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);

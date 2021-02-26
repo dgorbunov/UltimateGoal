@@ -53,8 +53,11 @@ public abstract class Tele extends OpModeBase {
         super.loop();
         loopTime = systemClock.seconds() * 1000;
 
+
+        if (autoShoot) return;
+
         //automatically go to slow mode during shooting
-        if (!manualShoot && !autoShoot) {
+        if (!manualShoot) {
             driveModeButton.toggleLoop(
                     gameMap.DriveMode(),
                     () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
@@ -68,7 +71,7 @@ public abstract class Tele extends OpModeBase {
 
         drive.update();
 
-        if (!autoShoot && !manualShoot) {
+        if (!manualShoot) {
             shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShoot);
         }

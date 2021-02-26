@@ -26,7 +26,7 @@ public class ShooterController implements Controller {
     public static double BumpPosition = 0.6;
     public static double RetractPosition = 0.35;
 
-    public boolean shootingState;
+    public volatile boolean shootingState;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 

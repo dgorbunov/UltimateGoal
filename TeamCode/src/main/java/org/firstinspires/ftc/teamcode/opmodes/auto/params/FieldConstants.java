@@ -34,18 +34,17 @@ public class FieldConstants {
 
     private static final double TapeWidth  = 1.75;
 
-    //Robot Width: 17.95 in (456mm)
-    //Robot Length: 17 in (432mm)
+    //Robot Dimensions: 18 x 18 in (approx.)
 
     @Config
     public static class RedField {
-        public static final Vector2d TargetZoneA = new Vector2d(-7,-61);
-        public static final Vector2d TargetZoneB = new Vector2d(17,-38);
-        public static final Vector2d TargetZoneC = new Vector2d(42,-61);
+        public static final Vector2d TargetZoneA = new Vector2d(12,-61);
+        public static final Vector2d TargetZoneB = new Vector2d(36,-37);
+        public static final Vector2d TargetZoneC = new Vector2d(60,-61);
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Pose2d GoalShotPos = new Pose2d(-2, -39, Math.toRadians(0));
         public static final Pose2d PowerShotPos = new Pose2d(-2, -12, Math.toRadians(9));
-        public static final Vector2d IntakePos = new Vector2d(RingPos.getX(), RingPos.getY());
+        public static final Vector2d IntakeOnePos = new Vector2d(RingPos.getX() + 2, RingPos.getY());
         public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 4, RingPos.getY());
         public static final Vector2d LeftWobblePos = new Vector2d(-37.5, -23.00);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 8, LeftWobblePos.getY());
@@ -53,8 +52,10 @@ public class FieldConstants {
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 10, RightWobblePos.getY());
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (10, TargetZoneC.getY());
-        public static final double WobbleXOffset = 10;
-        public static final double WobbleBackupDistance = 15;
+        public static final double SideWobbleXOffset = 0;
+        public static final double SideWobbleYOffset = 20;
+        public static final double FrontWobbleXOffset = -20;
+        public static final double FrontWobbleYOffset = 0;
     }
 
     @Config
@@ -66,7 +67,7 @@ public class FieldConstants {
 
     @Config
     public static class RedRight {
-        public static final Vector2d StartingPos = new Vector2d(-63, -46.20);
+        public static final Vector2d StartingPos = new Vector2d(-63, -50.50); //offset from center beam is 8mm = 0.3 in, tape offset from mat is +- 2.2 in
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX() + 6, RedField.RingPos.getY() - 19);
     }
