@@ -59,14 +59,14 @@ public class RedRightSequence extends Sequence {
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> stopIntake());
             actions.add(() -> shootGoal(1, MechConstants.RPMGoalFromStack));
+            actions.add(() -> stopIntake());
         }
 
         if (ringCount == 4) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
-            actions.add(() -> stopIntake());
             actions.add(() -> shootGoal(3, MechConstants.RPMGoalFromStack));
+            actions.add(() -> stopIntake());
         }
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
@@ -76,7 +76,6 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> pickupWobble());
 
         actions.add(() -> moveLinear(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0));
-        //TODO: make this all compound spline moves instead of turn + line
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {
@@ -87,7 +86,7 @@ public class RedRightSequence extends Sequence {
             actions.add(() -> strafe(new Vector2d(RedField.EndingPosition.getX() - 18, RedField.EndingPosition.getY())));
             actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
         }
-        actions.add(() -> stop());
 
+        actions.add(() -> stop());
     }
 }

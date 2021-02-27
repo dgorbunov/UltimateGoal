@@ -112,6 +112,10 @@ public abstract class Tele extends OpModeBase {
             flywheelButton.resetToggle();
         }
 
+        if (gameMap.Localize()) {
+            localize();
+        }
+
         if (gameMap.StopAllIntakes()) {
             intake.stop();
             vertIntake.stop();
@@ -127,6 +131,7 @@ public abstract class Tele extends OpModeBase {
     protected abstract void autoShoot();
     protected abstract void powerShot();
     protected abstract void manualShoot();
+    protected abstract void localize();
 
     @Override
     public void stop() {

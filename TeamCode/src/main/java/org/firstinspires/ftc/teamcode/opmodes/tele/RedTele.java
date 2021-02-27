@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
@@ -27,6 +28,7 @@ public class RedTele extends Tele {
     protected void autoShoot() {
         autoShoot = true;
         drive.stop();
+        intake.stopIntake();
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             drive.turn(GoalShotPos.getHeading());
@@ -51,6 +53,7 @@ public class RedTele extends Tele {
     @Override
     protected void powerShot() {
         autoShoot = true;
+        intake.stopIntake();
 
         for (int i = 0; i < 3; i++) {
             shooter.powerShot(RPMPowerShot);
@@ -65,6 +68,7 @@ public class RedTele extends Tele {
     @Override
     protected void manualShoot() {
         manualShoot = true;
+        intake.stopIntake();
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             shooter.shoot(3, RPMGoal);
         }
@@ -81,6 +85,11 @@ public class RedTele extends Tele {
         }
         manualShoot = false;
     }
+
+    protected void localize() {
+        drive.setPoseEstimate(new Pose2d(63, -63, 0)); //front right corner
+    }
+
 
 
 }

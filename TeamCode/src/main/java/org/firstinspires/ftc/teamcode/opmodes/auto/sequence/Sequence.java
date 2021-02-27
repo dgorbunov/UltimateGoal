@@ -17,7 +17,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHel
 import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildIntakeTrajectory;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildLineTrajectory;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildLinearTrajectory;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildSplineHeadingTrajectory;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildSplineTrajectoryConstantHeading;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper.buildStrafeTrajectory;
 
@@ -104,7 +103,8 @@ public abstract class Sequence {
         telemetry.addData("Sequence","moveToWobble");
 
 //        drive.followTrajectory(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
-        drive.followTrajectory(buildSplineHeadingTrajectory(drive,180, 180, new Pose2d(wobblePos, 180)));
+        drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+        drive.followTrajectory(buildLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180));
     }
 
     public void moveToShoot(Vector2d intermediate, Vector2d position, double targetHeading) {

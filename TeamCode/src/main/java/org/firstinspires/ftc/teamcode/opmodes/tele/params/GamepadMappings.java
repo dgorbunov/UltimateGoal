@@ -52,6 +52,10 @@ public class GamepadMappings {
         return gamepad1.left_bumper && gamepad1.right_bumper;
     };
 
+    public boolean Localize() {
+        return gamepad1.a && gamepad1.b && gamepad1.x && gamepad1.y;
+    };
+
     public enum DriverMode {
         OneDriver, TwoDrivers
     }

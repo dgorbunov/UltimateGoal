@@ -53,7 +53,7 @@ public class FieldConstants {
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (10, TargetZoneC.getY());
         public static final double SideWobbleXOffset = 0;
-        public static final double SideWobbleYOffset = 20;
+        public static final double SideWobbleYOffset = 9;
         public static final double FrontWobbleXOffset = -20;
         public static final double FrontWobbleYOffset = 0;
     }
