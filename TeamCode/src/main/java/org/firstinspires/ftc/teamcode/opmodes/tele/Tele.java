@@ -91,7 +91,7 @@ public abstract class Tele extends OpModeBase {
         wobbleArmButton.toggle(
                 gameMap.WobbleArm(),
                 () -> wobble.drop(),
-                () -> wobble.lift());
+                () -> wobble.pickup());
 
         wobbleGripButton.toggle(
                 gameMap.WobbleGrip(),

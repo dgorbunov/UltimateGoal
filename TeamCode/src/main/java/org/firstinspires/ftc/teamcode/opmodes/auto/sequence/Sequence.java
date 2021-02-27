@@ -101,8 +101,9 @@ public abstract class Sequence {
 
     public void moveToWobble(Vector2d wobblePos) {
         telemetry.addData("Sequence","moveToWobble");
-
+        WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
 //        drive.followTrajectory(buildSplineTrajectory(drive, 180, new Pose2d(intermediate, endTangent)));
+        wobble.readyToPickup();
         drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
         drive.followTrajectory(buildLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180));
     }

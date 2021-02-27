@@ -53,6 +53,7 @@ public class RedTele extends Tele {
     @Override
     protected void powerShot() {
         autoShoot = true;
+        drive.stop();
         intake.stopIntake();
 
         for (int i = 0; i < 3; i++) {

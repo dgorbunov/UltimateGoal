@@ -15,7 +15,7 @@ public class WobbleController implements Controller {
     private HardwareMap hardwareMap;
     private Servo wobbleGrip;
     private Servo wobbleArm;
-    private Servo sideWobble;
+    private Servo wobbleSide;
     public static String ControllerName;
 
     //Side Wobble Dropper
@@ -28,9 +28,10 @@ public class WobbleController implements Controller {
     public static double GripInitPos = GripGrabPos;
 
     //Main Wobble Arm (rotate)
-    public static double ArmDropPos = 0.18;
-    public static double ArmPickupPos = 0.625;
-    public static double ArmInitPos = 0.8; //to be within 18in
+    public static double ArmDropPos = 0.16;
+    public static double ArmPickupPos = 0.62;
+    public static double ArmPickupPosAuto = 0.2; //lower, doesn't need to clear wall
+    public static double ArmInitPos = 0.78; //to be within 18in
 
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -44,10 +45,10 @@ public class WobbleController implements Controller {
     public void init() {
         wobbleGrip = hardwareMap.get(Servo.class, "wobble_grip");
         wobbleArm = hardwareMap.get(Servo.class, "wobble_arm");
-        sideWobble = hardwareMap.get(Servo.class, "side_wobble");
+        wobbleSide = hardwareMap.get(Servo.class, "side_wobble");
         wobbleGrip.setPosition(GripInitPos);
         wobbleArm.setPosition(ArmInitPos);
-        sideWobble.setPosition(SideHoldPos);
+        wobbleSide.setPosition(SideHoldPos);
     }
 
     @Override
@@ -59,6 +60,7 @@ public class WobbleController implements Controller {
     public void stop() {
         wobbleGrip.setPosition(GripInitPos);
         wobbleArm.setPosition(ArmInitPos);
+        wobbleSide.setPosition(SideHoldPos);
     }
 
     public void dropAuto() {
@@ -73,7 +75,12 @@ public class WobbleController implements Controller {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);
         sleep(300);
-        wobbleArm.setPosition(ArmPickupPos);
+        wobbleArm.setPosition(ArmPickupPosAuto);
+    }
+
+    public void readyToPickup() {
+        release();
+        drop();
     }
 
     public void grab(){
@@ -82,13 +89,12 @@ public class WobbleController implements Controller {
     public void release(){
         wobbleGrip.setPosition(GripReleasePos);
     }
-    public void lift(){
+    public void pickup(){
         wobbleArm.setPosition(ArmPickupPos);
     }
     public void drop(){
         wobbleArm.setPosition(ArmDropPos);
     }
-    public void sideRelease(){sideWobble.setPosition(SideReleasePos);}
-
-
+    public void sideRelease(){
+        wobbleSide.setPosition(SideReleasePos);}
     }

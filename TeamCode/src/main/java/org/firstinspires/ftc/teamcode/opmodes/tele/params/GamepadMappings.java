@@ -49,11 +49,11 @@ public class GamepadMappings {
         return gamepad2.dpad_up || gamepad2.dpad_down;
     };
     public boolean WobbleAuto() {
-        return gamepad1.left_bumper && gamepad1.right_bumper;
+        return gamepad1.start && gamepad1.back;
     };
 
     public boolean Localize() {
-        return gamepad1.a && gamepad1.b && gamepad1.x && gamepad1.y;
+        return gamepad1.left_bumper && gamepad1.right_bumper;
     };
 
     public enum DriverMode {
