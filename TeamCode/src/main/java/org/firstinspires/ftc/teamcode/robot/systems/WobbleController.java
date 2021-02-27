@@ -19,8 +19,8 @@ public class WobbleController implements Controller {
     public static String ControllerName;
 
     //Side Wobble Dropper
-    public static double SideHoldPos = 0.25;
-    public static double SideReleasePos = 0.7;
+    public static double SideHoldPos = 0.22;
+    public static double SideReleasePos = 0.9;
 
     //Main Wobble Grip
     public static double GripGrabPos = 0.9;
@@ -95,6 +95,8 @@ public class WobbleController implements Controller {
     public void drop(){
         wobbleArm.setPosition(ArmDropPos);
     }
-    public void sideRelease(){
-        wobbleSide.setPosition(SideReleasePos);}
+    public void sideRelease() {
+        wobbleSide.setPosition(SideReleasePos);
+        sleep(250);
     }
+}

@@ -525,6 +525,10 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         return new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL);
     }
 
+    public static ProfileAccelerationConstraint getCustomAccelConstraint(double acceleration){
+        return new ProfileAccelerationConstraint(acceleration);
+    }
+
     @NonNull
     @Override
     public List<Double> getWheelPositions() {

@@ -27,6 +27,7 @@ public class ShooterController implements Controller {
     public static double RetractPosition = 0.35;
 
     public volatile boolean shootingState;
+    private boolean stopWheelOnFinish = true;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
@@ -36,17 +37,10 @@ public class ShooterController implements Controller {
 
     public static String ControllerName;
 
-    private volatile int ringCount = 3;
-
-    public static volatile double targetTicksPerSec;
-
     private DcMotorEx shooter;
     private Servo bumper;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    private boolean stopOnFinish = true;
-
-    private Thread telemetryThread = new Thread(this::telemetry);
 
     public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -83,7 +77,6 @@ public class ShooterController implements Controller {
     }
 
     class ShooterThread extends Thread {
-
         double RPM;
         int ringCount;
 
@@ -105,13 +98,13 @@ public class ShooterController implements Controller {
 
     public synchronized void shootAsync(int ringCount, double RPM){
         shootingState = true;
-        stopOnFinish = true;
+        stopWheelOnFinish = true;
         new ShooterThread(ringCount, RPM).start();
     }
 
     public void shoot(int ringCount, double RPM){
         shootingState = true;
-        stopOnFinish = true;
+        stopWheelOnFinish = true;
 
         checkSpeed(RPM);
         bumpRings(ringCount);
@@ -119,9 +112,9 @@ public class ShooterController implements Controller {
 
 
     public synchronized void powerShot(double RPM){
-        stopOnFinish = false;
-        checkSpeed(RPM);
+        stopWheelOnFinish = false;
 
+        checkSpeed(RPM);
         bumpRings(1);
     }
 
@@ -130,10 +123,10 @@ public class ShooterController implements Controller {
 
         NanoClock systemClock = NanoClock.system();
         double initialTime = systemClock.seconds();
-        double maxDelay = 4;
+        double maxDelay = 4; //while loop exits after maxDelay seconds
         int i = 0;
 
-       while (systemClock.seconds() - initialTime < maxDelay && (shooter.getVelocity() < 0.97 *  TicksPerSecond(RPM) || shooter.getVelocity() > 1.03 *TicksPerSecond(RPM))){
+        while (systemClock.seconds() - initialTime < maxDelay && (shooter.getVelocity() < 0.975 *  TicksPerSecond(RPM) || shooter.getVelocity() > 1.025 *TicksPerSecond(RPM))){
             if (i == 0) telemetry.addLine("Waiting for shooter to spin up");
             i++;
         }
@@ -142,15 +135,16 @@ public class ShooterController implements Controller {
            RobotLog.clearGlobalWarningMsg();
            RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
        }
-       //give some buffer
-       sleep(400);
+
+       //give some buffer, TODO: evaluate if we actually need this
+//       sleep(250);
     }
 
     /**
      * Spin up flywheel before shooting to save time
      **/
     public void spinUp(double RPM){
-        setRPM(RPM);
+        checkSpeed(RPM);
     }
 
     private void bumpRings(int ringCount){
@@ -189,7 +183,7 @@ public class ShooterController implements Controller {
             retract();
         }
 
-        if (stopOnFinish) stop();
+        if (stopWheelOnFinish) stop();
     }
 
     public synchronized void telemetry(){
