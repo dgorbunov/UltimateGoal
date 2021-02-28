@@ -23,10 +23,12 @@ public class IntakeController implements Controller {
     public static double ArmDropPos = 0.6;
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
+
     /*
     * Do not change motor direction to avoid breaking odometry
     * which uses the same encoder ports
     * */
+
     public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {

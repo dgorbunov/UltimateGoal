@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @Config
-@TeleOp(name="ShooterTesting", group="Iterative Opmode")
-public class ShooterTesting extends OpMode {
+@TeleOp(name="ShooterTest", group="Iterative Opmode")
+public class ShooterTest extends OpMode {
 
     /** Accessible via FTC Dashboard */
     public static volatile double MotorRPM = 4800;

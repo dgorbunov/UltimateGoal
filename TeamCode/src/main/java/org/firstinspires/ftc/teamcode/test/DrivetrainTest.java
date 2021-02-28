@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.drive;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,9 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
 @TeleOp(group = "drive")
-public class DriveTest extends OpMode {
+public class DrivetrainTest extends OpMode {
 
     DrivetrainController drive;
 

@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.robot.camera;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
 @TeleOp(name="CameraTest", group="Iterative Opmode")
 public class CameraTest extends OpMode {

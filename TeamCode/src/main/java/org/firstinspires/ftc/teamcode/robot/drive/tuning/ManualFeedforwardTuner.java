@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
@@ -19,7 +18,6 @@ import java.util.Objects;
 
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.kV;
@@ -45,7 +43,7 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 //@Disabled
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
-    public static double DISTANCE = 72; // in
+    public static double DISTANCE = 66; // in
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 

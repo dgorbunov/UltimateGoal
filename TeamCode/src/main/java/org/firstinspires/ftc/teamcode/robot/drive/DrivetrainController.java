@@ -68,12 +68,12 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     public static PIDCoefficients WOBBLE_PID = new PIDCoefficients(0.2, 0, 0.025); //8, 0, 1=
     public static int WOBBLE_MAX_ITERATIONS = 100;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(14, 0, 1.5); //10, 0, 0.8
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 1.25); //8, 0, 1=
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 1.5, 1.8); //10, 0, 0.8
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11, 1.5, 0.5); //8, 0, 1=
 
     public static boolean TESTING = false;
 
-    public static double LATERAL_MULTIPLIER = 1; //Calibrate using StrafeTest
+    public static double LATERAL_MULTIPLIER = 1.5; //Calibrate using StrafeTest/StrafeBackAndForth
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;

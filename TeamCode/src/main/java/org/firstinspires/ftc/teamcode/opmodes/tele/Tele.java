@@ -117,7 +117,7 @@ public abstract class Tele extends OpModeBase {
         }
 
         if (gameMap.StopAllIntakes()) {
-            intake.stop();
+            intake.stopIntake();
             vertIntake.stop();
             intakeButton.resetToggle();
             vertIntakeButton.resetToggle();
