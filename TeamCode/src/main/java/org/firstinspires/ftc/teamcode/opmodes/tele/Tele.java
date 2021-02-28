@@ -72,8 +72,8 @@ public abstract class Tele extends OpModeBase {
         drive.update();
 
         if (!manualShoot) {
-            shootButton.runOnce(gameMap.Shoot(), this::autoShoot);
-            shootManButton.runOnce(gameMap.ShootManual(), this::manualShoot);
+            shootButton.runOnce(gameMap.Shoot(), this::autoShot);
+            shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
         }
 
         intakeButton.toggle(
@@ -113,7 +113,7 @@ public abstract class Tele extends OpModeBase {
         }
 
         if (gameMap.Localize()) {
-            localize();
+            localizeWithCorner();
         }
 
         if (gameMap.StopAllIntakes()) {
@@ -128,10 +128,10 @@ public abstract class Tele extends OpModeBase {
         multiTelemetry.addData("Loop Time",Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
 
-    protected abstract void autoShoot();
-    protected abstract void powerShot();
-    protected abstract void manualShoot();
-    protected abstract void localize();
+    protected abstract void autoShot();
+    protected abstract void manualPowerShot();
+    protected abstract void manualShot();
+    protected abstract void localizeWithCorner();
 
     @Override
     public void stop() {
