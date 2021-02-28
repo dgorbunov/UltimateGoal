@@ -28,6 +28,7 @@ public class ShooterController implements Controller {
 
     public volatile boolean shootingState;
     private boolean stopWheelOnFinish = true;
+    private int powerShotCount = 0;
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
@@ -114,8 +115,12 @@ public class ShooterController implements Controller {
     public synchronized void powerShot(double RPM){
         stopWheelOnFinish = false;
 
-        checkSpeed(RPM);
+        if (powerShotCount == 0 || powerShotCount == 3) {
+            checkSpeed(RPM);
+            powerShotCount = 0;
+        }
         bumpRings(1);
+        powerShotCount++;
     }
 
     private synchronized void checkSpeed(double RPM) {

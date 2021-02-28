@@ -34,6 +34,7 @@ public class RedTele extends Tele {
             drive.turn(Math.toRadians(0));
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 35, 35));
             shooter.shootAsync(3, RPMGoal);
+            shooter.shootAsync(3, RPMGoal);
         }
         else {
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(PowerShotPos, Math.toRadians(0)), 35, 35));
@@ -88,7 +89,7 @@ public class RedTele extends Tele {
     }
 
     protected void localize() {
-        drive.setPoseEstimate(new Pose2d(63, -63, 0)); //front right corner
+        drive.setPoseEstimate(new Pose2d(61.75, -61.75, 0)); //front right corner
     }
 
 

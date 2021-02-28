@@ -42,7 +42,7 @@ public class FieldConstants {
         public static final Vector2d TargetZoneC = new Vector2d(60,-61);
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Vector2d GoalShotPos = new Vector2d(-2, -39);
-        public static final Vector2d PowerShotPos = new Vector2d(-2, -12);
+        public static final Vector2d PowerShotPos = new Vector2d(-2, -16);
         public static final Vector2d IntakeOnePos = new Vector2d(RingPos.getX() + 2, RingPos.getY());
         public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 4, RingPos.getY());
         public static final Vector2d LeftWobblePos = new Vector2d(-37.5, -23.00);
@@ -59,14 +59,14 @@ public class FieldConstants {
 
     @Config
     public static class RedLeft {
-        public static final Vector2d StartingPos = new Vector2d(-63, -24 - TapeWidth);
+        public static final Vector2d StartingPos = new Vector2d(-61.75, -24 - TapeWidth);
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX(), RedField.RingPos.getY() + 16);
     }
 
     @Config
     public static class RedRight {
-        public static final Vector2d StartingPos = new Vector2d(-63, -50.50); //offset from center beam is 8mm = 0.3 in, tape offset from mat is +- 2.2 in
+        public static final Vector2d StartingPos = new Vector2d(-61.75, -50.50); //offset from center beam is 8mm = 0.3 in, tape offset from mat is +- 2.2 in
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX() + 6, RedField.RingPos.getY() - 19);
         public static final Vector2d PowerShotIntermediatePos = new Vector2d(RedField.PowerShotPos.getX(), -52);
