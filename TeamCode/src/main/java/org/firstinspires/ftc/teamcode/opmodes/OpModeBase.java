@@ -21,11 +21,6 @@ import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 @Disabled
 public class OpModeBase extends OpMode {
 
@@ -64,23 +59,19 @@ public class OpModeBase extends OpMode {
         multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
 
-        File version = new File("version.properties");
-
-        if (version.canRead()) {
-            Properties versionProps = new Properties();
-
-            try {
-                versionProps.load(new FileInputStream(version));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String patch = versionProps.getProperty("VERSION_PATCH");
-            String build = versionProps.getProperty("VERSION_BUILD");
-
-            multiTelemetry.addLine("Running Patch " + patch + ", Build " + build);
-
-        }
+//        Properties properties = new Properties();
+//        try {
+//            properties.load(this.getClass().getClassLoader().getResourceAsStream("/version.properties"));
+//            if (properties != null) {
+//                String patch = properties.getProperty("VERSION_PATCH");
+//                String build = properties.getProperty("VERSION_BUILD");
+//                multiTelemetry.addLine("Running Patch: " + patch + ", Build: " + build);
+//                Log.i("Status, ","Running Patch: " + patch + ", Build: " + build);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         multiTelemetry.addLine("Initializing...");
 

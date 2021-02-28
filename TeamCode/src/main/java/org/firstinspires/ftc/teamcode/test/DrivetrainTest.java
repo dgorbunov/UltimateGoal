@@ -31,7 +31,7 @@ public class DrivetrainTest extends OpMode {
         controllers.init();
 
 //        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setPoseEstimate(MechConstants.StartingPose);
+        drive.setPoseEstimate(MechConstants.TeleStartingPose);
 
     }
 

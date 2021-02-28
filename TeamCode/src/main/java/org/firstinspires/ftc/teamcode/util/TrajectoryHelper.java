@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -100,14 +100,14 @@ public class TrajectoryHelper {
         return trajectory;
     }
 
-    public static Trajectory buildLineTrajectory(DrivetrainController drive, Pose2d position){
+    public static Trajectory buildLineTrajectory(DrivetrainController drive, double x, double y){
         TrajectoryBuilder trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint());
-        trajectory.lineToLinearHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())));
+        trajectory.lineTo(new Vector2d(x,y));
 
         return trajectory.build();
     }
 
-    public static Trajectory buildLineTrajectory(DrivetrainController drive, Pose2d position, double velocity){
+    public static Trajectory buildLinearTrajectory(DrivetrainController drive, Pose2d position, double velocity){
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
                 .lineToLinearHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())),
                         new MinVelocityConstraint(Arrays.asList(
@@ -127,10 +127,10 @@ public class TrajectoryHelper {
         return trajectory;
     }
 
-    public static Trajectory buildIntakeTrajectory(DrivetrainController drive, Vector2d position, double heading){
+    public static Trajectory buildIntakeTrajectory(DrivetrainController drive, Vector2d position){
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
                 //this ugly thing lowers the speed of our driving
-                .lineToLinearHeading(new Pose2d(position, Math.toRadians(heading)),
+                .lineTo(position,
                         new MinVelocityConstraint(Arrays.asList(
                                 getMaxAngVelConstraint(),
                                 drive.getCustomVelConstraint(15)

@@ -57,11 +57,12 @@ public class RedRightSequence extends Sequence {
 //        actions.add(() -> moveToShoot(RedRight.IntermediatePos, GoalShotPos, 0));
 //        actions.add(() -> shootGoal(3, MechConstants.RPMGoal));
 
-        actions.add(() -> moveToPowerShot(RedRight.PowerShotIntermediatePos, PowerShotPos));
+        actions.add(() -> moveLinear(RedRight.PowerShotIntermediatePos, 0));
+        actions.add(() -> moveLinear(PowerShotPos, 0));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
-        //TODO: RESPONSIBLE FOR INACCURACY IN COMPOUND LINEAR MOVES
+        //TODO: RESPONSIBLE FOR INACCURACY IN COMPOUND LINEAR MOVES..?
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
@@ -82,7 +83,7 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.LeftWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveLinear(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0));
+        actions.add(() -> moveLinearTurn(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 180));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {

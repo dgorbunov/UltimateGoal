@@ -23,7 +23,7 @@ public class LocalizationTest extends LinearOpMode {
         DrivetrainController drive = new DrivetrainController(hardwareMap);
 
 //        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setPoseEstimate(MechConstants.StartingPose);
+        drive.setPoseEstimate(MechConstants.TeleStartingPose);
 
         waitForStart();
 

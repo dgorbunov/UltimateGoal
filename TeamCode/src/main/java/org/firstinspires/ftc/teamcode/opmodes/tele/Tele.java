@@ -35,7 +35,7 @@ public abstract class Tele extends OpModeBase {
         OPMODE_TYPE = OPMODE.Tele;
         super.init();
 
-        drive.setPoseEstimate(MechConstants.StartingPose);
+        drive.setPoseEstimate(MechConstants.TeleStartingPose);
     }
 
     @Override

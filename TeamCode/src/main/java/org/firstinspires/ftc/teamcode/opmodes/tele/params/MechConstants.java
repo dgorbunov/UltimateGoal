@@ -8,19 +8,18 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 @Config
 public class MechConstants {
 
-    public static Pose2d StartingPose = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
+    public static Pose2d TeleStartingPose = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
     /**
      * Set by Sequence
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()
      */
-
 
     public static double DriveFullPower = 0.85;
     public static double DriveSlowPower = 0.25;
 
     public static double RPMGoal = 3800;
     public static double RPMGoalFromStack = 3600;
-    public static double RPMPowerShot = 3600; //3400-3600?
+    public static double RPMPowerShot = 3375; //~3300-3500
     public static double PowerShotDelay = 250;
 
     @Config

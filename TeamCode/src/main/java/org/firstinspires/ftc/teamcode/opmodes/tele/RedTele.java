@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
-import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.TrajectoryHelper;
 import org.firstinspires.ftc.teamcode.util.Sleep;
+import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
