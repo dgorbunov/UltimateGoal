@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -17,12 +18,14 @@ public class IntakeController implements Controller {
     private DcMotorEx intake;
     private DcMotorEx intake2;
     private Servo arm;
+    private CRServo sweeper;
     public static String ControllerName;
 
     public static double ArmStartPos = 0.262;
     public static double ArmDropPos = 0.6;
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
+    public static double SweeperPower = 0.8;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -30,6 +33,7 @@ public class IntakeController implements Controller {
     * */
 
     public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
+    public static CRServo.Direction SweeperDirection = CRServo.Direction.REVERSE;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -42,8 +46,10 @@ public class IntakeController implements Controller {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         intake2 = hardwareMap.get(DcMotorEx.class, "intake2");
         arm = hardwareMap.get(Servo.class, "intake_arm");
-        arm.setDirection(ArmDirection);
+        sweeper = hardwareMap.get(CRServo.class, "sweeper");
 
+        arm.setDirection(ArmDirection);
+        sweeper.setDirection(SweeperDirection);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -58,6 +64,7 @@ public class IntakeController implements Controller {
     public void extend() {
         arm.setPosition(ArmDropPos);
     }
+    public void retract() { arm.setPosition(ArmStartPos); }
 
     @Override
     public void stop() {
@@ -68,6 +75,15 @@ public class IntakeController implements Controller {
     public void stopIntake() {
         intake.setPower(0);
         intake2.setPower(0);
+        sweeper.setPower(0);
+    }
+
+    public void runSweeper() {
+        sweeper.setPower(SweeperPower);
+    }
+
+    public void stopSweeper() {
+        sweeper.setPower(SweeperPower);
     }
 
     public void run(DcMotorEx.Direction Direction) {
@@ -75,10 +91,12 @@ public class IntakeController implements Controller {
         if (Direction == DcMotorSimple.Direction.FORWARD) {
             intake.setPower(IntakePower);
             intake2.setPower(Intake2Power);
+            sweeper.setPower(SweeperPower);
         }
         else {
             intake.setPower(-IntakePower);
             intake2.setPower(-Intake2Power);
+            sweeper.setPower(-SweeperPower);
         }
     }
 }

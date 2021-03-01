@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Disabled
 public abstract class Tele extends OpModeBase {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
     protected boolean autoShoot = false;
     protected boolean manualShoot = false;
@@ -81,6 +81,11 @@ public abstract class Tele extends OpModeBase {
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
                 () -> intake.stopIntake());
+
+        sweeperButton.toggle(
+                gameMap.Sweeper(),
+                () -> intake.runSweeper(),
+                () -> intake.stopSweeper());
 
         vertIntakeButton.toggle(
                 gameMap.VertIntake(),

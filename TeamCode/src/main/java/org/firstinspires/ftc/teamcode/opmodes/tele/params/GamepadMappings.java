@@ -56,6 +56,8 @@ public class GamepadMappings {
         return gamepad1.left_bumper && gamepad1.right_bumper;
     };
 
+    public boolean Sweeper() { return gamepad2.a && !gamepad2.start; }
+
     public enum DriverMode {
         OneDriver, TwoDrivers
     }

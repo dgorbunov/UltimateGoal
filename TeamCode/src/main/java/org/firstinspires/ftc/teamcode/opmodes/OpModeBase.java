@@ -26,6 +26,7 @@ public class OpModeBase extends OpMode {
 
     protected GamepadMappings gameMap;
     protected Button intakeButton = new Button();
+    protected Button sweeperButton = new Button();
     protected Button vertIntakeButton = new Button();
     protected Button wobbleArmButton = new Button();
     protected Button wobbleGripButton = new Button();

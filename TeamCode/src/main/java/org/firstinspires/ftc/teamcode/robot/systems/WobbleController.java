@@ -19,8 +19,9 @@ public class WobbleController implements Controller {
     public static String ControllerName;
 
     //Side Wobble Dropper
-    public static double SideHoldPos = 0.22;
-    public static double SideReleasePos = 0.9;
+    public static double SideHoldPos = 0.8;
+    public static double SideReleasePos = 0.2;
+    public static Servo.Direction SideDirection = Servo.Direction.FORWARD;
 
     //Main Wobble Grip
     public static double GripGrabPos = 0.9;
@@ -28,7 +29,7 @@ public class WobbleController implements Controller {
     public static double GripInitPos = GripGrabPos;
 
     //Main Wobble Arm (rotate)
-    public static double ArmDropPos = 0.12;
+    public static double ArmDropPos = 0.08;
     public static double ArmPickupPos = 0.62;
     public static double ArmPickupPosAuto = 0.2; //lower, doesn't need to clear wall
     public static double ArmInitPos = 0.78; //to be within 18in
@@ -46,6 +47,7 @@ public class WobbleController implements Controller {
         wobbleGrip = hardwareMap.get(Servo.class, "wobble_grip");
         wobbleArm = hardwareMap.get(Servo.class, "wobble_arm");
         wobbleSide = hardwareMap.get(Servo.class, "side_wobble");
+        wobbleSide.setDirection(SideDirection);
         wobbleGrip.setPosition(GripInitPos);
         wobbleArm.setPosition(ArmInitPos);
         wobbleSide.setPosition(SideHoldPos);
@@ -74,8 +76,9 @@ public class WobbleController implements Controller {
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);
-        sleep(200);
+        sleep(400);
         wobbleArm.setPosition(ArmPickupPosAuto);
+        sleep(100);
     }
 
     public void readyToPickup() {
