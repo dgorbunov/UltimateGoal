@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.util.Sleep;
 
 @Config
 public class IntakeController implements Controller {
@@ -19,6 +22,8 @@ public class IntakeController implements Controller {
     private DcMotorEx intake2;
     private Servo arm;
     private CRServo sweeper;
+    private DistanceSensor intakeSensor;
+
     public static String ControllerName;
 
     public static double ArmStartPos = 0.262;
@@ -26,6 +31,8 @@ public class IntakeController implements Controller {
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
     public static double SweeperPower = 0.8;
+
+    public static double sensorMaxDistance = 2;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -47,6 +54,7 @@ public class IntakeController implements Controller {
         intake2 = hardwareMap.get(DcMotorEx.class, "intake2");
         arm = hardwareMap.get(Servo.class, "intake_arm");
         sweeper = hardwareMap.get(CRServo.class, "sweeper");
+        intakeSensor = hardwareMap.get(DistanceSensor.class, "intake_sensor");
 
         arm.setDirection(ArmDirection);
         sweeper.setDirection(SweeperDirection);
@@ -86,6 +94,10 @@ public class IntakeController implements Controller {
         sweeper.setPower(SweeperPower);
     }
 
+    public void runAuto(DcMotorEx.Direction Direction) {
+        new AutomaticIntakeThread(Direction).start();
+    }
+
     public void run(DcMotorEx.Direction Direction) {
         telemetry.addData(ControllerName, "Intaking");
         if (Direction == DcMotorSimple.Direction.FORWARD) {
@@ -97,6 +109,40 @@ public class IntakeController implements Controller {
             intake.setPower(-IntakePower);
             intake2.setPower(-Intake2Power);
             sweeper.setPower(-SweeperPower);
+        }
+    }
+
+    class AutomaticIntakeThread extends Thread {
+        DcMotorSimple.Direction Direction;
+        int ringCount;
+        boolean runIntake = true;
+        boolean ringDetected = false;
+
+        AutomaticIntakeThread(DcMotorEx.Direction Direction) {
+            this.Direction = Direction;
+        }
+
+        public void run() {
+            if (runIntake) {
+                IntakeController.this.run(Direction);
+                runIntake = false;
+            }
+
+            double reading = intakeSensor.getDistance(DistanceUnit.INCH);
+
+            if (!ringDetected && reading <= sensorMaxDistance && reading >= 0) {
+                ringCount++;
+                ringDetected = true;
+                if (ringCount >= 3) killThread();
+            }
+            else if (reading >= sensorMaxDistance && reading >= 0) ringDetected = false;
+
+            Sleep.sleep(15);
+        }
+
+        public void killThread() {
+            stopIntake();
+            interrupt();
         }
     }
 }
