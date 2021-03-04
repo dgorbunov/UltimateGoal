@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.util.Button;
 
 @Disabled
 public class OpModeBase extends OpMode {
-
     protected GamepadMappings gameMap;
     protected Button intakeButton = new Button();
     protected Button sweeperButton = new Button();
@@ -52,8 +51,7 @@ public class OpModeBase extends OpMode {
         Tele, Auto
     }
 
-    //default
-    protected OPMODE OPMODE_TYPE = OPMODE.Tele;
+    protected OPMODE OPMODE_TYPE = OPMODE.Tele; //default
 
     @Override
     public void init() {
@@ -74,7 +72,10 @@ public class OpModeBase extends OpMode {
 //            e.printStackTrace();
 //        }
 
-        multiTelemetry.addLine("Initializing...");
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Initializing...</strong>"); //should this be normal telemetry?
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
+        //https://stackoverflow.com/questions/9754076/which-html-tags-are-supported-by-android-textview
 
         if (OPMODE_TYPE != null && OPMODE_TYPE == OPMODE.Auto) OpenCVController.DEFAULT_PIPELINE = PIPELINE.AUTO;
         else OpenCVController.DEFAULT_PIPELINE = PIPELINE.TELE;
@@ -94,7 +95,9 @@ public class OpModeBase extends OpMode {
 
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
-        multiTelemetry.addLine("Initialized");
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Initialized</strong>");
+        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
     }
 
     @Override
@@ -117,12 +120,12 @@ public class OpModeBase extends OpMode {
     @Override
     public void stop() {
         multiTelemetry.clear();
-        multiTelemetry.addLine("Stopping...");
+
+        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Stopping...</strong>");
 
         controllers.stop();
 
-        multiTelemetry.clear();
-        multiTelemetry.addLine("Stopped");
+        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Stopped</strong>");
     }
 
 }
