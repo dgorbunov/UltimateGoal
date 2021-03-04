@@ -21,14 +21,13 @@ import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
+
 @Disabled
 public class OpModeBase extends OpMode {
     protected GamepadMappings gameMap;
     protected Button intakeButton = new Button();
-    protected Button sweeperButton = new Button();
     protected Button vertIntakeButton = new Button();
-    protected Button wobbleArmButton = new Button();
-    protected Button wobbleGripButton = new Button();
+    protected Button wobbleButton = new Button();
     protected Button flywheelButton = new Button();
     protected Button shootButton = new Button();
     protected Button driveModeButton = new Button();
@@ -114,7 +113,7 @@ public class OpModeBase extends OpMode {
 
     @Override
     public void loop() {
-
+        multiTelemetry.addData("Threads Running", java.lang.Thread.activeCount());
     }
 
     @Override

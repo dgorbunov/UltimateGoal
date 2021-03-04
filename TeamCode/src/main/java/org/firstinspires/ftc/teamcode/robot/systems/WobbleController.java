@@ -34,6 +34,11 @@ public class WobbleController implements Controller {
     public static double ArmPickupPosAuto = 0.2; //lower, doesn't need to clear wall
     public static double ArmInitPos = 0.78; //to be within 18in
 
+    public static int grabDelay = 300;
+    public static int releaseDelay = 150;
+    public static int pickupDelay = 150;
+    public static int dropDelayAuto = 150;
+    public static int dropDelayTele = 400;
 
     public WobbleController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -68,17 +73,33 @@ public class WobbleController implements Controller {
     public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
         wobbleArm.setPosition(ArmDropPos);
-        sleep(100);
+        sleep(dropDelayAuto);
         wobbleGrip.setPosition(GripReleasePos);
-        sleep(200);
+        sleep(releaseDelay);
     }
 
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
         wobbleGrip.setPosition(GripGrabPos);
-        sleep(400);
+        sleep(grabDelay);
         wobbleArm.setPosition(ArmPickupPosAuto);
-        sleep(100);
+        sleep(pickupDelay);
+    }
+
+    public void pickupTele() {
+        telemetry.addData(ControllerName, "Picking Up Wobble");
+        wobbleGrip.setPosition(GripGrabPos);
+        sleep(grabDelay);
+        wobbleArm.setPosition(ArmPickupPos);
+        sleep(pickupDelay);
+    }
+
+    public void dropTele() {
+        telemetry.addData(ControllerName, "Dropping Wobble");
+        wobbleArm.setPosition(ArmDropPos);
+        sleep(dropDelayTele);
+        wobbleGrip.setPosition(GripReleasePos);
+        sleep(releaseDelay);
     }
 
     public void readyToPickup() {

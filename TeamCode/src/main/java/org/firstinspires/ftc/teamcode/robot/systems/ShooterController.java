@@ -23,8 +23,8 @@ public class ShooterController implements Controller {
     public static volatile double Delay1 = 250;
     public static volatile double Delay2 = 250;
 
-    public static double BumpPosition = 0.6;
-    public static double RetractPosition = 0.35;
+    public static final double BumpPosition = 0.6;
+    public static final double RetractPosition = 0.35;
 
     public volatile boolean shootingState;
     private boolean stopWheelOnFinish = true;
@@ -34,7 +34,7 @@ public class ShooterController implements Controller {
 
     //Do not modify
     private final double TicksPerRev = 28;
-    double wheelRadius = 0.051; //meters
+    private final double wheelRadius = 0.051; //meters
 
     public static String ControllerName;
 
@@ -142,7 +142,7 @@ public class ShooterController implements Controller {
        }
 
        //give some buffer, TODO: evaluate if we actually need this
-//       sleep(250);
+       sleep(100);
     }
 
     /**

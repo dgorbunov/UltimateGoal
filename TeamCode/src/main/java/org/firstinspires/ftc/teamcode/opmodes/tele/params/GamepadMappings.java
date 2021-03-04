@@ -40,13 +40,9 @@ public class GamepadMappings {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.x;
         return gamepad2.x;
     }
-    public boolean WobbleGrip() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_left || gamepad1.dpad_right;
-        return gamepad2.dpad_left || gamepad2.dpad_right;
-    };
-    public boolean WobbleArm() {
+    public boolean Wobble() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
-        return gamepad2.dpad_up || gamepad2.dpad_down;
+        return gamepad2.a && !gamepad2.start;
     };
     public boolean WobbleAuto() {
         return gamepad1.start && gamepad1.back;
@@ -55,8 +51,6 @@ public class GamepadMappings {
     public boolean Localize() {
         return gamepad1.left_bumper && gamepad1.right_bumper;
     };
-
-    public boolean Sweeper() { return gamepad2.a && !gamepad2.start; }
 
     public enum DriverMode {
         OneDriver, TwoDrivers

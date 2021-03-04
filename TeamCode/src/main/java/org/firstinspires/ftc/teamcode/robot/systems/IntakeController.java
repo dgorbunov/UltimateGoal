@@ -21,18 +21,18 @@ public class IntakeController implements Controller {
     private DcMotorEx intake;
     private DcMotorEx intake2;
     private Servo arm;
-    private CRServo sweeper;
+    private static CRServo sweeper;
     private DistanceSensor intakeSensor;
 
     public static String ControllerName;
+    public static boolean intakeRunning;
 
-    public static double ArmStartPos = 0.262;
-    public static double ArmDropPos = 0.6;
-    public static double IntakePower = 0.6;
-    public static double Intake2Power = 0.6;
-    public static double SweeperPower = 0.8;
-
-    public static double sensorMaxDistance = 2;
+    public static final double ArmStartPos = 0.262;
+    public static final double ArmDropPos = 0.6;
+    public static final double IntakePower = 0.6;
+    public static final double Intake2Power = 0.6;
+    public static final double SweeperPower = 0.8;
+    public static final double sensorMaxDistance = 2;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -81,17 +81,22 @@ public class IntakeController implements Controller {
     }
 
     public void stopIntake() {
+        intakeRunning = false;
         intake.setPower(0);
         intake2.setPower(0);
-        sweeper.setPower(0);
+        stopSweeper();
     }
 
-    public void runSweeper() {
+    public static void startSweeper() {
         sweeper.setPower(SweeperPower);
     }
 
-    public void stopSweeper() {
-        sweeper.setPower(SweeperPower);
+    private static void startSweeper(double power) {
+        if (!VertIntakeController.vertIntakeRunning) sweeper.setPower(power);
+    }
+
+    public static void stopSweeper() {
+        if (!intakeRunning && !VertIntakeController.vertIntakeRunning) sweeper.setPower(0);
     }
 
     public void runAuto(DcMotorEx.Direction Direction) {
@@ -99,16 +104,18 @@ public class IntakeController implements Controller {
     }
 
     public void run(DcMotorEx.Direction Direction) {
+        intakeRunning = true;
         telemetry.addData(ControllerName, "Intaking");
+
         if (Direction == DcMotorSimple.Direction.FORWARD) {
             intake.setPower(IntakePower);
             intake2.setPower(Intake2Power);
-            sweeper.setPower(SweeperPower);
+            startSweeper(SweeperPower);
         }
         else {
             intake.setPower(-IntakePower);
             intake2.setPower(-Intake2Power);
-            sweeper.setPower(-SweeperPower);
+            startSweeper(-SweeperPower);
         }
     }
 

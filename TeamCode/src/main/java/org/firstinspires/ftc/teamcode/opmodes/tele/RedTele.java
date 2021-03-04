@@ -31,12 +31,11 @@ public class RedTele extends Tele {
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             drive.turn(Math.toRadians(0));
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 35, 35));
-            shooter.shootAsync(3, RPMGoal);
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 45, 40));
             shooter.shootAsync(3, RPMGoal);
         }
         else {
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(PowerShotPos, Math.toRadians(0)), 35, 35));
+            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(PowerShotPos, Math.toRadians(0)), 45, 40));
 
             drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
             shooter.powerShot(RPMPowerShot);

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 @TeleOp(name="BlueTele", group="Iterative Opmode")
 public class BlueTele extends Tele {
 
-    BlueTele(){
+    BlueTele() {
         super();
         Auto.alliance = FieldConstants.Alliance.Blue;
     }

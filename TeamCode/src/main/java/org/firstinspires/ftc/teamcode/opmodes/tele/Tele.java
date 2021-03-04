@@ -53,9 +53,7 @@ public abstract class Tele extends OpModeBase {
         super.loop();
         loopTime = systemClock.seconds() * 1000;
 
-
         if (autoShoot) return;
-
         //automatically go to slow mode during shooting
         if (!manualShoot) {
             driveModeButton.toggleLoop(
@@ -82,26 +80,16 @@ public abstract class Tele extends OpModeBase {
                 () -> intake.run(REVERSE),
                 () -> intake.stopIntake());
 
-        sweeperButton.toggle(
-                gameMap.Sweeper(),
-                () -> intake.runSweeper(),
-                () -> intake.stopSweeper());
-
         vertIntakeButton.toggle(
                 gameMap.VertIntake(),
                 () -> vertIntake.run(FORWARD),
                 () -> vertIntake.run(REVERSE),
                 () -> vertIntake.stop());
 
-        wobbleArmButton.toggle(
-                gameMap.WobbleArm(),
-                () -> wobble.drop(),
-                () -> wobble.pickup());
-
-        wobbleGripButton.toggle(
-                gameMap.WobbleGrip(),
-                () -> wobble.grab(),
-                () -> wobble.release());
+        wobbleButton.toggle(
+                gameMap.Wobble(),
+                () -> wobble.dropTele(),
+                () -> wobble.pickupTele());
 
         flywheelButton.toggle(
                 gameMap.StartFlywheel(),

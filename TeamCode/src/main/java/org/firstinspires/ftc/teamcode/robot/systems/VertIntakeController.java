@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,6 +18,7 @@ public class VertIntakeController implements Controller{
     private CRServo wheel2;
 
     public static String ControllerName;
+    public static boolean vertIntakeRunning;
 
     /*
      * Do not change motor direction to avoid breaking odometry
@@ -51,14 +51,22 @@ public class VertIntakeController implements Controller{
 
     @Override
     public void stop() {
+        vertIntakeRunning = false;
+
         vIntake.setPower(0);
         wheel1.setPower(0);
         wheel2.setPower(0);
+
+        IntakeController.stopSweeper();
     }
 
     public void run(DcMotorEx.Direction Direction) {
-        if (Direction == DcMotorSimple.Direction.FORWARD) vIntake.setPower(VertIntakePower);
+        vertIntakeRunning = true;
+        IntakeController.startSweeper();
+
+        if (Direction == DcMotorEx.Direction.FORWARD) vIntake.setPower(VertIntakePower);
         else vIntake.setPower(-VertIntakePower);
+
         wheel1.setPower(1);
         wheel2.setPower(1);
         telemetry.addData(ControllerName, "V. Intake Running");
