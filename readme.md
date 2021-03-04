@@ -13,8 +13,6 @@
 Written by [@dgorbunov](https://github.com/dgorbunov).
 
 #### To-Do:
-- Fix TeleOp auto shooting and power shots
-- Localize with wall corner
 - Shoot from start position at auto
-- Sensor for rings intaked
-- Wobble CV aligner
+- More TeleOp automation
+- Compound moves in Auto
