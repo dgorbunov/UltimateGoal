@@ -39,7 +39,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.88976; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16;
+    public static double TRACK_WIDTH = 15.66; //distance between robot wheels
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -47,9 +47,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.01855; //Original: 1.0 / rpmToVelocity(MAX_RPM)
-    public static double kA = 0.00425;
-    public static double kStatic = 0.0024;
+    public static double kV = 0.016746088299765307; //Original: 1.0 / rpmToVelocity(MAX_RPM) //Automatic: 0.01774
+    public static double kA = 0.0028; //Automatic: 0.00004
+    public static double kStatic = 0.09625; //Automatic: 0.08625 (Given by AutomaticFeedforwardTuner)
 
     //Automatic Results:
 
@@ -82,11 +82,15 @@ public class DriveConstants {
 
      */
 
-    //TODO: lower max vel to reduce error buildup
-    public static double MAX_VEL = 45; //prev: 50, orig: 52
-    public static double MAX_ACCEL = 42; //prev: 48, orig: 52
-    public static double MAX_ANG_VEL = Math.toRadians(184.02607784577722);
-    public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
+    //max vel: (MAX_RPM) *
+    public static double MAX_VEL = getTheoreticalMaxVel() * 0.8; //prev: 50, orig: 52
+    public static double MAX_ACCEL = getTheoreticalMaxVel() * 0.8; //prev: 48, orig: 52
+    public static double MAX_ANG_VEL = Math.toRadians(210); //orig: 184, max: 219
+    public static double MAX_ANG_ACCEL = Math.toRadians(210); //orig: 184, max:219
+
+    private static double getTheoreticalMaxVel() {
+        return (MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI;
+    }
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

@@ -34,13 +34,13 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.6889764; // in (35mm/2 = 17.5mm)
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 16.4559389109; // in; distance between the left and right wheels (tuned)
+    public static double LATERAL_DISTANCE = 16.4691936; // in; distance between the left and right odometry wheels (prev: 16.4559389109)
 
-    public static double FORWARD_OFFSET = 0.39; // in; offset of the lateral wheel (about 1cm forward)
+    public static double FORWARD_OFFSET = -0.24; // in; offset of the lateral wheel (about 0.5cm back)
 
-    public static double LEFT_MULTIPLIER = 1; //left encoder multiplier
-    public static double RIGHT_MULTIPLIER = 1; //right encoder multiplier
-    public static double LATERAL_MULTIPLIER = 1; // Multiplier in the Y direction (strafe)
+    public static double LEFT_MULTIPLIER = 1.0038088556; //left encoder multiplier
+    public static double RIGHT_MULTIPLIER = 1.0038088556; //right encoder multiplier
+    public static double LATERAL_MULTIPLIER = 0.9978140079; // Multiplier in the Y direction (strafe)
     //TODO: Tune X/Y Multiplier for error (https://www.learnroadrunner.com/dead-wheels.html#tuning-three-wheel)
 
     /**
@@ -97,9 +97,9 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public List<Double> getWheelVelocities() {
 
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(rightEncoder.getCorrectedVelocity()),
-                encoderTicksToInches(frontEncoder.getCorrectedVelocity())
+                encoderTicksToInches(leftEncoder.getCorrectedVelocity()) * LEFT_MULTIPLIER,
+                encoderTicksToInches(rightEncoder.getCorrectedVelocity()) * LEFT_MULTIPLIER,
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity()) * LATERAL_MULTIPLIER
         );
     }
 }
