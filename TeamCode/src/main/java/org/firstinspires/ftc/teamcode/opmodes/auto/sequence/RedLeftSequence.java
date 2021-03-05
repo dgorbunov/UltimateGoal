@@ -43,17 +43,12 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
-        //TODO: RESPONSIBLE FOR INACCURACY IN COMPOUND LINEAR MOVES..?
 
         if (ringCount == 1) {
-            actions.add(() -> spinUp(MechConstants.RPMGoalFromStack));
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
             actions.add(() -> shootGoal(1, MechConstants.RPMGoalFromStack));
             actions.add(() -> stopIntake());
-        }
-
-        if (ringCount == 4) {
-            actions.add(() -> spinUp(MechConstants.RPMGoalFromStack));
+        } else if (ringCount == 4) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
             actions.add(() -> shootGoal(3, MechConstants.RPMGoalFromStack));
             actions.add(() -> stopIntake());
@@ -66,7 +61,8 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveLinearTurn(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 180));
+        if (ringCount == 0) actions.add(() -> moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0, -40));
+        else actions.add(() -> moveLinear(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {

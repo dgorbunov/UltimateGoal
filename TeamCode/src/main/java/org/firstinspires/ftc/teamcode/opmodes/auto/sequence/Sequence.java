@@ -21,6 +21,7 @@ import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSp
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildIntakeTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLinearTrajectory;
+import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineLinearHeadingTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineTrajectoryConstantHeading;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildStrafeTrajectory;
 
@@ -79,16 +80,21 @@ public abstract class Sequence {
     }
 
     public void moveLinear(double x, double y, double targetHeading) {
+        //TODO: EVALUATE LINEAR/LINEAR HEADING and LINEAR/SPLINE HEADING TRAJECTORIES
         drive.followTrajectory(buildLinearTrajectory(drive, x, y, targetHeading));
     }
 
     public void moveLinearTurn(double x, double y, double targetHeading) {
-        drive.turn(Math.toRadians(targetHeading));
+        drive.turnRelative(Math.toRadians(targetHeading));
         drive.followTrajectory(TrajectoryHelper.buildLineTrajectory(drive, x, y));
     }
 
     public void moveLinear(Vector2d pos, double targetHeading) {
         drive.followTrajectory(buildLinearTrajectory(drive, pos.getX(), pos.getY(), targetHeading));
+    }
+
+    public void moveSpline(double x, double y, double targetHeading, double startTangent, double endTangent) {
+        drive.followTrajectory(buildSplineLinearHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(x,y,targetHeading)));
     }
 
     public void dropWobble() {
@@ -115,13 +121,13 @@ public abstract class Sequence {
         telemetry.addData("Sequence","moveToWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
         wobble.readyToPickup();
+
         drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
-//        drive.followTrajectory(buildLinearTrajectory(drive, pos.getX(), pos.getY(), 180));
-        moveLinearTurn(pos.getX(), pos.getY(), 180);
+        drive.followTrajectory(buildLinearTrajectory(drive, pos.getX(), pos.getY(), 180));
     }
 
     public void approachWobble(Vector2d wobblePos) {
-        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 8));
+        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 10));
     }
 
 
@@ -151,6 +157,7 @@ public abstract class Sequence {
     public void shootGoal(int numRings, double RPM) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        drive.turnAbsolute(Math.toRadians(0));
         shooter.shoot(numRings, RPM);
     }
 
@@ -167,18 +174,21 @@ public abstract class Sequence {
     public void powerShot(double RPM) {
         telemetry.addData("Sequence","powerShot");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        boolean twoRings = false; //hit three powershots with two rings
+
         shooter.spinUp(RPM);
 
+        drive.turnRelative(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement[0]));
+
+        boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPM);
-            drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
+            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0] + MechConstants.Red.PowerShotAngleIncrement[1]));
             shooter.powerShot(RPM);
         } else {
-            drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
+
             shooter.powerShot(RPM);
             for (int i = 0; i < 2; i++) {
-                drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
+                drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
                 shooter.powerShot(RPM);
             }
         }
@@ -196,18 +206,23 @@ public abstract class Sequence {
 
             case (1):
                 telemetry.addData("Sequence", "intake 1 ring");
+//                drive.turn(Math.toRadians(heading));
+                drive.turnToFacePoint(position);
                 intake.extend();
                 intake.run(FORWARD);
-                drive.followTrajectory(buildIntakeTrajectory(drive, position));
-                drive.turn(Math.toRadians(heading));
+
+                drive.followTrajectory(buildIntakeTrajectory(drive, position, 15));
                 break;
 
             case (4):
                 telemetry.addData("Sequence", "intake 4 rings");
+//                drive.turn(Math.toRadians(heading));
+                drive.turnToFacePoint(position);
                 intake.extend();
                 intake.run(FORWARD);
-                drive.followTrajectory(buildIntakeTrajectory(drive, position));
-                drive.turn(Math.toRadians(heading));
+
+                drive.followTrajectory(buildIntakeTrajectory(drive, position, 15));
+                sleep(2000);
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");

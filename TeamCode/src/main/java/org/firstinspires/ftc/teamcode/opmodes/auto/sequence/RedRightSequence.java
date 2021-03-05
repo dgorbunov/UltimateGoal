@@ -86,7 +86,7 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.LeftWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveLinearTurn(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 180));
+        actions.add(() -> moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 180, 0, -40));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {

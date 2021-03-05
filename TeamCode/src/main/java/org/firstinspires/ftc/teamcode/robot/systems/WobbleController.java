@@ -30,7 +30,7 @@ public class WobbleController implements Controller {
 
     //Main Wobble Arm (rotate)
     public static double ArmDropPos = 0.08;
-    public static double ArmPickupPos = 0.62;
+    public static double ArmPickupPos = 0.58;
     public static double ArmPickupPosAuto = 0.2; //lower, doesn't need to clear wall
     public static double ArmInitPos = 0.78; //to be within 18in
 

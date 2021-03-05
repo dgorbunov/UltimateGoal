@@ -211,7 +211,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         setPoseEstimate(defaultStartPose);
     }
 
-    public void turnAsync(double angle) {
+    public void turnRelativeAsync(double angle) {
         if (telemetry != null) {
             telemetry.addData( "MecanumDrivetrainController", "turnAsync: " + angle);
         }
@@ -231,9 +231,14 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         mode = Mode.TURN;
     }
 
-    public void turn(double angle) {
-        turnAsync(angle);
+    public void turnRelative(double angle) {
+        turnRelativeAsync(angle);
         waitForIdle();
+    }
+
+    public void turnAbsolute(double angle) {
+        double target = angle - getPoseEstimate().getHeading();
+        turnRelative(target);
     }
 
     @Override
@@ -507,6 +512,13 @@ public class DrivetrainController extends MecanumDrive implements Controller {
                         power * -gamepad.right_stick_x
                 )
         );
+    }
+
+    public void turnToFacePoint(Vector2d point) {
+        double x = -point.getX() + getPoseEstimate().getX();
+        double y = -point.getY() + getPoseEstimate().getY();
+        double angle = Math.atan(x/y);
+        turnRelative(angle);
     }
 
     public static AngularVelocityConstraint getMaxAngVelConstraint(){

@@ -32,20 +32,12 @@ public class RedTele extends Tele {
         intake.stopIntake();
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            drive.turn(Math.toRadians(0));
+            drive.turnRelative(Math.toRadians(0));
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 45, 40));
             shooter.shootAsync(3, RPMGoal);
         }
         else {
-            drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(PowerShotPos, Math.toRadians(0)), 45, 40));
-
-            drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
-            shooter.powerShot(RPMPowerShot);
-            for (int i = 0; i < 2; i++) {
-                drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
-                shooter.powerShot(RPMPowerShot);
-            }
-            shooter.stop();
+            manualPowerShot();
         }
         autoShoot = false;
     }
@@ -59,18 +51,19 @@ public class RedTele extends Tele {
         shooter.spinUp(RPMPowerShot);
         drive.followTrajectory(buildLinearTrajectory(drive, PowerShotPos.getX(), PowerShotPos.getY(), 0));
 
+        drive.turnRelative(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement[0]));
+
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPMPowerShot);
-            drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
+            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0] + Red.PowerShotAngleIncrement[1]));
             shooter.powerShot(RPMPowerShot);
 
         } else {
-            drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
             shooter.powerShot(RPMPowerShot);
 
             for (int i = 0; i < 2; i++) {
-                drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
+                drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
                 shooter.powerShot(RPMPowerShot);
             }
         }

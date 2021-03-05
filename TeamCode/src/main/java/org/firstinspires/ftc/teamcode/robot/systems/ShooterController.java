@@ -142,7 +142,7 @@ public class ShooterController implements Controller {
        }
 
        //give some buffer, TODO: evaluate if we actually need this
-       sleep(100);
+       sleep(200);
     }
 
     /**

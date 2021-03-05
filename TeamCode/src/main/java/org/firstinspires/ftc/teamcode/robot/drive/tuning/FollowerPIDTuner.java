@@ -44,7 +44,7 @@ public class FollowerPIDTuner extends LinearOpMode {
                     .forward(DISTANCE)
                     .build();
             drive.followTrajectory(traj);
-            drive.turn(Math.toRadians(90));
+            drive.turnRelative(Math.toRadians(90));
 
             startPose = traj.end().plus(new Pose2d(0, 0, Math.toRadians(90)));
         }
