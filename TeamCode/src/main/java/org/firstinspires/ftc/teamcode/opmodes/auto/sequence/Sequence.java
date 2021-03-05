@@ -138,7 +138,7 @@ public abstract class Sequence {
         //TODO: fix, path continuity exception
     }
 
-    public void startShooter(double RPM){
+    public void spinUp(double RPM){
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         shooter.spinUp(RPM);
     }

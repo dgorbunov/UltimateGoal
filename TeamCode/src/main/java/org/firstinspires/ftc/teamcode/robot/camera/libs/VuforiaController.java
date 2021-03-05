@@ -11,10 +11,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +33,12 @@ public class VuforiaController implements Controller {
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    private org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer vuforia = null;
+    private VuforiaLocalizer vuforia = null;
     private OpenGLMatrix lastLocation = null;
-    private org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Parameters parameters;
-    private boolean useLocalizer;
+    private VuforiaLocalizer.Parameters parameters;
+    private boolean useLocalizer = false;
 
     private static final String VUFORIA_KEY = "Aa/NlSv/////AAABmfbIZJDVPkVejecKu21N5r4cTLhAMLAnbwXd1tcQJ9MqaVnqS+4aph3k9bZBglo+YhRJ243YKUAEpsFJEzqyyqrqGMSU8c9wxzQIakH+VFLamT1m/XPCW5M40u3k/BeLk03yiovXd3wCuGWVeAI6ipHlI2h+uMY0Q+HKr8TOFljzHXlqe7wsTbDhXu7tZRDf7LTPT5eWGZRrtHe7VgRW3sFUJ+3HvauBg20E/PRwQEDtFNNFohTMEOumOiV3EUenXrYnrINqlNOhPDlBlkm2du7bHuDho2TCv11DEmHWXCE+Pz8i1tLsaS3dyfjOCwO8BwG468ZsjQiGIFU4FEFqV34W9zLYdwEpaqhCP4OkpoIz";
-    public static String WebcamName = "Webcam 1";
 
     public boolean targetVisible = false;
     private float phoneXRotate = 180;
@@ -58,7 +59,7 @@ public class VuforiaController implements Controller {
     private static final float quadField  = 36 * mmPerInch;
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
-    private static final org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
+    private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false;
 
     private VuforiaTrackables targetsUltimateGoal;
@@ -70,11 +71,11 @@ public class VuforiaController implements Controller {
         /*
          * Setup Vuforia
          */
-        parameters = new org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Parameters(viewportContainerIds[0]);
+        parameters = new VuforiaLocalizer.Parameters(viewportContainerIds[0]);
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection   = org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraDirection   = VuforiaLocalizer.CameraDirection.BACK;
         // Uncomment this line below to use a webcam
-        parameters.cameraName = hardwareMap.get(WebcamName.class, WebcamName);
+        parameters.cameraName = hardwareMap.get(WebcamName.class, CameraController.WEBCAM_NAME);
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
@@ -104,13 +105,9 @@ public class VuforiaController implements Controller {
 
     }
 
-    public org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer getVuforia() {
-        return vuforia;
-    }
+    public VuforiaLocalizer getVuforia() { return vuforia; }
 
-    public org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Parameters getParameters() {
-        return parameters;
-    }
+    public VuforiaLocalizer.Parameters getParameters() { return parameters; }
 
     @Nullable
     public Pose2d getRobotPosition(){

@@ -25,7 +25,7 @@ public class GamepadMappings {
     public boolean ShootManual() {
         return gamepad1.y;
     }
-    public boolean StartFlywheel() {
+    public boolean SpinUp() {
         return gamepad1.b && !gamepad1.start;
     }
     public Boolean Intake() {
@@ -44,7 +44,11 @@ public class GamepadMappings {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
         return gamepad2.a && !gamepad2.start;
     };
-    public boolean WobbleAuto() {
+    public boolean WobbleDeliver() {
+        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_left || gamepad1.dpad_right;
+        return gamepad2.b && !gamepad2.start;
+    };
+    public boolean WobbleAlign() {
         return gamepad1.start && gamepad1.back;
     };
 

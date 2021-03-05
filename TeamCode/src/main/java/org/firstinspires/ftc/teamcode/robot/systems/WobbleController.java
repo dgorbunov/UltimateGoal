@@ -72,15 +72,15 @@ public class WobbleController implements Controller {
 
     public void dropAuto() {
         telemetry.addData(ControllerName, "Dropping Wobble");
-        wobbleArm.setPosition(ArmDropPos);
+        drop();
         sleep(dropDelayAuto);
-        wobbleGrip.setPosition(GripReleasePos);
+        release();
         sleep(releaseDelay);
     }
 
     public void pickupAuto() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
-        wobbleGrip.setPosition(GripGrabPos);
+        grab();
         sleep(grabDelay);
         wobbleArm.setPosition(ArmPickupPosAuto);
         sleep(pickupDelay);
@@ -88,17 +88,17 @@ public class WobbleController implements Controller {
 
     public void pickupTele() {
         telemetry.addData(ControllerName, "Picking Up Wobble");
-        wobbleGrip.setPosition(GripGrabPos);
+        grab();
         sleep(grabDelay);
-        wobbleArm.setPosition(ArmPickupPos);
+        pickup();
         sleep(pickupDelay);
     }
 
     public void dropTele() {
         telemetry.addData(ControllerName, "Dropping Wobble");
-        wobbleArm.setPosition(ArmDropPos);
+        drop();
         sleep(dropDelayTele);
-        wobbleGrip.setPosition(GripReleasePos);
+        release();
         sleep(releaseDelay);
     }
 

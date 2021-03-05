@@ -28,11 +28,13 @@ public class OpModeBase extends OpMode {
     protected Button intakeButton = new Button();
     protected Button vertIntakeButton = new Button();
     protected Button wobbleButton = new Button();
-    protected Button flywheelButton = new Button();
+    protected Button wobbleDeliverButton = new Button();
+    protected Button spinUpButton = new Button();
     protected Button shootButton = new Button();
-    protected Button driveModeButton = new Button();
     protected Button shootManButton = new Button();
-    protected Button wobbleAutoButton = new Button();
+    protected Button driveModeButton = new Button();
+
+    protected Button wobbleAlignButton = new Button();
 
     protected DrivetrainController drive;
     protected IntakeController intake;
@@ -43,7 +45,7 @@ public class OpModeBase extends OpMode {
     protected CameraController camera;
 
     protected ControllerManager controllers;
-    protected MultipleTelemetry multiTelemetry;
+    protected MultipleTelemetry telemetry;
     protected NanoClock systemClock = NanoClock.system();
 
     protected enum OPMODE{
@@ -54,8 +56,8 @@ public class OpModeBase extends OpMode {
 
     @Override
     public void init() {
-        multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        multiTelemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
+        telemetry = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
 //        Properties properties = new Properties();
 //        try {
@@ -63,7 +65,7 @@ public class OpModeBase extends OpMode {
 //            if (properties != null) {
 //                String patch = properties.getProperty("VERSION_PATCH");
 //                String build = properties.getProperty("VERSION_BUILD");
-//                multiTelemetry.addLine("Running Patch: " + patch + ", Build: " + build);
+//                telemetry.addLine("Running Patch: " + patch + ", Build: " + build);
 //                Log.i("Status, ","Running Patch: " + patch + ", Build: " + build);
 //            }
 //
@@ -71,16 +73,13 @@ public class OpModeBase extends OpMode {
 //            e.printStackTrace();
 //        }
 
-        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Initializing...</strong>"); //should this be normal telemetry?
-        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
-        //https://stackoverflow.com/questions/9754076/which-html-tags-are-supported-by-android-textview
+        telemetry.addLine("<h3>Initializing...</h3>");
 
         if (OPMODE_TYPE != null && OPMODE_TYPE == OPMODE.Auto) OpenCVController.DEFAULT_PIPELINE = PIPELINE.AUTO;
         else OpenCVController.DEFAULT_PIPELINE = PIPELINE.TELE;
 
-        controllers = new ControllerManager(multiTelemetry);
-        controllers.make(hardwareMap, multiTelemetry);
+        controllers = new ControllerManager(telemetry);
+        controllers.make(hardwareMap, telemetry);
 
         drive = controllers.get(DrivetrainController.class, FieldConstants.Drive);
         hub = controllers.get(HubController.class, FieldConstants.Hub);
@@ -94,9 +93,7 @@ public class OpModeBase extends OpMode {
 
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
-        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Initialized</strong>");
-        multiTelemetry.setDisplayFormat(Telemetry.DisplayFormat.CLASSIC);
+        telemetry.addLine("<h3>Initialized</h3>");
     }
 
     @Override
@@ -106,25 +103,25 @@ public class OpModeBase extends OpMode {
 
     @Override
     public void start() {
-        multiTelemetry.clear();
+        telemetry.clear();
         controllers.start();
     }
 
 
     @Override
     public void loop() {
-        multiTelemetry.addData("Threads Running", java.lang.Thread.activeCount());
+        telemetry.addData("Threads Running", java.lang.Thread.activeCount());
     }
 
     @Override
     public void stop() {
-        multiTelemetry.clear();
+        telemetry.clear();
 
-        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Stopping...</strong>");
+        telemetry.addLine("<h3>Stopping...</h3>");
 
         controllers.stop();
 
-        multiTelemetry.addLine("<strong style = \"color:DodgerBlue;\">Stopped</strong>");
+        telemetry.addLine("<h3>Stopped</h3>");
     }
 
 }

@@ -14,6 +14,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red;
+import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
+import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLinearTrajectory;
 
 @TeleOp(name="RedTele", group="Iterative Opmode")
 public class RedTele extends Tele {
@@ -52,17 +54,28 @@ public class RedTele extends Tele {
     protected void manualPowerShot() {
         autoShoot = true;
         drive.stop();
-        intake.stopIntake();
+        intake.stop();
 
-        drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
-        shooter.powerShot(RPMPowerShot);
-        for (int i = 0; i < 2; i++) {
+        shooter.spinUp(RPMPowerShot);
+        drive.followTrajectory(buildLinearTrajectory(drive, PowerShotPos.getX(), PowerShotPos.getY(), 0));
+
+        boolean twoRings = false; //hit three powershots with two rings
+        if (twoRings) {
+            shooter.powerShot(RPMPowerShot);
             drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
             shooter.powerShot(RPMPowerShot);
+
+        } else {
+            drive.turn(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement));
+            shooter.powerShot(RPMPowerShot);
+
+            for (int i = 0; i < 2; i++) {
+                drive.turn(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement));
+                shooter.powerShot(RPMPowerShot);
+            }
         }
 
-        shooter.stop();
-
+        sleep(50); //buffer
         autoShoot = false;
     }
 

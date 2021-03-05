@@ -149,7 +149,7 @@ public class ShooterController implements Controller {
      * Spin up flywheel before shooting to save time
      **/
     public void spinUp(double RPM){
-        checkSpeed(RPM);
+        setRPM(RPM);
     }
 
     private void bumpRings(int ringCount){

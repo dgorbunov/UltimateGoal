@@ -53,6 +53,7 @@ public class CameraController implements Controller {
     private VuforiaController vuforiaController;
 
     private boolean useLocalizer = false;
+    public static String WEBCAM_NAME = "Webcam 1";
 
     public CameraController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
@@ -61,13 +62,16 @@ public class CameraController implements Controller {
 
     @Override
     public void init() {
+        openCV = new OpenCVController(hardwareMap, telemetry);
+        openCV.init();
+    }
 
+    private void createPassthroughCamera() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         int[] viewportContainerIds = OpenCvCameraFactory.getInstance().splitLayoutForMultipleViewports(cameraMonitorViewId, 2, OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY);
 
         vuforiaController = new VuforiaController(hardwareMap, telemetry, viewportContainerIds, useLocalizer);
         openCV = new OpenCVController(vuforiaController.getVuforia(), vuforiaController.getParameters(), viewportContainerIds, telemetry);
-
         vuforiaController.init();
         openCV.init();
     }
@@ -91,13 +95,13 @@ public class CameraController implements Controller {
 
     @Override
     public void start() {
-        vuforiaController.start();
+        if (vuforiaController != null) vuforiaController.start();
         openCV.start();
     }
 
     @Override
     public void stop() {
         openCV.stop();
-        vuforiaController.stop();
+        if (vuforiaController != null) vuforiaController.stop();
     }
 }

@@ -58,6 +58,7 @@ public class RedRightSequence extends Sequence {
 //        actions.add(() -> shootGoal(3, MechConstants.RPMGoal));
 
         actions.add(() -> moveLinear(RedRight.PowerShotIntermediatePos, 0));
+        actions.add(() -> spinUp(MechConstants.RPMPowerShot));
         actions.add(() -> moveLinear(PowerShotPos, 0));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
@@ -65,12 +66,14 @@ public class RedRightSequence extends Sequence {
         //TODO: RESPONSIBLE FOR INACCURACY IN COMPOUND LINEAR MOVES..?
 
         if (ringCount == 1) {
+            actions.add(() -> spinUp(MechConstants.RPMGoalFromStack));
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
             actions.add(() -> shootGoal(1, MechConstants.RPMGoalFromStack));
             actions.add(() -> stopIntake());
         }
 
         if (ringCount == 4) {
+            actions.add(() -> spinUp(MechConstants.RPMGoalFromStack));
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
             actions.add(() -> shootGoal(3, MechConstants.RPMGoalFromStack));
             actions.add(() -> stopIntake());

@@ -60,11 +60,10 @@ public class Auto extends OpModeBase {
         super.start();
 
             try {
-                multiTelemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
+                telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
                 currentSequence.init(ringCount);
 
-                multiTelemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
-                multiTelemetry.update();
+                telemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
                 // execute runs async
                 currentSequence.execute();
@@ -117,16 +116,16 @@ public class Auto extends OpModeBase {
     private void makeSequences() {
         synchronized (lock) {
             sequences.put(makeSequenceName(Red, Left),
-                    new RedLeftSequence(controllers, multiTelemetry));
+                    new RedLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(Red, Right),
-                    new RedRightSequence(controllers, multiTelemetry));
+                    new RedRightSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(Blue, Left),
-                    new BlueLeftSequence(controllers, multiTelemetry));
+                    new BlueLeftSequence(controllers, telemetry));
 
             sequences.put(makeSequenceName(Blue, Right),
-                    new BlueRightSequence(controllers, multiTelemetry));
+                    new BlueRightSequence(controllers, telemetry));
         }
     }
 
@@ -141,17 +140,15 @@ public class Auto extends OpModeBase {
     private void getRingCount() {
         if (camera == null) {
             RobotLog.addGlobalWarningMessage("Camera not initialized");
-            multiTelemetry.update();
             return;
         }
 
-        multiTelemetry.addData("Camera returned rings", camera.getRingCountStr());
+        telemetry.addData("Camera returned rings", camera.getRingCountStr());
 
         int rings = camera.getRingCount();
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1); //if null return -1
-            multiTelemetry.addData("Camera returned rings", ringCount);
-            multiTelemetry.update();
+            telemetry.addData("Camera returned rings", ringCount);
         }
     }
 }

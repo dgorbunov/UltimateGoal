@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.WobbleDetector;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -91,18 +90,22 @@ public abstract class Tele extends OpModeBase {
                 () -> wobble.dropTele(),
                 () -> wobble.pickupTele());
 
-        flywheelButton.toggle(
-                gameMap.StartFlywheel(),
+        wobbleDeliverButton.toggle(
+                gameMap.WobbleDeliver(),
+                () -> wobble.release());
+
+        spinUpButton.toggle(
+                gameMap.SpinUp(),
                 () -> shooter.spinUp(RPMGoal),
                 ()-> shooter.stop());
 
-        wobbleAutoButton.toggle(
-                gameMap.WobbleAuto(),
+        wobbleAlignButton.toggle(
+                gameMap.WobbleAlign(),
                 () -> drive.alignWithWobble(camera),
                 () -> drive.stop());
 
         if (gameMap.Shoot()){
-            flywheelButton.resetToggle();
+            spinUpButton.resetToggle();
         }
 
         if (gameMap.Localize()) {
@@ -116,9 +119,9 @@ public abstract class Tele extends OpModeBase {
             vertIntakeButton.resetToggle();
         }
 
-        multiTelemetry.addData("Vision: Aspect Ratio", WobbleDetector.getAspectRatio());
-        multiTelemetry.addLine(hub.getFormattedCurrentDraw());
-        multiTelemetry.addData("Loop Time",Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
+//        telemetry.addData("Vision: Aspect Ratio", WobbleDetector.getAspectRatio());
+        telemetry.addLine("<strong>Using: </strong>" + hub.getCurrentDraw());
+        telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
 
     protected abstract void autoShot();
