@@ -7,18 +7,23 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
+import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
+import org.firstinspires.ftc.teamcode.util.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
+import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.WOBBLE;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
 public abstract class Tele extends OpModeBase {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
     protected boolean autoShoot = false;
     protected boolean manualShoot = false;
@@ -52,26 +57,21 @@ public abstract class Tele extends OpModeBase {
         super.loop();
         loopTime = systemClock.seconds() * 1000;
 
-        if (autoShoot) return;
-        //automatically go to slow mode during shooting
-        if (!manualShoot) {
+        if (!manualShoot && !autoShoot && !VertIntakeController.isRunning) {
+            shootButton.runOnce(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
+            shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
+
             driveModeButton.toggleLoop(
                     gameMap.DriveMode(),
                     () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
                     () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
             );
-        }
-        else {
+        } else {
             drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             driveModeButton.resetToggle();
         }
 
         drive.update();
-
-        if (!manualShoot) {
-            shootButton.runOnce(gameMap.Shoot(), this::autoShot);
-            shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
-        }
 
         intakeButton.toggle(
                 gameMap.Intake(),
@@ -101,25 +101,32 @@ public abstract class Tele extends OpModeBase {
 
         wobbleAlignButton.toggle(
                 gameMap.WobbleAlign(),
-                () -> drive.alignWithWobble(camera),
+                () -> drive.alignWithObject(camera, WOBBLE),
                 () -> drive.stop());
 
-        if (gameMap.Shoot()){
-            spinUpButton.resetToggle();
-        }
+        autoIntakeButton.toggle(
+                gameMap.AutoVertIntake(),
+                () -> new Button().runAllBlocking(
+                        () -> drive.turnAbsolute(0),
+                        () -> vertIntake.run(FORWARD),
+                        () -> drive.alignWithObject(camera, VERTICAL_RING))
+                );
 
-        if (gameMap.Localize()) {
-            localizeWithCorner();
-        }
+        localizeButton.runOnce(
+                gameMap.Localize(),
+                this::localizeWithCorner
+        );
 
-        if (gameMap.StopAllIntakes()) {
-            intake.stopIntake();
-            vertIntake.stop();
-            intakeButton.resetToggle();
-            vertIntakeButton.resetToggle();
-        }
+        stopIntakeButton.runOnce(
+                gameMap.StopAllIntakes(),
+                () -> intake.stopIntake(),
+                () -> vertIntake.stop(),
+                () -> intakeButton.resetToggle(),
+                () -> vertIntakeButton.resetToggle()
+        );
 
-//        telemetry.addData("Vision: Aspect Ratio", WobbleDetector.getAspectRatio());
+        telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
+        telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Using: </strong>" + hub.getCurrentDraw());
         telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }

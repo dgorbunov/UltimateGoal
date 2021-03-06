@@ -29,7 +29,7 @@ public class WobbleDetector extends OpenCvPipeline {
     private static Scalar lowerBlue = new Scalar(0.0, 141.0, 0.0);
     private static Scalar upperBlue = new Scalar(255.0, 230.0, 95.0);
 
-    private int CAMERA_WIDTH = 800;
+    private int CAMERA_WIDTH = 640;
     private static double HORIZON = 0; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MAX_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
     private static double MIN_ASPECT_RATIO = 1.2;

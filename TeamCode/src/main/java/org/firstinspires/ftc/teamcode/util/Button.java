@@ -49,15 +49,32 @@ public class Button {
     }
 
     /**
-     * Runs method once, no matter the length of button press
+     * Runs method(s) once, no matter the length of button press
      */
-    public void runOnce(boolean buttonState, Runnable method){
+    public void runOnce(boolean buttonState, Runnable... methods){
         if (buttonState) {
             if (!pressed) {
                 pressed = true;
-                new Thread(method).start();
+                for (Runnable method: methods) {
+                    new Thread(method).start();
+                }
             }
         } else pressed = false;
+    }
+
+    /**
+     * Runs all method(s)
+     */
+    public void runAll(Runnable... methods){
+        for (Runnable method: methods) {
+            new Thread(method).start();
+        }
+    }
+
+    public void runAllBlocking(Runnable... methods){
+        for (Runnable method: methods) {
+            method.run();
+        }
     }
 
     public void resetToggle() {

@@ -32,17 +32,6 @@ import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController;
 import org.firstinspires.ftc.teamcode.robot.camera.libs.VuforiaController;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-/**
- * In this sample, we demonstrate how to use EasyOpenCV in
- * Vuforia passthrough mode. In this mode, EasyOpenCV does not
- * take direct control over the camera. Instead, it pulls frames
- * out of a VuforiaController's frame queue. This allows you to
- * run both OpenCV and Vuforia simultaneously on the same camera.
- * The downside is that you do not get to choose the resolution
- * of frames delivered to your pipeline, and you do not get any
- * sort of manual control over sensor parameters such as exposure,
- * gain, ISO, or frame rate.
- */
 public class CameraController implements Controller {
 
     private HardwareMap hardwareMap;
@@ -54,6 +43,10 @@ public class CameraController implements Controller {
 
     private boolean useLocalizer = false;
     public static String WEBCAM_NAME = "Webcam 1";
+
+    public static enum Objects {
+        WOBBLE, VERTICAL_RING
+    }
 
     public CameraController(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
@@ -86,7 +79,7 @@ public class CameraController implements Controller {
 
     public double getWobbleDisplacement() { return openCV.getWobbleDisplacement(); }
 
-    public double getCameraCenterX() { return openCV.getCameraCenterX(); }
+    public double getRingDisplacement() { return openCV.getVerticalRingDisplacement(); }
 
     @Nullable
     public Pose2d getRobotPosition() {

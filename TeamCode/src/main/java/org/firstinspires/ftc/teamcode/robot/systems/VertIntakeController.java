@@ -18,7 +18,7 @@ public class VertIntakeController implements Controller{
     private CRServo wheel2;
 
     public static String ControllerName;
-    public static boolean vertIntakeRunning;
+    public static boolean isRunning;
 
     /*
      * Do not change motor direction to avoid breaking odometry
@@ -51,7 +51,7 @@ public class VertIntakeController implements Controller{
 
     @Override
     public void stop() {
-        vertIntakeRunning = false;
+        isRunning = false;
 
         vIntake.setPower(0);
         wheel1.setPower(0);
@@ -61,7 +61,7 @@ public class VertIntakeController implements Controller{
     }
 
     public void run(DcMotorEx.Direction Direction) {
-        vertIntakeRunning = true;
+        isRunning = true;
         IntakeController.startSweeper();
 
         if (Direction == DcMotorEx.Direction.FORWARD) vIntake.setPower(VertIntakePower);

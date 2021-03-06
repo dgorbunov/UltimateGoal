@@ -20,8 +20,8 @@ public class ShooterController implements Controller {
     public static volatile double RetractDelay = 200;
     public static volatile double[] ShootingDelay = {250,250,0};
     public static volatile boolean useDelayArray = false;
-    public static volatile double Delay1 = 250;
-    public static volatile double Delay2 = 250;
+    public static volatile double Delay1 = 300;
+    public static volatile double Delay2 = 300;
 
     public static final double BumpPosition = 0.6;
     public static final double RetractPosition = 0.35;
@@ -119,6 +119,7 @@ public class ShooterController implements Controller {
             checkSpeed(RPM);
             powerShotCount = 0;
         }
+        sleep(50); //buffer
         bumpRings(1);
         powerShotCount++;
     }
@@ -142,7 +143,7 @@ public class ShooterController implements Controller {
        }
 
        //give some buffer, TODO: evaluate if we actually need this
-       sleep(200);
+       sleep(100);
     }
 
     /**

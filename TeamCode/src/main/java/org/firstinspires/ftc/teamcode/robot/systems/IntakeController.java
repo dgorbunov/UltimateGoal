@@ -92,11 +92,11 @@ public class IntakeController implements Controller {
     }
 
     private static void startSweeper(double power) {
-        if (!VertIntakeController.vertIntakeRunning) sweeper.setPower(power);
+        if (!VertIntakeController.isRunning) sweeper.setPower(power);
     }
 
     public static void stopSweeper() {
-        if (!intakeRunning && !VertIntakeController.vertIntakeRunning) sweeper.setPower(0);
+        if (!intakeRunning && !VertIntakeController.isRunning) sweeper.setPower(0);
     }
 
     public void runAuto(DcMotorEx.Direction Direction) {

@@ -174,7 +174,6 @@ public abstract class Sequence {
     public void powerShot(double RPM) {
         telemetry.addData("Sequence","powerShot");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-
         shooter.spinUp(RPM);
 
         drive.turnRelative(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement[0]));
@@ -185,13 +184,13 @@ public abstract class Sequence {
             drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0] + MechConstants.Red.PowerShotAngleIncrement[1]));
             shooter.powerShot(RPM);
         } else {
-
             shooter.powerShot(RPM);
             for (int i = 0; i < 2; i++) {
                 drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
                 shooter.powerShot(RPM);
             }
         }
+
         sleep(50); //buffer
         shooter.stop();
     }

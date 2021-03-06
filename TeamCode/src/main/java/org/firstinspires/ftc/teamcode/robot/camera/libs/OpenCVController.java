@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.RingDetector;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.WobbleDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,6 +24,7 @@ public class OpenCVController implements Controller{
     private Telemetry telemetry;
     private RingDetector ringDetector;
     private WobbleDetector wobbleDetector;
+    private VerticalRingDetector verticalDetector;
 
     public enum PIPELINE {
         AUTO, TELE
@@ -76,12 +78,13 @@ public class OpenCVController implements Controller{
 
     private void setPipeline() {
         if (openCvCamera != null) {
-            wobbleDetector = new WobbleDetector(telemetry, false, Auto.getAlliance());
             if (DEFAULT_PIPELINE == AUTO) {
                 ringDetector = new RingDetector(telemetry, false);
+                wobbleDetector = new WobbleDetector(telemetry, false, Auto.getAlliance());
                 openCvCamera.setPipeline(ringDetector);
             } else {
-                openCvCamera.setPipeline(wobbleDetector);
+                verticalDetector = new VerticalRingDetector(telemetry, false);
+                openCvCamera.setPipeline(verticalDetector);
             }
         }
     }
@@ -100,9 +103,7 @@ public class OpenCVController implements Controller{
        return wobbleDetector.getDisplacementFromCenter();
     }
 
-    public double getCameraCenterX() {
-        return wobbleDetector.getCameraCenterX();
-    }
+    public double getVerticalRingDisplacement() { return verticalDetector.getDisplacementFromCenter(); }
 
     @Override
     public void init() {

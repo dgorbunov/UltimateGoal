@@ -30,6 +30,7 @@ public class RedTele extends Tele {
         autoShoot = true;
         drive.stop();
         intake.stopIntake();
+        vertIntake.stop();
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
             drive.turnRelative(Math.toRadians(0));
@@ -46,7 +47,8 @@ public class RedTele extends Tele {
     protected void manualPowerShot() {
         autoShoot = true;
         drive.stop();
-        intake.stop();
+        intake.stopIntake();
+        vertIntake.stop();
 
         shooter.spinUp(RPMPowerShot);
         drive.followTrajectory(buildLinearTrajectory(drive, PowerShotPos.getX(), PowerShotPos.getY(), 0));

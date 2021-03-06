@@ -27,7 +27,7 @@ public class RingDetector extends OpenCvPipeline {
     private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
     private static final Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
 
-    private int CAMERA_WIDTH = 800;
+    private int CAMERA_WIDTH = 640;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MIN_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
     private static double ASPECT_RATIO_THRES = 0.7;

@@ -27,6 +27,9 @@ public class OpModeBase extends OpMode {
     protected GamepadMappings gameMap;
     protected Button intakeButton = new Button();
     protected Button vertIntakeButton = new Button();
+    protected Button autoIntakeButton = new Button();
+    protected Button stopIntakeButton = new Button();
+    protected Button localizeButton = new Button();
     protected Button wobbleButton = new Button();
     protected Button wobbleDeliverButton = new Button();
     protected Button spinUpButton = new Button();
@@ -73,7 +76,7 @@ public class OpModeBase extends OpMode {
 //            e.printStackTrace();
 //        }
 
-        telemetry.addLine("<h3>Initializing...</h3>");
+        telemetry.addLine("<strong>Initializing...</strong>");
 
         if (OPMODE_TYPE != null && OPMODE_TYPE == OPMODE.Auto) OpenCVController.DEFAULT_PIPELINE = PIPELINE.AUTO;
         else OpenCVController.DEFAULT_PIPELINE = PIPELINE.TELE;
@@ -110,14 +113,14 @@ public class OpModeBase extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Threads Running", java.lang.Thread.activeCount());
+        telemetry.addLine("<strong>Threads Running: </strong>" + java.lang.Thread.activeCount());
     }
 
     @Override
     public void stop() {
         telemetry.clear();
 
-        telemetry.addLine("<h3>Stopping...</h3>");
+        telemetry.addLine("<strong>Stopping...</strong>");
 
         controllers.stop();
 

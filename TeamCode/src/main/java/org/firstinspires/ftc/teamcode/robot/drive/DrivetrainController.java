@@ -18,7 +18,6 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -42,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_VEL;
@@ -65,8 +66,11 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.k
 
 @Config
 public class DrivetrainController extends MecanumDrive implements Controller {
-    public static PIDCoefficients WOBBLE_PID = new PIDCoefficients(0.2, 0, 0.025);
-    public static int WOBBLE_MAX_ITERATIONS = 100;
+    public static PIDCoefficients ALIGNMENT_PID = new PIDCoefficients(0.0025, 0, 0);
+    public static double ALIGNMENT_MAX_TIME = 0.75;
+    public static double ALIGNMENT_ACCEL = 0.02;
+    public static double ALIGNMENT_VEL = 0.02;
+    public static double ALIGNMENT_POWER = 0.4;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0.25, 0.6);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0.4, 0.55);
@@ -307,7 +311,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
-        packet.put("wobbleError", 0);
+        if (!VertIntakeController.isRunning) packet.put("alignmentError", 0);
 
         switch (mode) {
             case IDLE:
@@ -403,41 +407,34 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         }
     }
 
-    public void alignWithWobble(CameraController camera) {
-        //TODO: move to auto, without manual approach
-        int alignmentThreshold = 25;
+    public void alignWithObject(CameraController camera, CameraController.Objects object) {
+        //TODO: use in auto, without manual approach
         if (camera != null) {
-            PIDFController controller = new PIDFController(WOBBLE_PID);
+            PIDFController controller = new PIDFController(ALIGNMENT_PID);
 
-            controller.setOutputBounds(-0.4, 0.4);
-            controller.setTargetPosition(0);
-            controller.setTargetAcceleration(20);
-//            controller.setTargetVelocity(); //MAX_VEL / k? MAX_ACCEL / k as well?
-            controller.update(camera.getWobbleDisplacement());
+            controller.setOutputBounds(-ALIGNMENT_POWER, ALIGNMENT_POWER);
+            controller.setTargetAcceleration(ALIGNMENT_ACCEL);
+            controller.setTargetVelocity(ALIGNMENT_VEL); //MAX_VEL / k? MAX_ACCEL / k as well?
+            if (object == VERTICAL_RING) controller.update(camera.getRingDisplacement());
+            else controller.update(camera.getWobbleDisplacement());
 
-            final int attempts = WOBBLE_MAX_ITERATIONS;
-            for (int i = 0; i < attempts; i++) {
-                if (Math.abs(controller.getLastError()) > alignmentThreshold) {
-                    double correction = controller.update(camera.getWobbleDisplacement());
+            NanoClock clock = NanoClock.system();
+            double startTime = clock.seconds();
+            int alignmentThreshold = 25;
+
+            while (clock.seconds() - startTime <= ALIGNMENT_MAX_TIME) {
+//                if (Math.abs(controller.getLastError()) > alignmentThreshold) {
+                    double correction;
+                    if (object == VERTICAL_RING) correction = controller.update(camera.getRingDisplacement());
+                    else correction = controller.update(camera.getWobbleDisplacement());
+
                     strafe(-correction); //or: rotate()
-                    packet.put("wobbleError", controller.getLastError());
+                    packet.put("alignmentError", controller.getLastError());
                     dashboard.sendTelemetryPacket(packet);
-                }
-                 else break;
+//                }
+//                 else break;
             }
-            approachWobble(12);
         }
-    }
-
-    public void approachWobble(double speed){
-        Trajectory trajectory = new TrajectoryBuilder(getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
-            .forward(24,
-                new MinVelocityConstraint(Arrays.asList(
-                        getMaxAngVelConstraint(),
-                        getCustomVelConstraint(speed))), getMaxAccelConstraint())
-                .build();
-
-        followTrajectoryAsync(trajectory);
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
@@ -462,10 +459,12 @@ public class DrivetrainController extends MecanumDrive implements Controller {
 
     public void strafe(double power) {
         setWeightedDrivePower(new Pose2d(0, -power, 0));
+        update();
     }
 
     public void rotate(double power) {
         setWeightedDrivePower(new Pose2d(0, 0, -power));
+        update();
     }
 
     public void driveRobotCentric(Gamepad gamepad, double power){

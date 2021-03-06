@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.camera.algorithms;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,32 +18,30 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerticalRingAligner extends OpenCvPipeline {
+@Config
+public class VerticalRingDetector extends OpenCvPipeline {
 
     private Telemetry telemetry;
     private boolean debug = false;
-    private FieldConstants.Alliance alliance; //Blue or Red
 
     private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
     private static final Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
 
-    private int CAMERA_WIDTH = 800;
-    private static double HORIZON = 0; //(100.0 / 320.0) * CAMERA_WIDTH;
-    private static double MAX_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
-    private static double MIN_ASPECT_RATIO = 1.2;
+    private int CAMERA_WIDTH = 640;
+    private static double MIN_ASPECT_RATIO = 2;
 
     private double centerX;
     private double centerY;
-    private static double aspectRatio = 0;
+    private static double aspectRatio = 2;
+    private static double ringWidth = 20;
 
-    public VerticalRingAligner(Telemetry telemetry, boolean debug, FieldConstants.Alliance alliance) {
+    public VerticalRingDetector(Telemetry telemetry, boolean debug) {
         this.telemetry = telemetry;
-        this.alliance = alliance;
         this.debug = debug;
     }
 
-    public VerticalRingAligner(Telemetry telemetry, FieldConstants.Alliance alliance) {
-        this(telemetry, false, alliance);
+    public VerticalRingDetector(Telemetry telemetry) {
+        this(telemetry, false);
     }
 
     public double getDisplacementFromCenter() {
@@ -50,10 +49,11 @@ public class VerticalRingAligner extends OpenCvPipeline {
     }
 
     public double getCameraCenterX() {
-        return (double)CAMERA_WIDTH/2;
+        return (double)CAMERA_WIDTH / 2;
     }
 
     public static double getAspectRatio() { return aspectRatio; }
+    public static double getRingWidth() { return ringWidth; }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -84,7 +84,7 @@ public class VerticalRingAligner extends OpenCvPipeline {
             Imgproc.drawContours(ret, contours, -1, new Scalar(0.0, 255.0, 0.0), 3);
 
             /**finding widths of each contour, comparing, and storing the widest**/
-            double maxWidth = 0;
+            double minWidth = 20;
             Rect maxRect = new Rect();
             for (MatOfPoint c : contours) {
                 MatOfPoint2f copy = new MatOfPoint2f(c.toArray());
@@ -93,9 +93,8 @@ public class VerticalRingAligner extends OpenCvPipeline {
                 double w = rect.width;
                 double aspectRatio = (double)rect.height / (double)rect.width;
 
-                //TODO: switch to min, but within a reasonable range to remove noise
-                if (w > maxWidth && aspectRatio > MIN_ASPECT_RATIO) {
-                    maxWidth = w;
+                if (w > minWidth && aspectRatio > MIN_ASPECT_RATIO) {
+                    minWidth = w;
                     maxRect = rect;
                 }
 
@@ -104,18 +103,23 @@ public class VerticalRingAligner extends OpenCvPipeline {
             }
 
             /**drawing widest bounding rectangle to ret**/
-            Scalar color;
-            if (alliance == FieldConstants.Alliance.Red) color = new Scalar(0,0,255);
-            else color = new Scalar(255,0,0);
+            Scalar color = new Scalar(0,255,255);
             Imgproc.rectangle(ret, maxRect, color, 5);
 
+            ringWidth = maxRect.width;
             centerX = maxRect.x + (double)maxRect.width/2;
             centerY = maxRect.y + (double)maxRect.height/2;
 
             Point center = new Point(centerX, centerY);
             Imgproc.drawMarker(ret, center, color, 0, 35);
 
-            if (debug) telemetry.addData("Vision: maxW", maxWidth);
+            Imgproc.line(
+                    ret,
+                    new Point(CAMERA_WIDTH/2, 0),
+                    new Point(CAMERA_WIDTH/2, input.height()),
+                    new Scalar(255.0, .0, 255.0));
+
+            if (debug) telemetry.addData("Vision: maxW", minWidth);
             aspectRatio = (double)maxRect.height / (double)maxRect.width;
             if(debug) telemetry.addData("Vision: Aspect Ratio", aspectRatio);
 

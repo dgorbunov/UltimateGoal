@@ -28,6 +28,9 @@ public class GamepadMappings {
     public boolean SpinUp() {
         return gamepad1.b && !gamepad1.start;
     }
+    public boolean AutoVertIntake() {
+        return gamepad1.x;
+    }
     public Boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;
@@ -37,7 +40,6 @@ public class GamepadMappings {
         return gamepad2.start && !gamepad2.b && !gamepad2.a;
     }
     public boolean StopAllIntakes() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.x;
         return gamepad2.x;
     }
     public boolean Wobble() {
