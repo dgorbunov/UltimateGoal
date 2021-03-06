@@ -24,7 +24,7 @@ public class MechConstants {
 
     @Config
     public static class Red {
-        public static double[] PowerShotAngleIncrement = {-8,-6.5}; //prev: -9.5
+        public static double[] PowerShotAngleIncrement = {8,-9,-5.5}; //prev: -9.5
         public static double AutoShootLine = -24.5;
     }
 

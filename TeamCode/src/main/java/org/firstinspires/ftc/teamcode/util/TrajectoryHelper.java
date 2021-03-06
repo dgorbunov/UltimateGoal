@@ -36,7 +36,7 @@ public class TrajectoryHelper {
 
     public static Trajectory buildLinearTrajectory(DrivetrainController drive, double x, double y, double heading) {
         TrajectoryBuilder trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint());
-        trajectory.lineToSplineHeading(new Pose2d(x, y, Math.toRadians(heading)));
+        trajectory.lineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)));
 
         return trajectory.build();
     }

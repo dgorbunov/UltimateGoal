@@ -24,6 +24,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -240,9 +241,12 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         waitForIdle();
     }
 
-    public void turnAbsolute(double angle) {
-        double target = angle - getPoseEstimate().getHeading();
-        turnRelative(target);
+    public void turnAbsolute(double targetAngle) {
+        turnRelative(Angle.normDelta(targetAngle - getPoseEstimate().getHeading()));
+    }
+
+    public void turnAbsoluteAsync(double targetAngle) {
+        turnRelativeAsync(Angle.normDelta(targetAngle - getPoseEstimate().getHeading()));
     }
 
     @Override

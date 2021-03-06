@@ -53,18 +53,18 @@ public class RedTele extends Tele {
         shooter.spinUp(RPMPowerShot);
         drive.followTrajectory(buildLinearTrajectory(drive, PowerShotPos.getX(), PowerShotPos.getY(), 0));
 
-        drive.turnRelative(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement[0]));
+        drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0]));
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPMPowerShot);
-            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0] + Red.PowerShotAngleIncrement[1]));
+            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[1] + Red.PowerShotAngleIncrement[2]));
             shooter.powerShot(RPMPowerShot);
 
         } else {
             shooter.powerShot(RPMPowerShot);
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 1; i < 3; i++) {
                 drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
                 shooter.powerShot(RPMPowerShot);
             }

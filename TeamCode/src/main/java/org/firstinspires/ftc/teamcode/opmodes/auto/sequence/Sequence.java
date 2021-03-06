@@ -157,7 +157,7 @@ public abstract class Sequence {
     public void shootGoal(int numRings, double RPM) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        drive.turnAbsolute(Math.toRadians(0));
+        drive.turnAbsolute(0);
         shooter.shoot(numRings, RPM);
     }
 
@@ -176,16 +176,16 @@ public abstract class Sequence {
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         shooter.spinUp(RPM);
 
-        drive.turnRelative(Math.toRadians(-1 * MechConstants.Red.PowerShotAngleIncrement[0]));
+        drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0]));
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPM);
-            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0] + MechConstants.Red.PowerShotAngleIncrement[1]));
+            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[1] + MechConstants.Red.PowerShotAngleIncrement[2]));
             shooter.powerShot(RPM);
         } else {
             shooter.powerShot(RPM);
-            for (int i = 0; i < 2; i++) {
+            for (int i = 1; i < 3; i++) {
                 drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
                 shooter.powerShot(RPM);
             }
@@ -236,9 +236,5 @@ public abstract class Sequence {
     public void moveToLaunchLine(Vector2d position) {
         telemetry.addData("Sequence","moveToLaunchLine" );
         drive.followTrajectory(buildLineTrajectory(drive, position.getX(), position.getY()));
-    }
-
-    public Pose2d getPose() {
-        return drive.getPoseEstimate();
     }
 }
