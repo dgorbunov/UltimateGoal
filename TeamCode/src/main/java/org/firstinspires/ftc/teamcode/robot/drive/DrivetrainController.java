@@ -40,6 +40,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
@@ -426,7 +427,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             double startTime = clock.seconds();
             int alignmentThreshold = 25;
 
-            while (clock.seconds() - startTime <= ALIGNMENT_MAX_TIME) {
+            while (clock.seconds() - startTime <= ALIGNMENT_MAX_TIME && VerticalRingDetector.getRingWidth() != 0){
 //                if (Math.abs(controller.getLastError()) > alignmentThreshold) {
                     double correction;
                     if (object == VERTICAL_RING) correction = controller.update(camera.getRingDisplacement());

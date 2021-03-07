@@ -71,6 +71,7 @@ public class RedTele extends Tele {
         }
 
         sleep(50); //buffer
+        shooter.stop();
         autoShoot = false;
     }
 
@@ -78,17 +79,7 @@ public class RedTele extends Tele {
     protected void manualShot() {
         manualShoot = true;
         intake.stopIntake();
-        if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            shooter.shoot(3, RPMGoal);
-        }
-        else {
-            powerShotCt++;
-            shooter.powerShot(RPMPowerShot);
-            if (powerShotCt >= 3) {
-                shooter.stop();
-                powerShotCt = 0;
-            }
-        }
+        shooter.shoot(3, RPMGoal);
         while (shooter.shootingState){
             Sleep.sleep(10);
         }
