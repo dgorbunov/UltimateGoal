@@ -63,12 +63,15 @@ public class RingDetector extends OpenCvPipeline {
 
         Mat ret = new Mat();
         Mat mat = new Mat();
+        Mat hierarchy = new Mat();
+        Mat mask = null;
+
         try { // try catch in order for opMode to not crash and force a restart
             /**converting from RGB color space to YCrCb color space**/
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
-            Mat mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
+            mask = new Mat(mat.rows(), mat.cols(), CvType.CV_8UC1); // variable to store mask in
             Core.inRange(mat, lowerOrange, upperOrange, mask);
 
             /**applying to input and putting it on ret in black or yellow**/
@@ -77,10 +80,8 @@ public class RingDetector extends OpenCvPipeline {
             /**applying GaussianBlur to reduce noise when finding contours**/
             Imgproc.GaussianBlur(mask, mask, new Size(5.0, 15.0), 0.00);
 
-
             /**finding contours on mask**/
             List<MatOfPoint> contours = new ArrayList();
-            Mat hierarchy = new Mat();
             Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
             /**drawing contours to ret in green**/
@@ -144,21 +145,22 @@ public class RingDetector extends OpenCvPipeline {
 
             if (debug) telemetry.addData("Vision: Height", ringCountStr);
 
-            // releasing all mats after use
-            mask.release();
-            hierarchy.release();
+            /**returns the contour mask combined with original image for context**/
+            Core.addWeighted(ret, 0.65, input, 0.35, 0, input);
+
         } catch (Exception e) {
             /**error handling, prints stack trace for specific debug**/
             telemetry.addData("[ERROR]", e.toString());
             telemetry.addData("[ERROR]", e.getStackTrace().toString());
         }
+        finally {
+            // releasing all mats after use
+            mask.release();
+            hierarchy.release();
+            mat.release();
+            ret.release();
+        }
 
-        /**returns the contour mask combined with original image for context**/
-        Mat output = new Mat();
-        Core.addWeighted(ret, 0.65, input, 0.35, 0, output);
-        mat.release();
-        ret.release();
-
-        return output;
+        return input;
     }
 }
