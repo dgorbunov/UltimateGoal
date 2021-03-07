@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 
 public class RedLeftSequence extends Sequence {
 
@@ -35,24 +36,23 @@ public class RedLeftSequence extends Sequence {
                 targetZone = RedField.TargetZoneC;
                 break;
         }
-//        actions.add(() -> moveToShoot(RedRight.IntermediatePos, GoalShotPos, 0));
-//        actions.add(() -> shootGoal(3, MechConstants.RPMGoal));
 
         actions.add(() -> spinUp(MechConstants.RPMPowerShot));
-        actions.add(() -> moveLinear(PowerShotPos, 0));
+        if (ringCount == 4) actions.add(() -> moveSpline(PowerShotPos, 0, 40, -20));
+        else actions.add(() -> moveSpline(PowerShotPos, 0, 0, 0));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> shootGoal(1, MechConstants.RPMGoalFromStack));
-            actions.add(() -> stopIntake());
-        } else if (ringCount == 4) {
-            actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
-            actions.add(() -> shootGoal(3, MechConstants.RPMGoalFromStack));
-            actions.add(() -> stopIntake());
+            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMGoal, 1));
         }
+        else if (ringCount == 4) {
+            actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
+            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMGoal, 3));
+        }
+        actions.add(() -> stopIntake());
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
@@ -61,8 +61,7 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 
-        if (ringCount == 0) actions.add(() -> moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0, -40));
-        else actions.add(() -> moveLinear(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0));
+        actions.add(() -> moveToDropWobble(ringCount, targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0.80));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {
@@ -75,6 +74,5 @@ public class RedLeftSequence extends Sequence {
         }
 
         actions.add(() -> stop());
-
     }
 }

@@ -121,6 +121,6 @@ public class WobbleController implements Controller {
     }
     public void sideRelease() {
         wobbleSide.setPosition(SideReleasePos);
-        sleep(250);
+        sleep(50);
     }
 }

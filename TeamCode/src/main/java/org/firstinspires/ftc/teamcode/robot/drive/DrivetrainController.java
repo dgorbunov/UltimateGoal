@@ -528,6 +528,10 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         return new AngularVelocityConstraint(MAX_ANG_VEL);
     }
 
+    public static AngularVelocityConstraint getCustomMaxAngVelConstraint(double angVel){
+        return new AngularVelocityConstraint(angVel);
+    }
+
     public static MecanumVelocityConstraint getMaxVelConstrain(){
         return new MecanumVelocityConstraint(MAX_VEL, DriveConstants.TRACK_WIDTH);
     }

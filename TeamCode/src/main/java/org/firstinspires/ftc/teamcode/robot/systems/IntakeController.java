@@ -27,12 +27,12 @@ public class IntakeController implements Controller {
     public static String ControllerName;
     public static boolean intakeRunning;
 
-    public static final double ArmStartPos = 0.262;
-    public static final double ArmDropPos = 0.6;
-    public static final double IntakePower = 0.6;
-    public static final double Intake2Power = 0.6;
-    public static final double SweeperPower = 0.8;
-    public static final double sensorMaxDistance = 2;
+    public static double ArmStartPos = 0.262;
+    public static double ArmDropPos = 0.6;
+    public static double IntakePower = 0.6;
+    public static double Intake2Power = 0.6;
+    public static double SweeperPower = 1.;
+    public static double sensorMaxDistance = 2;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -85,6 +85,13 @@ public class IntakeController implements Controller {
         intake.setPower(0);
         intake2.setPower(0);
         stopSweeper();
+    }
+
+    public void stopIntake(boolean stopSweeper) {
+        intakeRunning = false;
+        intake.setPower(0);
+        intake2.setPower(0);
+        if (stopSweeper) stopSweeper();
     }
 
     public static void startSweeper() {

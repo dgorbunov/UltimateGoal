@@ -18,8 +18,9 @@ public class MechConstants {
     public static double DriveSlowPower = 0.18;
 
     public static double RPMGoal = 3800;
+    @Deprecated
     public static double RPMGoalFromStack = 3600;
-    public static double RPMPowerShot = 3350; //~3300-3500
+    public static double RPMPowerShot = 3350; //~3300-3400
     public static double PowerShotDelay = 250;
 
     @Config
