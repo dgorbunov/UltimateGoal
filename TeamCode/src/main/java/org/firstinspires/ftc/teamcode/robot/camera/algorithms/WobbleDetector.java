@@ -133,6 +133,9 @@ public class WobbleDetector extends OpenCvPipeline {
             aspectRatio = (double)maxRect.height / (double)maxRect.width;
             if(debug) telemetry.addData("Vision: Aspect Ratio", aspectRatio);
 
+            /**returns the contour mask combined with original image for context**/
+            Core.addWeighted(ret, 0.65, input, 0.35, 0, input);
+
         } catch (Exception e) {
             /**error handling, prints stack trace for specific debug**/
             telemetry.addData("[ERROR]", e.toString());
@@ -148,8 +151,6 @@ public class WobbleDetector extends OpenCvPipeline {
             hierarchy.release();
         }
 
-        /**returns the contour mask combined with original image for context**/
-        Core.addWeighted(ret, 0.65, input, 0.35, 0, input);
         return input;
     }
 }
