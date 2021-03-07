@@ -64,6 +64,8 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> moveToDropWobble(ringCount, targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0.80));
         actions.add(() -> dropWobble());
 
+        //switch to turns+lines for these
+
         if (ringCount == 4) {
             actions.add(() -> moveToLaunchLine(RedField.EndingPositionFour));
         } else if (ringCount == 1){
