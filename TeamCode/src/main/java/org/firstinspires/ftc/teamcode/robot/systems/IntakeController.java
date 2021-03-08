@@ -27,8 +27,8 @@ public class IntakeController implements Controller {
     public static String ControllerName;
     public static boolean intakeRunning;
 
-    public static double ArmStartPos = 0.262;
-    public static double ArmDropPos = 0.6;
+    public static double ArmStartPos = 0.1;
+    public static double ArmDropPos = 0.35;
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
     public static double SweeperPower = 1.;

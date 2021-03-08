@@ -23,12 +23,11 @@ import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objec
 @Disabled
 public abstract class Tele extends OpModeBase {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
     protected boolean autoShoot = false;
     protected boolean manualShoot = false;
     private double loopTime;
-    protected int powerShotCt = 0;
 
     public Tele() {
         super();
