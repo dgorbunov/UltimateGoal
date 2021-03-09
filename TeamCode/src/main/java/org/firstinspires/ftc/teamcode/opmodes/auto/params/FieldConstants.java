@@ -27,6 +27,7 @@ public class FieldConstants {
     public static final String Intake = "intake";
     public static final String VertIntake = "verticalIntake";
     public static final String Wobble = "wobble";
+    public static final String PacketManager = "packetManager";
     public static final String Drive = "drive";
     public static final String Hub = "hub";
     public static final String Bumper = "bumper";

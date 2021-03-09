@@ -50,8 +50,10 @@ import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
@@ -99,6 +101,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     private FtcDashboard dashboard;
     private NanoClock clock;
     private TelemetryPacket packet;
+    private Map<String, Object> packetData = new HashMap<>();
 
     private Mode mode;
 
@@ -214,6 +217,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         /** If using two wheel,
          *  See also {@link #getRawExternalHeading()}. */
 
+        packet = new TelemetryPacket();
+
         setPoseEstimate(defaultStartPose);
     }
 
@@ -304,8 +309,12 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             poseHistory.removeFirst();
         }
 
-        packet = new TelemetryPacket();
+//        packet = new TelemetryPacket();
+//        packet.clearLines();
         Canvas fieldOverlay = packet.fieldOverlay();
+
+        packet = new TelemetryPacket();
+        sendExternalPacketData(packet);
 
         packet.put("mode", mode);
 
@@ -378,6 +387,19 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
         dashboard.sendTelemetryPacket(packet);
+    }
+
+    public void drawRings(Vector2d ringPos) {
+        packet.fieldOverlay()
+                .strokeCircle(ringPos.getX(), ringPos.getY(), 2.5);
+    }
+
+    public void putPacketData(String key, Object value) {
+       packetData.put(key, value);
+    }
+
+    private void sendExternalPacketData(TelemetryPacket packet) {
+        if (!packetData.isEmpty()) packetData.forEach(packet::put);
     }
 
     public void waitForIdle() {

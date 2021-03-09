@@ -124,9 +124,11 @@ public abstract class Tele extends OpModeBase {
                 () -> vertIntakeButton.resetToggle()
         );
 
+        drive.putPacketData("intake sensor", intake.getSensorDistance());
+        telemetry.addData("Intake Sensor", intake.getSensorDistance());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
-        telemetry.addLine("<strong>Using: </strong>" + hub.getCurrentDraw());
+        telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
         telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
 

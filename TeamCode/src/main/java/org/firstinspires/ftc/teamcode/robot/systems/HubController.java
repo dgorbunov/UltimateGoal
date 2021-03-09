@@ -84,7 +84,7 @@ public class HubController implements Controller {
     }
 
     public String getFormattedCurrentDraw(){
-        return "Using " + getCurrentDraw() + " A";
+        return getCurrentDraw() + " A";
     }
 
     public double getCurrentDraw(){
