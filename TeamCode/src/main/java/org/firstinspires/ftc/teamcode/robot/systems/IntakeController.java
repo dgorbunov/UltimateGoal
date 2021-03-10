@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Config
@@ -31,12 +32,14 @@ public class IntakeController implements Controller {
     public static String ControllerName;
     public static boolean intakeRunning;
     public volatile AtomicLong lastSensorReading = new AtomicLong(0);
-    private SensorThread sensorThread = new SensorThread(DistanceUnit.INCH);
+    private SensorThread sensorThread = new SensorThread(DistanceUnit.CM);
+    public static double SensorThreshold = 21.0;
+    public static volatile AtomicInteger numRings = new AtomicInteger(0);
 
     public static double ArmStartPos = 0.1;
     public static double ArmDropPos = 0.35;
-    public static double IntakePower = 0.6;
-    public static double Intake2Power = 0.6;
+    public static double IntakePower = 0.7;
+    public static double Intake2Power = 0.7;
     public static double SweeperPower = 1.;
     public static double sensorMaxDistance = 2;
 
@@ -68,6 +71,7 @@ public class IntakeController implements Controller {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setPosition(ArmStartPos);
+        numRings.set(0);
     }
 
     @Override
@@ -114,6 +118,8 @@ public class IntakeController implements Controller {
         if (!intakeRunning && !VertIntakeController.isRunning) sweeper.setPower(0);
     }
 
+    public static void resetRingCount() { numRings.set(0); }
+
     public void runAuto(DcMotorEx.Direction Direction) {
         new AutomaticIntakeThread(Direction).start();
     }
@@ -143,6 +149,7 @@ public class IntakeController implements Controller {
         public long SENSOR_POLLING_RATE = 250;
         private DistanceUnit unit;
         private AtomicBoolean isRunning = new AtomicBoolean(false);
+        boolean ringState;
 
         SensorThread(DistanceUnit unit) {
             this.unit = unit;
@@ -154,6 +161,10 @@ public class IntakeController implements Controller {
                 try {
                     sleep(SENSOR_POLLING_RATE);
                     lastSensorReading.set((long)intakeSensor.getDistance(unit));
+                    if (!ringState && lastSensorReading.get() < SensorThreshold) {
+                        ringState = true;
+                        numRings.getAndIncrement();
+                    } else if (ringState && lastSensorReading.get() >= SensorThreshold) ringState = false;
                 } catch (InterruptedException e) {
                     lastSensorReading.set(0);
                     //TODO: sensor reading limited to ints

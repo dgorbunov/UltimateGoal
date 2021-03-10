@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
@@ -124,7 +125,9 @@ public abstract class Tele extends OpModeBase {
                 () -> vertIntakeButton.resetToggle()
         );
 
-        drive.putPacketData("intake sensor", intake.getSensorDistance());
+//        drive.putPacketData("intake sensor", intake.getSensorDistance());
+        drive.putPacketData("Num rings intaked", IntakeController.numRings);
+        telemetry.addData("Rings Intaked", IntakeController.numRings);
         telemetry.addData("Intake Sensor", intake.getSensorDistance());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());

@@ -226,7 +226,9 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectory(buildIntakeTrajectory(drive, position, 15));
+                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 15));
+                while (drive.isBusy() || IntakeController.numRings.get() < 3) drive.update();
+                drive.stop();
                 break;
 
             case (4):
@@ -236,8 +238,9 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectory(buildIntakeTrajectory(drive, position, 10));
-                sleep(500);
+                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 10));
+                while (drive.isBusy() || IntakeController.numRings.get() < 3) drive.update();
+                drive.stop();
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");
