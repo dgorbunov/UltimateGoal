@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
@@ -14,8 +14,7 @@ public class VertIntakeController implements Controller{
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
     private DcMotorEx vIntake;
-    private CRServo wheel1;
-    private CRServo wheel2;
+    private Servo floorSweeper;
 
     public static String ControllerName;
     public static boolean isRunning;
@@ -26,6 +25,8 @@ public class VertIntakeController implements Controller{
      * */
 
     public static double VertIntakePower = -0.4;
+    public static double FloorSweeperRestPos = 0.2;
+    public static double FloorSweeperOutPos = 0.8;
 
     public VertIntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -33,8 +34,7 @@ public class VertIntakeController implements Controller{
         ControllerName = getClass().getSimpleName();
 
         vIntake = hardwareMap.get(DcMotorEx.class, "vIntake");
-        wheel1 = hardwareMap.get(CRServo.class, "vIntakeWheel1");
-        wheel2 = hardwareMap.get(CRServo.class, "vIntakeWheel2");
+        floorSweeper = hardwareMap.get(Servo.class, "floor_sweeper");
 
         vIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -42,6 +42,7 @@ public class VertIntakeController implements Controller{
 
     @Override
     public void init() {
+        sweepIn();
     }
 
     @Override
@@ -54,8 +55,6 @@ public class VertIntakeController implements Controller{
         isRunning = false;
 
         vIntake.setPower(0);
-        wheel1.setPower(0);
-        wheel2.setPower(0);
 
         IntakeController.stopSweeper();
     }
@@ -67,8 +66,14 @@ public class VertIntakeController implements Controller{
         if (Direction == DcMotorEx.Direction.FORWARD) vIntake.setPower(VertIntakePower);
         else vIntake.setPower(-VertIntakePower);
 
-        wheel1.setPower(1);
-        wheel2.setPower(1);
         telemetry.addData(ControllerName, "V. Intake Running");
+    }
+
+    public void sweepOut() {
+        floorSweeper.setPosition(FloorSweeperOutPos);
+    }
+
+    public void sweepIn() {
+        floorSweeper.setPosition(FloorSweeperRestPos);
     }
 }

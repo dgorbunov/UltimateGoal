@@ -309,11 +309,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             poseHistory.removeFirst();
         }
 
-//        packet = new TelemetryPacket();
-//        packet.clearLines();
-        Canvas fieldOverlay = packet.fieldOverlay();
-
         packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
         sendExternalPacketData(packet);
 
         packet.put("mode", mode);
@@ -596,6 +593,11 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+    }
+
+    public double[] getMotorEncoderPositions() {
+        if (RUN_USING_ENCODER) return new double[] {leftFront.getCurrentPosition(), leftRear.getCurrentPosition(), rightFront.getCurrentPosition(), rightRear.getCurrentPosition()};
+        return new double[] {0,0,0,0};
     }
 
     @Override

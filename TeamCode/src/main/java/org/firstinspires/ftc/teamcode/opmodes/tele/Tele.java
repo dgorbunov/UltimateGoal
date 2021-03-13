@@ -57,7 +57,7 @@ public abstract class Tele extends OpModeBase {
         super.loop();
         loopTime = systemClock.seconds() * 1000;
 
-        if (!manualShoot && !autoShoot && !VertIntakeController.isRunning) {
+        if (!manualShoot && !autoShoot && !VertIntakeController.isRunning && !IntakeController.isRunning) {
             shootButton.runOnce(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
 
@@ -84,6 +84,11 @@ public abstract class Tele extends OpModeBase {
                 () -> vertIntake.run(FORWARD),
                 () -> vertIntake.run(REVERSE),
                 () -> vertIntake.stop());
+
+        sweepFloorButton.toggle(
+                gameMap.SweepFloor(),
+                () -> vertIntake.sweepOut(),
+                () -> vertIntake.sweepIn());
 
         wobbleButton.toggle(
                 gameMap.Wobble(),
@@ -125,10 +130,10 @@ public abstract class Tele extends OpModeBase {
                 () -> vertIntakeButton.resetToggle()
         );
 
-//        drive.putPacketData("intake sensor", intake.getSensorDistance());
-        drive.putPacketData("Num rings intaked", IntakeController.numRings);
-        telemetry.addData("Rings Intaked", IntakeController.numRings);
-        telemetry.addData("Intake Sensor", intake.getSensorDistance());
+        drive.putPacketData("intake sensor", intake.getSensorReading());
+//        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
+        telemetry.addData("Rings Intaked", IntakeController.getNumRings());
+        telemetry.addData("Intake Sensor", intake.getSensorReading());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());

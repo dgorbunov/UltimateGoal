@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.drive.tuning;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,7 +37,6 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
  *
  * Uncomment the @Disabled tag below to use this opmode.
  */
-@Disabled
 @Config
 @TeleOp(group = "drive")
 public class MotorDirectionDebugger extends LinearOpMode {
@@ -72,20 +70,25 @@ public class MotorDirectionDebugger extends LinearOpMode {
 
             if(gamepad1.x) {
                 drive.setMotorPowers(MOTOR_POWER, 0, 0, 0);
-                telemetry.addLine("Running Motor: Front Left");
+                telemetry.addLine("Running Motor: Left Front");
             } else if(gamepad1.y) {
                 drive.setMotorPowers(0, 0, 0, MOTOR_POWER);
-                telemetry.addLine("Running Motor: Front Right");
+                telemetry.addLine("Running Motor: Right Front");
             } else if(gamepad1.b) {
                 drive.setMotorPowers(0, 0, MOTOR_POWER, 0);
-                telemetry.addLine("Running Motor: Rear Right");
+                telemetry.addLine("Running Motor: Right Rear");
             } else if(gamepad1.a) {
                 drive.setMotorPowers(0, MOTOR_POWER, 0, 0);
-                telemetry.addLine("Running Motor: Rear Left");
+                telemetry.addLine("Running Motor: Left Rear");
             } else {
                 drive.setMotorPowers(0, 0, 0, 0);
                 telemetry.addLine("Running Motor: None");
             }
+
+            telemetry.addData("Left Front Encoder", drive.getMotorEncoderPositions()[0]);
+            telemetry.addData("Left Rear Encoder", drive.getMotorEncoderPositions()[1]);
+            telemetry.addData("Right Front Encoder", drive.getMotorEncoderPositions()[2]);
+            telemetry.addData("Right Rear Encoder", drive.getMotorEncoderPositions()[3]);
 
             telemetry.update();
         }

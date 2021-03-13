@@ -15,9 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Config
 public class IntakeController implements Controller {
@@ -30,14 +28,14 @@ public class IntakeController implements Controller {
     private DistanceSensor intakeSensor;
 
     public static String ControllerName;
-    public static boolean intakeRunning;
-    public volatile AtomicLong lastSensorReading = new AtomicLong(0);
+    public static boolean isRunning;
     private SensorThread sensorThread = new SensorThread(DistanceUnit.CM);
     public static double SensorThreshold = 21.0;
     public static volatile AtomicInteger numRings = new AtomicInteger(0);
+    public static int numRingsStale;
 
     public static double ArmStartPos = 0.1;
-    public static double ArmDropPos = 0.35;
+    public static double ArmDropPos = 0.73;
     public static double IntakePower = 0.7;
     public static double Intake2Power = 0.7;
     public static double SweeperPower = 1.;
@@ -91,7 +89,7 @@ public class IntakeController implements Controller {
     }
 
     public void stopIntake() {
-        intakeRunning = false;
+        isRunning = false;
         intake.setPower(0);
         intake2.setPower(0);
         sensorThread.stopThread();
@@ -99,7 +97,7 @@ public class IntakeController implements Controller {
     }
 
     public void stopIntake(boolean stopSweeper) {
-        intakeRunning = false;
+        isRunning = false;
         intake.setPower(0);
         intake2.setPower(0);
         sensorThread.stopThread();
@@ -115,7 +113,16 @@ public class IntakeController implements Controller {
     }
 
     public static void stopSweeper() {
-        if (!intakeRunning && !VertIntakeController.isRunning) sweeper.setPower(0);
+        if (!isRunning && !VertIntakeController.isRunning) sweeper.setPower(0);
+    }
+
+    public static int getNumRings() {
+        numRingsStale = numRings.get();
+        return numRingsStale;
+    }
+
+    public double getSensorReading() {
+        return sensorThread.lastSensorReading;
     }
 
     public static void resetRingCount() { numRings.set(0); }
@@ -124,12 +131,8 @@ public class IntakeController implements Controller {
         new AutomaticIntakeThread(Direction).start();
     }
 
-    public double getSensorDistance() {
-        return lastSensorReading.doubleValue();
-    }
-
     public void run(DcMotorEx.Direction Direction) {
-        intakeRunning = true;
+        isRunning = true;
         if (!sensorThread.isAlive()) sensorThread.start();
         telemetry.addData(ControllerName, "Intaking");
 
@@ -145,42 +148,42 @@ public class IntakeController implements Controller {
         }
     }
 
-    class SensorThread extends Thread {
-        public long SENSOR_POLLING_RATE = 250;
+    private class SensorThread extends Thread {
+        public long SENSOR_POLLING_RATE = 100;
         private DistanceUnit unit;
-        private AtomicBoolean isRunning = new AtomicBoolean(false);
+        private volatile boolean isRunning = false;
         boolean ringState;
+        public double lastSensorReading;
 
         SensorThread(DistanceUnit unit) {
             this.unit = unit;
         }
 
         public void run() {
-            isRunning.set(true);
-            while (isRunning.get()) {
+            isRunning = true;
+            while (isRunning) {
                 try {
                     sleep(SENSOR_POLLING_RATE);
-                    lastSensorReading.set((long)intakeSensor.getDistance(unit));
-                    if (!ringState && lastSensorReading.get() < SensorThreshold) {
+                    lastSensorReading = intakeSensor.getDistance(unit);
+                    if (!ringState && lastSensorReading < SensorThreshold) {
                         ringState = true;
                         numRings.getAndIncrement();
-                    } else if (ringState && lastSensorReading.get() >= SensorThreshold) ringState = false;
+                    } else if (ringState && lastSensorReading >= SensorThreshold) ringState = false;
                 } catch (InterruptedException e) {
-                    lastSensorReading.set(0);
-                    //TODO: sensor reading limited to ints
+                    lastSensorReading = 0;
                     interrupt();
                     e.printStackTrace();
                     RobotLog.addGlobalWarningMessage("Intake sensor prematurely interrupted");
                 }
             }
+            lastSensorReading = 0;
         }
         public void stopThread() {
-            isRunning.set(false);
-            lastSensorReading.set(0);
+            isRunning = false;
         }
     }
 
-    class AutomaticIntakeThread extends Thread {
+    private class AutomaticIntakeThread extends Thread {
         DcMotorSimple.Direction Direction;
         int ringCount;
         boolean runIntake = true;

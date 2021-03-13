@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.util.NanoClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
@@ -23,6 +24,7 @@ import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSp
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildIntakeTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLinearTrajectory;
+import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineHeadingTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineLinearHeadingTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildStrafeTrajectory;
 
@@ -105,7 +107,7 @@ public abstract class Sequence {
     }
 
     public void moveSpline(double x, double y, double targetHeading, double startTangent, double endTangent) {
-        drive.followTrajectory(buildSplineLinearHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(x,y,targetHeading)));
+        drive.followTrajectory(buildSplineHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(x,y,targetHeading)));
     }
 
     public void moveSpline(Vector2d vector, double targetHeading, double startTangent, double endTangent) {
@@ -156,7 +158,7 @@ public abstract class Sequence {
 
         intake.stopIntake(false);
 
-        shootGoal(numRings, RPM);
+        shooter.shoot(numRings, RPM);
         IntakeController.stopSweeper();
     }
 
@@ -213,6 +215,7 @@ public abstract class Sequence {
 
     public void intakeRings(int numRings, Vector2d position, double heading) {
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
+        double timeout = 4.50;
 
         switch (numRings) {
             case (0):
@@ -227,7 +230,9 @@ public abstract class Sequence {
                 intake.run(FORWARD);
 
                 drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 15));
-                while (drive.isBusy() || IntakeController.numRings.get() < 3) drive.update();
+                NanoClock clock =  NanoClock.system();
+                double initTime = clock.seconds();
+                while (IntakeController.numRings.get() < 1 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;
 
@@ -239,7 +244,7 @@ public abstract class Sequence {
                 intake.run(FORWARD);
 
                 drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 10));
-                while (drive.isBusy() || IntakeController.numRings.get() < 3) drive.update();
+                while (IntakeController.numRings.get() < 3 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;
             default:

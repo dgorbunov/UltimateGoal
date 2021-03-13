@@ -27,6 +27,7 @@ public class OpModeBase extends OpMode {
     protected GamepadMappings gameMap;
     protected Button intakeButton = new Button();
     protected Button vertIntakeButton = new Button();
+    protected Button sweepFloorButton = new Button();
     protected Button autoIntakeButton = new Button();
     protected Button stopIntakeButton = new Button();
     protected Button localizeButton = new Button();

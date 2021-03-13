@@ -39,10 +39,12 @@ public class RedLeftSequence extends Sequence {
 
         actions.add(() -> spinUp(MechConstants.RPMPowerShot));
         if (ringCount == 4) actions.add(() -> moveSpline(PowerShotPos, 0, 40, -20));
-        else actions.add(() -> moveSpline(PowerShotPos, 0, 0, 0));
+        else actions.add(() -> moveLinear(PowerShotPos, 0));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
+        //TODO: LINEAR INSTEAD OF SPLINE
+        //TODO: LINEAR HEADING VS. SPLINE HEADING? CHECK IN SPLINETEST CLASS
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
@@ -52,7 +54,6 @@ public class RedLeftSequence extends Sequence {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
             actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMGoal, 3));
         }
-        actions.add(() -> stopIntake());
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
