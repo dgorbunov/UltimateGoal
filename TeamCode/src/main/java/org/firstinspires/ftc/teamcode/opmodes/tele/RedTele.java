@@ -33,7 +33,7 @@ public class RedTele extends Tele {
         vertIntake.stop();
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            drive.turnRelative(Math.toRadians(0));
+            drive.turnAbsolute(Math.toRadians(0));
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 45, 40));
             shooter.shootAsync(3, RPMGoal);
         }
@@ -53,19 +53,19 @@ public class RedTele extends Tele {
         shooter.spinUp(RPMPowerShot);
         drive.followTrajectory(buildLinearTrajectory(drive, PowerShotPos.getX(), PowerShotPos.getY(), 0));
 
-        drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0]));
+        drive.turnAbsolute(Math.toRadians(MechConstants.Red.PowerShotAbsoluteAngles[0]));
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPMPowerShot);
-            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[1] + Red.PowerShotAngleIncrement[2]));
+            drive.turnAbsolute(Math.toRadians(MechConstants.Red.PowerShotAbsoluteAngles[1] + Red.PowerShotAbsoluteAngles[2]));
             shooter.powerShot(RPMPowerShot);
 
         } else {
             shooter.powerShot(RPMPowerShot);
 
             for (int i = 1; i < 3; i++) {
-                drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
+                drive.turnAbsolute(Math.toRadians(MechConstants.Red.PowerShotAbsoluteAngles[i]));
                 shooter.powerShot(RPMPowerShot);
             }
         }

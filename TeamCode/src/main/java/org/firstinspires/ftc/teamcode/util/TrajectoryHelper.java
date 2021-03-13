@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.ge
 import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getCustomVelConstraint;
 import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getMaxAccelConstraint;
 import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getMaxAngVelConstraint;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_VEL;
 
 public class TrajectoryHelper {
 
@@ -84,7 +85,7 @@ public class TrajectoryHelper {
     }
 
     public static Trajectory buildSplineTrajectory(DrivetrainController drive, double startTangent, Pose2d... positions){
-        TrajectoryBuilder trajectoryBuilder = new TrajectoryBuilder(drive.getPoseEstimate(), startTangent, getMaxAngVelConstraint(), getMaxAccelConstraint());
+        TrajectoryBuilder trajectoryBuilder = new TrajectoryBuilder(drive.getPoseEstimate(), Math.toRadians(startTangent), getMaxAngVelConstraint(), getMaxAccelConstraint());
         for (Pose2d position : positions) {
             trajectoryBuilder.splineTo(position.vec(), Math.toRadians(position.getHeading()));
         }
@@ -94,7 +95,7 @@ public class TrajectoryHelper {
     }
 
     public static Trajectory buildSplineHeadingTrajectory(DrivetrainController drive, double startTangent, double endTangent, Pose2d... positions){
-        TrajectoryBuilder trajectoryBuilder = new TrajectoryBuilder(drive.getPoseEstimate(), startTangent, getMaxAngVelConstraint(), getMaxAccelConstraint());
+        TrajectoryBuilder trajectoryBuilder = new TrajectoryBuilder(drive.getPoseEstimate(), Math.toRadians(startTangent), getMaxAngVelConstraint(), getMaxAccelConstraint());
         for (Pose2d position : positions) {
             trajectoryBuilder.splineToSplineHeading(new Pose2d(position.vec(), Math.toRadians(position.getHeading())), Math.toRadians(endTangent));
         }
@@ -140,27 +141,13 @@ public class TrajectoryHelper {
         return trajectory;
     }
 
-    public static Trajectory buildIntakeTrajectory(DrivetrainController drive, Vector2d position, double speed){
+    public static Trajectory buildCustomSpeedLineTrajectory(DrivetrainController drive, Vector2d position, double speed){
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
                 //this ugly thing lowers the speed of our driving
                 .lineTo(position,
                         new MinVelocityConstraint(Arrays.asList(
                                 getMaxAngVelConstraint(),
-                                getCustomVelConstraint(speed)
-                        )
-                        ), getMaxAccelConstraint())
-
-                .build();
-        return trajectory;
-    }
-
-    public static Trajectory buildPowerShotTrajectory(DrivetrainController drive, Vector2d position, double heading){
-        Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
-                //this ugly thing lowers the speed of our driving
-                .lineToLinearHeading(new Pose2d(position, Math.toRadians(heading)),
-                        new MinVelocityConstraint(Arrays.asList(
-                                getMaxAngVelConstraint(),
-                                getCustomVelConstraint(15)
+                                getCustomVelConstraint(speed * MAX_VEL)
                         )
                         ), getMaxAccelConstraint())
 
@@ -173,9 +160,23 @@ public class TrajectoryHelper {
                 .lineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)),
                         new MinVelocityConstraint(Arrays.asList(
                                 getMaxAngVelConstraint(),
-                                getCustomVelConstraint(speed)
+                                getCustomVelConstraint(speed * MAX_VEL)
                         )
                         ), getMaxAccelConstraint())
+                .build();
+
+        return trajectory;
+    }
+
+    public static Trajectory buildCustomSpeedSplineTrajectory(DrivetrainController drive, double x, double y, double heading, double startTangent, double endTangent, double speed) {
+        Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), Math.toRadians(startTangent), getMaxAngVelConstraint(), getMaxAccelConstraint())
+        .splineToSplineHeading(new Pose2d(x,y, Math.toRadians(heading)),
+                Math.toRadians(endTangent),
+                new MinVelocityConstraint(Arrays.asList(
+                        getMaxAngVelConstraint(),
+                        getCustomVelConstraint(speed * MAX_VEL)
+                )
+                ), getMaxAccelConstraint())
                 .build();
 
         return trajectory;

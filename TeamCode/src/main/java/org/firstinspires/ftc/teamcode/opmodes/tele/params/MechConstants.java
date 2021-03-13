@@ -20,12 +20,12 @@ public class MechConstants {
     public static double RPMGoal = 3800;
     @Deprecated
     public static double RPMGoalFromStack = 3600;
-    public static double RPMPowerShot = 3350; //~3300-3400
+    public static double RPMPowerShot = 3300; //~3300-3400
     public static double PowerShotDelay = 250;
 
     @Config
     public static class Red {
-        public static double[] PowerShotAngleIncrement = {8,-9,-5.5}; //prev: -9.5
+        public static double[] PowerShotAbsoluteAngles = {7,-2.5,-8.5}; //prev: -9.5
         public static double AutoShootLine = -24.5;
     }
 
@@ -33,7 +33,5 @@ public class MechConstants {
     public static class Blue {
 
     }
-
-
 
 }

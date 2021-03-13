@@ -77,7 +77,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     public static double ALIGNMENT_POWER = 0.4;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0.25, 0.6);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0.4, 0.55);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0.2, 0.45);
 
     public static boolean TESTING = false;
 
@@ -234,8 +234,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
-                MAX_ANG_VEL,
-                MAX_ANG_ACCEL
+                MAX_ANG_VEL * 0.85,
+                MAX_ANG_ACCEL * 0.75
         );
 
         turnStart = clock.seconds();

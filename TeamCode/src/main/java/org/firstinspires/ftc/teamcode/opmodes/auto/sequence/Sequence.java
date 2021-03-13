@@ -18,10 +18,12 @@ import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildBackTrajectory;
+import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLinearTrajectory;
-import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildIntakeTrajectory;
+import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedSplineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLinearTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineHeadingTrajectory;
@@ -87,18 +89,22 @@ public abstract class Sequence {
         drive.followTrajectory(buildLinearTrajectory(drive, x, y, targetHeading));
     }
 
-    public void moveToDropWobble(int ringCount, double x, double y, double targetHeading, double speed) {
+    public void moveToDropWobble(Vector2d targetZone, double speed) {
         double endTangent = 0;
-        if (ringCount == 0) endTangent = -40;
+        double targetHeading = 0;
+        double startTangent = 0;
+        if (ringCount == 0) {
+            targetHeading = 0.1; //rotate other way
+            endTangent = -30;
+        }
         else if (ringCount == 4) endTangent = -20;
 
-        moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0, endTangent);
-//        drive.followTrajectory(buildLinearTrajectory(drive, new Pose2d(x,y,targetHeading),
-//                speed * MAX_VEL, speed * MAX_ANG_VEL,speed * MAX_ACCEL));
+        moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset,
+                targetHeading, startTangent, endTangent, speed);
     }
 
     public void moveLinearTurn(double x, double y, double targetHeading) {
-        drive.turnRelative(Math.toRadians(targetHeading));
+        drive.turnAbsolute(Math.toRadians(targetHeading));
         drive.followTrajectory(TrajectoryHelper.buildLineTrajectory(drive, x, y));
     }
 
@@ -108,6 +114,10 @@ public abstract class Sequence {
 
     public void moveSpline(double x, double y, double targetHeading, double startTangent, double endTangent) {
         drive.followTrajectory(buildSplineHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(x,y,targetHeading)));
+    }
+
+    public void moveSpline(double x, double y, double targetHeading, double startTangent, double endTangent, double speed) {
+        drive.followTrajectory(buildCustomSpeedSplineTrajectory(drive, x, y, targetHeading, startTangent, endTangent, speed));
     }
 
     public void moveSpline(Vector2d vector, double targetHeading, double startTangent, double endTangent) {
@@ -192,20 +202,26 @@ public abstract class Sequence {
     public void powerShot(double RPM) {
         telemetry.addData("Sequence","powerShot");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.spinUp(RPM);
+        double sleepDelay = 200;
 
-        drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[0]));
+        sleep(sleepDelay);
+        shooter.spinUp(RPM);
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]));
+        sleep(sleepDelay);
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPM);
-            drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[1] + MechConstants.Red.PowerShotAngleIncrement[2]));
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]));
             shooter.powerShot(RPM);
         } else {
             shooter.powerShot(RPM);
+            sleep(sleepDelay);
             for (int i = 1; i < 3; i++) {
-                drive.turnRelative(Math.toRadians(MechConstants.Red.PowerShotAngleIncrement[i]));
+                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]));
+                sleep(sleepDelay);
                 shooter.powerShot(RPM);
+                sleep(sleepDelay);
             }
         }
 
@@ -229,7 +245,7 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 15));
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 15));
                 NanoClock clock =  NanoClock.system();
                 double initTime = clock.seconds();
                 while (IntakeController.numRings.get() < 1 && drive.isBusy()) drive.update();
@@ -243,7 +259,7 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildIntakeTrajectory(drive, position, 10));
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 10));
                 while (IntakeController.numRings.get() < 3 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;

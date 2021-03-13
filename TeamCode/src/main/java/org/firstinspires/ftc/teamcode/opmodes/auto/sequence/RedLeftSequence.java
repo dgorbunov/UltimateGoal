@@ -7,8 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
@@ -38,8 +36,8 @@ public class RedLeftSequence extends Sequence {
         }
 
         actions.add(() -> spinUp(MechConstants.RPMPowerShot));
-        if (ringCount == 4) actions.add(() -> moveSpline(PowerShotPos, 0, 40, -20));
-        else actions.add(() -> moveLinear(PowerShotPos, 0));
+        actions.add(() -> moveSpline(PowerShotPos, 0, 40, -10));
+//        actions.add(() -> moveLinear(PowerShotPos, 0));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
@@ -62,10 +60,8 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveToDropWobble(ringCount, targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, 0, 0.80));
+        actions.add(() -> moveToDropWobble(targetZone, 0.80));
         actions.add(() -> dropWobble());
-
-        //switch to turns+lines for these
 
         if (ringCount == 4) {
             actions.add(() -> moveToLaunchLine(RedField.EndingPositionFour));

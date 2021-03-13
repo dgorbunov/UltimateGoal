@@ -4,13 +4,21 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 
+import java.util.Arrays;
+
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.TargetZoneA;
+import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getCustomAccelConstraint;
+import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getCustomVelConstraint;
+import static org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController.getMaxAngVelConstraint;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_VEL;
 
 @Config
 @Autonomous(group = "drive")
@@ -34,7 +42,13 @@ public class PositionalAccuracyTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         Trajectory traj = new TrajectoryBuilder(drive.getPoseEstimate(), DrivetrainController.getMaxAngVelConstraint(), DrivetrainController.getMaxAccelConstraint())
-                .splineTo(TargetZoneA, 0)
+                .lineTo(TargetZoneA,
+                        new MinVelocityConstraint(Arrays.asList(
+                                getMaxAngVelConstraint(),
+                                getCustomVelConstraint(MAX_VEL * 0.75)
+                        )
+                        ), getCustomAccelConstraint(MAX_ACCEL * 0.75))
+
                 .build();
 
         drive.followTrajectory(traj);
