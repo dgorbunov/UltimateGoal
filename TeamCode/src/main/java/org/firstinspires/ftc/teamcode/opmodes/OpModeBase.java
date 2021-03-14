@@ -33,7 +33,7 @@ public class OpModeBase extends OpMode {
     protected Button localizeButton = new Button();
     protected Button wobbleButton = new Button();
     protected Button wobbleDeliverButton = new Button();
-    protected Button spinUpButton = new Button();
+    protected Button powerShotButton = new Button();
     protected Button shootButton = new Button();
     protected Button shootManButton = new Button();
     protected Button driveModeButton = new Button();
@@ -52,11 +52,11 @@ public class OpModeBase extends OpMode {
     protected MultipleTelemetry telemetry;
     protected NanoClock systemClock = NanoClock.system();
 
-    protected enum OPMODE{
+    public enum OPMODE{
         Tele, Auto
     }
 
-    protected OPMODE OPMODE_TYPE = OPMODE.Tele; //default
+    protected static OPMODE OPMODE_TYPE = OPMODE.Tele; //default
 
     @Override
     public void init() {
@@ -109,7 +109,6 @@ public class OpModeBase extends OpMode {
     public void start() {
         telemetry.clear();
         controllers.start();
-        camera.closeCamera();
     }
 
 
@@ -129,4 +128,7 @@ public class OpModeBase extends OpMode {
         telemetry.addLine("<h3>Stopped</h3>");
     }
 
+    public static OPMODE getRunningOpMode() {
+        return OPMODE_TYPE;
+    }
 }

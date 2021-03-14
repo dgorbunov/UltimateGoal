@@ -47,6 +47,7 @@ public class OpenCVController implements Controller{
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
 //                openCvCamera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
                 //TODO: Evaluate if this is the cause of our crashes
+
                 setPipeline();
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters

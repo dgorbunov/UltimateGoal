@@ -23,13 +23,13 @@ public class GamepadMappings {
     public boolean ShootManual() {
         return gamepad1.y;
     }
-    public boolean SpinUp() {
+    public boolean PowerShot() {
         return gamepad1.b && !gamepad1.start;
     }
-    public boolean AutoVertIntake() {
+    public boolean AutoIntake() {
         return gamepad1.x;
     }
-    public Boolean Intake() {
+    public boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;
     }

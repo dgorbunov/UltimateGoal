@@ -30,6 +30,11 @@ public class BlueTele extends Tele {
     }
 
     @Override
+    protected void autoIntake() {
+
+    }
+
+    @Override
     protected void localizeWithCorner() {
         drive.setPoseEstimate(new Pose2d(61.75, 61.75, 0)); //front left corner
     }

@@ -62,6 +62,17 @@ public class Button {
         } else pressed = false;
     }
 
+    public void runOnceBlocking(boolean buttonState, Runnable... methods){
+        if (buttonState) {
+            if (!pressed) {
+                pressed = true;
+                for (Runnable method: methods) {
+                    method.run();
+                }
+            }
+        } else pressed = false;
+    }
+
     /**
      * Runs all method(s)
      */

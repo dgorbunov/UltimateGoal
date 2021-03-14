@@ -4,17 +4,23 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
-import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPos;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.TopCornerPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPosTele;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.IntakePos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TeleTrajectorySpeed;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @TeleOp(name="RedTele", group="Iterative Opmode")
@@ -22,43 +28,42 @@ public class RedTele extends Tele {
 
     public RedTele() {
         super();
-        Auto.alliance = FieldConstants.Alliance.Red;
+        Auto.alliance = Alliance.Red;
     }
 
     @Override
     protected synchronized void autoShot() {
-        autoShoot = true;
-
         drive.stop();
-        intake.stopIntake();
         vertIntake.stop();
-        sleep(400);
+        intake.stopIntake(false);
 
-        if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            drive.turnAbsolute(0);
-            drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPos.getX(), GoalShotPos.getY(), 0, 0.80));
-            shooter.shootAsync(3, RPMGoal);
-        } else {
-            powerShot();
-        }
-        autoShoot = false;
+        shooter.spinUp(RPMGoal);
+        sleep(150);
+
+        drive.turnAbsolute(Math.toRadians(GoalShotAngle));
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPosTele, Red.GoalShotAngle, TeleTrajectorySpeed));
+        shooter.shoot(3, RPMGoal);
+        IntakeController.stopSweeper();
+//        } else {
+//            powerShot();
+//        }
     }
 
     @Override
     protected synchronized void powerShot() {
-        autoShoot = true;
         telemetry.addData("Sequence", "powerShot");
 
         drive.stop();
-        intake.stopIntake();
         vertIntake.stop();
-        sleep(400);
+        intake.stopIntake(false);
 
-        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        ShooterController shooter = controllers.get(ShooterController.class, Shooter);
         double sleepDelay = 200;
 
-        sleep(sleepDelay);
         shooter.spinUp(RPMPowerShot);
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, 0, TeleTrajectorySpeed));
+
+        sleep(sleepDelay);
         drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]));
         sleep(sleepDelay);
 
@@ -80,9 +85,8 @@ public class RedTele extends Tele {
         }
 
         sleep(50); //buffer
+        IntakeController.stopSweeper();
         shooter.stop();
-
-        autoShoot = false;
     }
 
     @Override
@@ -99,7 +103,12 @@ public class RedTele extends Tele {
         manualShoot = false;
     }
 
+    @Override
+    protected synchronized void autoIntake() {
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, IntakePos,0, TeleTrajectorySpeed));
+    }
+
     protected void localizeWithCorner() {
-        drive.setPoseEstimate(new Pose2d(TopCornerPos, 0)); //front right corner
+        drive.setPoseEstimate(new Pose2d(RedField.LocalizePos, 0));
     }
 }

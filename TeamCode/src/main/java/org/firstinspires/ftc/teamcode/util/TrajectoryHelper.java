@@ -129,6 +129,21 @@ public class TrajectoryHelper {
         return trajectory;
     }
 
+    public static Trajectory buildCustomSpeedLinearTrajectory(DrivetrainController drive, Vector2d pos, double heading, double speed) {
+        Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
+                .lineToLinearHeading(new Pose2d(pos, Math.toRadians(heading)),
+                        new MinVelocityConstraint(
+                                Arrays.asList(
+                                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                        new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
+                                )
+                        ),
+                        new ProfileAccelerationConstraint(speed * DriveConstants.MAX_ACCEL))
+                .build();
+
+        return trajectory;
+    }
+
     public static Trajectory buildCustomSpeedSplineTrajectory(DrivetrainController drive, double x, double y, double heading, double startTangent, double endTangent, double speed) {
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), Math.toRadians(startTangent), getMaxAngVelConstraint(), getMaxAccelConstraint())
         .splineToSplineHeading(new Pose2d(x,y, Math.toRadians(heading)),

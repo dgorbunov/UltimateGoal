@@ -36,9 +36,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robocol.TelemetryMessage;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeServices;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeServices;
 
 import java.util.concurrent.TimeUnit;
 
@@ -189,7 +189,7 @@ public abstract class OpMode {
   public int msStuckDetectInit     = 5000;
   public int msStuckDetectInitLoop = 5000;
   public int msStuckDetectStart    = 5000;
-  public int msStuckDetectLoop     = 5000;
+  public int msStuckDetectLoop     = 15000;
   public int msStuckDetectStop     = 900;
 
   //----------------------------------------------------------------------------------------------

@@ -122,6 +122,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     private VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
+    private Vector2d ringPos = FieldConstants.RedField.RingPos;
+    private boolean drawRings = false;
     Telemetry telemetry;
     HardwareMap hardwareMap;
 
@@ -219,6 +221,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
          *  See also {@link #getRawExternalHeading()}. */
 
         packet = new TelemetryPacket();
+        drawRings = false;
 
         setPoseEstimate(defaultStartPose);
     }
@@ -313,6 +316,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
         sendExternalPacketData(packet);
+        if (drawRings) drawRings(fieldOverlay);
 
         packet.put("mode", mode);
 
@@ -387,9 +391,24 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         dashboard.sendTelemetryPacket(packet);
     }
 
-    public void drawRings(Vector2d ringPos) {
+    private void drawRings(Canvas fieldOverlay) {
+        fieldOverlay.setStroke("#FFA200");
         packet.fieldOverlay()
                 .strokeCircle(ringPos.getX(), ringPos.getY(), 2.5);
+    }
+
+    public void setRingDraw(Vector2d ringPos, int numRings) {
+        this.ringPos = ringPos;
+        if (numRings > 0) drawRings = true;
+        else drawRings = false;
+    }
+
+    public void drawRingsOverridePacket(Vector2d ringPos, int numRings) {
+        setRingDraw(ringPos, numRings);
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
+        drawRings(fieldOverlay);
+        dashboard.sendTelemetryPacket(packet);
     }
 
     public void putPacketData(String key, Object value) {

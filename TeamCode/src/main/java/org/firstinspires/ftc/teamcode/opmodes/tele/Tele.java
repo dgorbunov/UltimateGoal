@@ -15,15 +15,13 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
 public abstract class Tele extends OpModeBase {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
 
-    protected boolean autoShoot = false;
     protected boolean manualShoot = false;
     private double loopTime;
 
@@ -55,14 +53,15 @@ public abstract class Tele extends OpModeBase {
 
         loopTime = systemClock.seconds() * 1000;
 
-        if (manualShoot || autoShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
+        if (manualShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
+            //whenever manual shooting or vertical intake running, drive slow
             drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             driveModeButton.resetToggle();
 
         } else {
-            shootButton.runOnce(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
+            shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
-
+            //TODO: FIX OPMODE STUCK LOOP TIMEOUT
             driveModeButton.toggleLoop(
                     gameMap.DriveMode(),
                     () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
@@ -70,7 +69,7 @@ public abstract class Tele extends OpModeBase {
             );
         }
 
-        if (!autoShoot) drive.update();
+        drive.update();
 
         intakeButton.toggle(
                 gameMap.Intake(),
@@ -98,23 +97,13 @@ public abstract class Tele extends OpModeBase {
                 gameMap.WobbleDeliver(),
                 () -> wobble.release());
 
-        spinUpButton.toggle(
-                gameMap.SpinUp(),
-                () -> shooter.spinUp(RPMGoal),
-                ()-> shooter.stop());
-//
-//        wobbleAlignButton.toggle(
-//                gameMap.WobbleAlign(),
-//                () -> drive.alignWithObject(camera, WOBBLE),
-//                () -> drive.stop());
+        powerShotButton.runOnceBlocking(
+                gameMap.PowerShot(),
+                this::powerShot);
 
-//        autoIntakeButton.toggle(
-//                gameMap.AutoVertIntake(),
-//                () -> new Button().runAllBlocking(
-//                        () -> drive.turnAbsolute(0),
-//                        () -> vertIntake.run(FORWARD),
-//                        () -> drive.alignWithObject(camera, VERTICAL_RING))
-//                );
+        autoIntakeButton.runOnceBlocking(
+                gameMap.AutoIntake(),
+                this::autoIntake);
 
         localizeButton.runOnce(
                 gameMap.Localize(),
@@ -134,7 +123,7 @@ public abstract class Tele extends OpModeBase {
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
         telemetry.addData("Intake Sensor", intake.getSensorReading());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
-        telemetry.addData("Rings: W9idth", VerticalRingDetector.getRingWidth());
+        telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
         telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
@@ -142,6 +131,7 @@ public abstract class Tele extends OpModeBase {
     protected abstract void autoShot();
     protected abstract void powerShot();
     protected abstract void manualShot();
+    protected abstract void autoIntake();
     protected abstract void localizeWithCorner();
 
     @Override

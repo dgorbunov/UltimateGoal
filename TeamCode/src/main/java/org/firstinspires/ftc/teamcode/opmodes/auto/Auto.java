@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Blue;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Red;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.RingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Left;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Right;
 
@@ -53,6 +54,7 @@ public class Auto extends OpModeBase {
     @Override
     public void init_loop() {
         getRingCount();
+        drive.drawRingsOverridePacket(RingPos, ringCount);
     }
 
     @Override
