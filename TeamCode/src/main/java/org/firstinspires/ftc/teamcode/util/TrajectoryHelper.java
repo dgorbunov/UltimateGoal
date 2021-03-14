@@ -4,9 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 
 import java.util.Arrays;
 
@@ -143,14 +147,14 @@ public class TrajectoryHelper {
 
     public static Trajectory buildCustomSpeedLineTrajectory(DrivetrainController drive, Vector2d position, double speed){
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
-                //this ugly thing lowers the speed of our driving
                 .lineTo(position,
-                        new MinVelocityConstraint(Arrays.asList(
-                                getMaxAngVelConstraint(),
-                                getCustomVelConstraint(speed * MAX_VEL)
-                        )
-                        ), getMaxAccelConstraint())
-
+                        new MinVelocityConstraint(
+                                Arrays.asList(
+                                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                        new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
+                                )
+                        ),
+                        new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         return trajectory;
     }
@@ -158,11 +162,13 @@ public class TrajectoryHelper {
     public static Trajectory buildCustomSpeedLinearTrajectory(DrivetrainController drive, double x, double y, double heading, double speed) {
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
                 .lineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)),
-                        new MinVelocityConstraint(Arrays.asList(
-                                getMaxAngVelConstraint(),
-                                getCustomVelConstraint(speed * MAX_VEL)
-                        )
-                        ), getMaxAccelConstraint())
+                        new MinVelocityConstraint(
+                                Arrays.asList(
+                                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                        new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
+                                )
+                        ),
+                        new ProfileAccelerationConstraint(0.8 * DriveConstants.MAX_ACCEL))
                 .build();
 
         return trajectory;
@@ -172,11 +178,13 @@ public class TrajectoryHelper {
         Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), Math.toRadians(startTangent), getMaxAngVelConstraint(), getMaxAccelConstraint())
         .splineToSplineHeading(new Pose2d(x,y, Math.toRadians(heading)),
                 Math.toRadians(endTangent),
-                new MinVelocityConstraint(Arrays.asList(
-                        getMaxAngVelConstraint(),
-                        getCustomVelConstraint(speed * MAX_VEL)
-                )
-                ), getMaxAccelConstraint())
+                new MinVelocityConstraint(
+                        Arrays.asList(
+                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
+                        )
+                ),
+                new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         return trajectory;

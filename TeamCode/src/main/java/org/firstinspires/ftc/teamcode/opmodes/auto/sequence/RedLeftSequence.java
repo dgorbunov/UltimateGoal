@@ -36,8 +36,7 @@ public class RedLeftSequence extends Sequence {
         }
 
         actions.add(() -> spinUp(MechConstants.RPMPowerShot));
-        actions.add(() -> moveSpline(PowerShotPos, 0, 40, -10));
-//        actions.add(() -> moveLinear(PowerShotPos, 0));
+        actions.add(() -> moveSplineCustomSpeed(PowerShotPos, 0, 40, -10, 0.90));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
@@ -60,7 +59,7 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveToDropWobble(targetZone, 0.80));
+        actions.add(() -> moveToDropWobble(targetZone, 0.85));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {

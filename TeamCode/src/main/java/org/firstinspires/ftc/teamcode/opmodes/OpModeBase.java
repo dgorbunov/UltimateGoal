@@ -109,6 +109,7 @@ public class OpModeBase extends OpMode {
     public void start() {
         telemetry.clear();
         controllers.start();
+        camera.closeCamera();
     }
 
 

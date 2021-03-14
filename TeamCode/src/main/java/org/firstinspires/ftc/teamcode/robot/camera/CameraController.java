@@ -86,6 +86,10 @@ public class CameraController implements Controller {
         return vuforiaController.getRobotPosition();
     }
 
+    public void closeCamera() {
+        openCV.closeCamera();
+    }
+
     @Override
     public void start() {
         if (vuforiaController != null) vuforiaController.start();

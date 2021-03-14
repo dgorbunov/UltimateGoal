@@ -44,18 +44,18 @@ public class FieldConstants {
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Vector2d GoalShotPos = new Vector2d(-4, -41);
         public static final Vector2d PowerShotPos = new Vector2d(-4, -15.5);
-        public static final Vector2d IntakeOnePos = new Vector2d(RingPos.getX() + 2, RingPos.getY());
-        public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 6, RingPos.getY());
-        public static final Vector2d LeftWobblePos = new Vector2d(-37, -21);
+        public static final Vector2d IntakeOnePos = RingPos;
+        public static final Vector2d IntakeFourPos = new Vector2d(-24, -46.50);
+        public static final Vector2d LeftWobblePos = new Vector2d(-37.00, -21);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 7, LeftWobblePos.getY());
-        public static final Vector2d RightWobblePos = new Vector2d(-37, -44);
+        public static final Vector2d RightWobblePos = new Vector2d(-37.00, -44);
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 7, RightWobblePos.getY());
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (12.5, TargetZoneC.getY());
         public static final double SideWobbleXOffset = 0;
-        public static final double SideWobbleYOffset = 9;
+        public static final double SideWobbleYOffset = 7;
         public static final double FrontWobbleXOffset = -18;
-        public static final double FrontWobbleYOffset = 0;
+        public static final double FrontWobbleYOffset = -2;
     }
 
     @Config

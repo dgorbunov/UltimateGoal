@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.NanoClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
@@ -99,7 +98,7 @@ public abstract class Sequence {
         }
         else if (ringCount == 4) endTangent = -20;
 
-        moveSpline(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset,
+        moveSplineCustomSpeed(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset,
                 targetHeading, startTangent, endTangent, speed);
     }
 
@@ -116,8 +115,12 @@ public abstract class Sequence {
         drive.followTrajectory(buildSplineHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(x,y,targetHeading)));
     }
 
-    public void moveSpline(double x, double y, double targetHeading, double startTangent, double endTangent, double speed) {
+    public void moveSplineCustomSpeed(double x, double y, double targetHeading, double startTangent, double endTangent, double speed) {
         drive.followTrajectory(buildCustomSpeedSplineTrajectory(drive, x, y, targetHeading, startTangent, endTangent, speed));
+    }
+
+    public void moveSplineCustomSpeed(Vector2d pos, double targetHeading, double startTangent, double endTangent, double speed) {
+        drive.followTrajectory(buildCustomSpeedSplineTrajectory(drive, pos.getX(), pos.getY(), targetHeading, startTangent, endTangent, speed));
     }
 
     public void moveSpline(Vector2d vector, double targetHeading, double startTangent, double endTangent) {
@@ -151,11 +154,11 @@ public abstract class Sequence {
         drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
         //TODO: remove or use less backup
         wobble.readyToPickup();
-        drive.followTrajectory(buildLinearTrajectory(drive, pos.getX(), pos.getY(), 180));
+        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.85));
     }
 
     public void approachWobble(Vector2d wobblePos) {
-        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 10));
+        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 0.50));
     }
 
     public void shootSequence(Vector2d position, double targetHeading, double RPM, int numRings) {
@@ -245,9 +248,7 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 15));
-                NanoClock clock =  NanoClock.system();
-                double initTime = clock.seconds();
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.85));
                 while (IntakeController.numRings.get() < 1 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;
@@ -255,11 +256,11 @@ public abstract class Sequence {
             case (4):
                 telemetry.addData("Sequence", "intake 4 rings");
 //                drive.turn(Math.toRadians(heading));
-                drive.turnToFacePoint(position);
+                drive.turnToFacePoint(new Vector2d(position.getX() + 3, position.getY()));
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 10));
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.75));
                 while (IntakeController.numRings.get() < 3 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;

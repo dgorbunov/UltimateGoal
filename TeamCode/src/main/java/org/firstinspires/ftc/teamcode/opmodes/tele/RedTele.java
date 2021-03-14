@@ -33,8 +33,8 @@ public class RedTele extends Tele {
         vertIntake.stop();
 
         if (drive.getPoseEstimate().getY() < Red.AutoShootLine) {
-            drive.turnAbsolute(Math.toRadians(0));
             drive.followTrajectory(TrajectoryHelper.buildAutoShootTrajectory(drive, new Pose2d(GoalShotPos, Math.toRadians(0)), 45, 40));
+            drive.turnAbsolute(Math.toRadians(0));
             shooter.shootAsync(3, RPMGoal);
         }
         else {

@@ -154,7 +154,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         accelConstraint = new ProfileAccelerationConstraint(MAX_ACCEL);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(2.0)), 0.75);
+        //TODO: TUNE this!!
 
         poseHistory = new LinkedList<>();
 
@@ -234,8 +235,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
-                MAX_ANG_VEL * 0.85,
-                MAX_ANG_ACCEL * 0.75
+                MAX_ANG_VEL * 0.65,
+                MAX_ANG_ACCEL * 0.65
         );
 
         turnStart = clock.seconds();

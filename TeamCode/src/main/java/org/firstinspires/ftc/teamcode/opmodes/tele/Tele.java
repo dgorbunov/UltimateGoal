@@ -10,15 +10,12 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
-import org.firstinspires.ftc.teamcode.util.Button;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
-import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
-import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.WOBBLE;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
@@ -103,19 +100,19 @@ public abstract class Tele extends OpModeBase {
                 gameMap.SpinUp(),
                 () -> shooter.spinUp(RPMGoal),
                 ()-> shooter.stop());
+//
+//        wobbleAlignButton.toggle(
+//                gameMap.WobbleAlign(),
+//                () -> drive.alignWithObject(camera, WOBBLE),
+//                () -> drive.stop());
 
-        wobbleAlignButton.toggle(
-                gameMap.WobbleAlign(),
-                () -> drive.alignWithObject(camera, WOBBLE),
-                () -> drive.stop());
-
-        autoIntakeButton.toggle(
-                gameMap.AutoVertIntake(),
-                () -> new Button().runAllBlocking(
-                        () -> drive.turnAbsolute(0),
-                        () -> vertIntake.run(FORWARD),
-                        () -> drive.alignWithObject(camera, VERTICAL_RING))
-                );
+//        autoIntakeButton.toggle(
+//                gameMap.AutoVertIntake(),
+//                () -> new Button().runAllBlocking(
+//                        () -> drive.turnAbsolute(0),
+//                        () -> vertIntake.run(FORWARD),
+//                        () -> drive.alignWithObject(camera, VERTICAL_RING))
+//                );
 
         localizeButton.runOnce(
                 gameMap.Localize(),

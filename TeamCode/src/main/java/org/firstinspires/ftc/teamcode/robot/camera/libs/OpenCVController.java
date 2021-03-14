@@ -111,8 +111,10 @@ public class OpenCVController implements Controller{
     }
 
     @Override
-    public void start() {
-        if (DEFAULT_PIPELINE == AUTO) openCvCamera.setPipeline(wobbleDetector);
+    public void start() { }
+
+    public void closeCamera() {
+        openCvCamera.closeCameraDevice();
     }
 
     @Override

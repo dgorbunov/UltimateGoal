@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.Controller;
-import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,10 +35,9 @@ public class IntakeController implements Controller {
 
     public static double ArmStartPos = 0.1;
     public static double ArmDropPos = 0.73;
-    public static double IntakePower = 0.7;
-    public static double Intake2Power = 0.7;
-    public static double SweeperPower = 1.;
-    public static double sensorMaxDistance = 2;
+    public static double IntakePower = 0.6;
+    public static double Intake2Power = 0.6;
+    public static double SweeperPower = 1;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -68,7 +66,7 @@ public class IntakeController implements Controller {
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.setPosition(ArmStartPos);
+        retract();
         numRings.set(0);
     }
 
@@ -85,7 +83,7 @@ public class IntakeController implements Controller {
     @Override
     public void stop() {
         stopIntake();
-        arm.setPosition(ArmStartPos);
+        retract();
     }
 
     public void stopIntake() {
@@ -149,7 +147,7 @@ public class IntakeController implements Controller {
     }
 
     private class SensorThread extends Thread {
-        public long SENSOR_POLLING_RATE = 100;
+        public long SENSOR_POLLING_RATE = 75;
         private DistanceUnit unit;
         private volatile boolean isRunning = false;
         boolean ringState;
@@ -168,6 +166,7 @@ public class IntakeController implements Controller {
                     if (!ringState && lastSensorReading < SensorThreshold) {
                         ringState = true;
                         numRings.getAndIncrement();
+                        telemetry.addData("Num Rings Intaked: ", numRings.get());
                     } else if (ringState && lastSensorReading >= SensorThreshold) ringState = false;
                 } catch (InterruptedException e) {
                     lastSensorReading = 0;
@@ -201,14 +200,14 @@ public class IntakeController implements Controller {
 
             double reading = intakeSensor.getDistance(DistanceUnit.INCH);
 
-            if (!ringDetected && reading <= sensorMaxDistance && reading >= 0) {
-                ringCount++;
-                ringDetected = true;
-                if (ringCount >= 3) stopThread();
-            }
-            else if (reading >= sensorMaxDistance && reading >= 0) ringDetected = false;
-
-            Sleep.sleep(15);
+//            if (!ringDetected && reading <= sensorMaxDistance && reading >= 0) {
+//                ringCount++;
+//                ringDetected = true;
+//                if (ringCount >= 3) stopThread();
+//            }
+//            else if (reading >= sensorMaxDistance && reading >= 0) ringDetected = false;
+//
+//            Sleep.sleep(15);
         }
 
         public void stopThread() {
