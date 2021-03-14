@@ -123,7 +123,7 @@ public class TrajectoryHelper {
                                         new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
                                 )
                         ),
-                        new ProfileAccelerationConstraint(speed * DriveConstants.MAX_ACCEL))
+                        new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         return trajectory;

@@ -28,6 +28,7 @@ public class OpModeBase extends OpMode {
     protected Button intakeButton = new Button();
     protected Button vertIntakeButton = new Button();
     protected Button sweepFloorButton = new Button();
+    protected Button resetIntakeCounterButton = new Button();
     protected Button autoIntakeButton = new Button();
     protected Button stopIntakeButton = new Button();
     protected Button localizeButton = new Button();
@@ -37,7 +38,6 @@ public class OpModeBase extends OpMode {
     protected Button shootButton = new Button();
     protected Button shootManButton = new Button();
     protected Button driveModeButton = new Button();
-
     protected Button wobbleAlignButton = new Button();
 
     protected DrivetrainController drive;
@@ -47,6 +47,8 @@ public class OpModeBase extends OpMode {
     protected WobbleController wobble;
     protected HubController hub;
     protected CameraController camera;
+//    protected FilteredGamepad gamepad1;
+//    protected FilteredGamepad gamepad2;
 
     protected ControllerManager controllers;
     protected MultipleTelemetry telemetry;
@@ -95,6 +97,11 @@ public class OpModeBase extends OpMode {
 
         controllers.init();
 
+//        gamepad1 = new FilteredGamepad(super.gamepad1, 0);
+//        gamepad2 = new FilteredGamepad(super.gamepad2, 8);
+//        gamepad1.start();
+//        gamepad2.start();
+
         gameMap = new GamepadMappings(gamepad1, gamepad2);
 
         telemetry.addLine("<h3>Initialized</h3>");
@@ -120,10 +127,11 @@ public class OpModeBase extends OpMode {
     @Override
     public void stop() {
         telemetry.clear();
-
         telemetry.addLine("<strong>Stopping...</strong>");
 
         controllers.stop();
+//        gamepad1.stop();
+//        gamepad2.stop();
 
         telemetry.addLine("<h3>Stopped</h3>");
     }

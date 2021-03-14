@@ -142,8 +142,7 @@ public class ShooterController implements Controller {
            RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
        }
 
-       //give some buffer, TODO: evaluate if we actually need this
-       sleep(250);
+       sleep(100);
     }
 
     /**
@@ -188,6 +187,8 @@ public class ShooterController implements Controller {
             sleep(RetractDelay);
             retract();
         }
+
+        IntakeController.numRings.set(IntakeController.numRings.get() - ringCount);
 
         if (stopWheelOnFinish) stop();
     }

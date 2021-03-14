@@ -35,18 +35,16 @@ public class RedTele extends Tele {
     protected synchronized void autoShot() {
         drive.stop();
         vertIntake.stop();
-        intake.stopIntake(false);
 
         shooter.spinUp(RPMGoal);
         sleep(150);
 
-        drive.turnAbsolute(Math.toRadians(GoalShotAngle));
+        drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
+        //TODO: make linearHeading?
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPosTele, Red.GoalShotAngle, TeleTrajectorySpeed));
+        intake.stopIntake(false);
         shooter.shoot(3, RPMGoal);
         IntakeController.stopSweeper();
-//        } else {
-//            powerShot();
-//        }
     }
 
     @Override
@@ -55,29 +53,29 @@ public class RedTele extends Tele {
 
         drive.stop();
         vertIntake.stop();
-        intake.stopIntake(false);
 
         ShooterController shooter = controllers.get(ShooterController.class, Shooter);
         double sleepDelay = 200;
 
         shooter.spinUp(RPMPowerShot);
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, 0, TeleTrajectorySpeed));
+        intake.stopIntake(false);
 
         sleep(sleepDelay);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]));
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.75);
         sleep(sleepDelay);
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPMPowerShot);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]));
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.75);
             shooter.powerShot(RPMPowerShot);
         } else {
             shooter.powerShot(RPMPowerShot);
             sleep(sleepDelay);
 
             for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]));
+                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.75);
                 sleep(sleepDelay);
                 shooter.powerShot(RPMPowerShot);
                 sleep(sleepDelay);
@@ -92,14 +90,14 @@ public class RedTele extends Tele {
     @Override
     protected synchronized void  manualShot() {
         manualShoot = true;
-
-        intake.stopIntake();
+        intake.stopIntake(false);
 
         shooter.shoot(3, RPMGoal);
         while (shooter.shootingState) {
             Sleep.sleep(10);
         }
 
+        IntakeController.stopSweeper();
         manualShoot = false;
     }
 

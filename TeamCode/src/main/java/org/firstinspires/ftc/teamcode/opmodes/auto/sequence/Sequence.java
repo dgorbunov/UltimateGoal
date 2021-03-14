@@ -158,7 +158,7 @@ public abstract class Sequence {
     }
 
     public void approachWobble(Vector2d wobblePos) {
-        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 0.50));
+        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 0.70));
     }
 
     public void shootSequence(Vector2d position, double targetHeading, double RPM, int numRings) {
@@ -188,7 +188,7 @@ public abstract class Sequence {
     public void shootGoal(int numRings, double RPM) {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        drive.turnAbsolute(0);
+        drive.turnAbsolute(0, 0.75);
         shooter.shoot(numRings, RPM);
     }
 
@@ -203,33 +203,57 @@ public abstract class Sequence {
     }
 
     public void powerShot(double RPM) {
-        telemetry.addData("Sequence","powerShot");
+        telemetry.addData("Sequence", "powerShot");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         double sleepDelay = 200;
 
-        sleep(sleepDelay);
         shooter.spinUp(RPM);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]));
+        sleep(sleepDelay);
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
         sleep(sleepDelay);
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPM);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]));
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.65);
             shooter.powerShot(RPM);
         } else {
             shooter.powerShot(RPM);
             sleep(sleepDelay);
             for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]));
+                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
                 sleep(sleepDelay);
                 shooter.powerShot(RPM);
                 sleep(sleepDelay);
             }
         }
+    }
 
-        sleep(50); //buffer
-        shooter.stop();
+    public void powerShotStrafe(double RPM) {
+        telemetry.addData("Sequence", "powerShot");
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        double sleepDelay = 200;
+
+        shooter.spinUp(RPM);
+        sleep(sleepDelay);
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
+        sleep(sleepDelay);
+
+        boolean twoRings = false; //hit three powershots with two rings
+        if (twoRings) {
+            shooter.powerShot(RPM);
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.65);
+            shooter.powerShot(RPM);
+        } else {
+            shooter.powerShot(RPM);
+            sleep(sleepDelay);
+            for (int i = 1; i < 3; i++) {
+                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
+                sleep(sleepDelay);
+                shooter.powerShot(RPM);
+                sleep(sleepDelay);
+            }
+        }
     }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {
@@ -260,7 +284,7 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.75));
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.60));
                 while (IntakeController.numRings.get() < 3 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;

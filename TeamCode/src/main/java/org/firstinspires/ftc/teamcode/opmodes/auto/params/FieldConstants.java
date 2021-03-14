@@ -40,12 +40,12 @@ public class FieldConstants {
     public static class RedField {
         public static final Vector2d TargetZoneA = new Vector2d(12,-61);
         public static final Vector2d TargetZoneB = new Vector2d(36,-37);
-        public static final Vector2d TargetZoneC = new Vector2d(60,-61);
+        public static final Vector2d TargetZoneC = new Vector2d(58.5,-61); //really x=60
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Vector2d GoalShotPos = new Vector2d(-4, -41);
         public static final Vector2d PowerShotPos = new Vector2d(-4, -15.5);
         public static final Vector2d IntakeOnePos = RingPos;
-        public static final Vector2d IntakeFourPos = new Vector2d(-24, -46.50);
+        public static final Vector2d IntakeFourPos = new Vector2d(-20, -46.50);
         public static final Vector2d LeftWobblePos = new Vector2d(-37.00, -21);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 7, LeftWobblePos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-37.00, -44);
@@ -53,7 +53,7 @@ public class FieldConstants {
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (12.5, TargetZoneC.getY());
         public static final Vector2d TopCornerPos = new Vector2d(62.00, -62.50);
-        public static final Vector2d LocalizePos = new Vector2d(15, -39);
+        public static final Vector2d LocalizePos = new Vector2d(14.75, -40.25);
         public static final Vector2d IntakePos = new Vector2d(-4, -24);
         public static final Vector2d GoalShotPosTele = IntakePos;
         public static final double SideWobbleXOffset = 0;

@@ -50,7 +50,7 @@ public abstract class OpMode {
   /**
    * Gamepad 1
    */
-  public Gamepad gamepad1 = null;   // will be set in OpModeManager.runActiveOpMode
+  public Gamepad  gamepad1 = null;   // will be set in OpModeManager.runActiveOpMode
 
   /**
    * Gamepad 2

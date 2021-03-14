@@ -21,13 +21,14 @@ public class MechConstants {
     @Deprecated
     public static double RPMGoalFromStack = 3600;
     public static double RPMPowerShot = 3250; //~3300-3400
-    public static double TeleTrajectorySpeed = 0.85;
+    public static double TeleTrajectorySpeed = 0.90;
 
     @Config
     public static class Red {
         public static double AutoShootLine = -24.5;
-        public static double GoalShotAngle = -12;
-        public static double[] PowerShotAbsoluteAngles = {5,-3.5,-9.5}; //prev: -9.5
+        public static double GoalShotAngle = -9.5;
+        public static double[] PowerShotAbsoluteAngles = {4,-3,-9.5}; //prev: {5,-3.5,-9.5}
+
     }
 
     @Config

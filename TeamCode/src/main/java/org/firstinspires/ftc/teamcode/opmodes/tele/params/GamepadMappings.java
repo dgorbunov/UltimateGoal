@@ -43,6 +43,9 @@ public class GamepadMappings {
     public boolean StopAllIntakes() {
         return gamepad2.x;
     }
+    public boolean ResetIntakeCounter() {
+        return gamepad1.back && gamepad1.start && !gamepad1.a;
+    }
     public boolean Wobble() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;
         return gamepad2.a && !gamepad2.start;

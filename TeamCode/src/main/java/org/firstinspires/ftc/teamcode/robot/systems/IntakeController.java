@@ -69,7 +69,6 @@ public class IntakeController implements Controller {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         retract();
-        numRings.set(0);
     }
 
     @Override
@@ -124,8 +123,6 @@ public class IntakeController implements Controller {
     public double getSensorReading() {
         return sensorThread.lastSensorReading;
     }
-
-    public static void resetRingCount() { numRings.set(0); }
 
     public void runAuto(DcMotorEx.Direction Direction) {
         new AutomaticIntakeThread(Direction).start();

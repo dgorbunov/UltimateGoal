@@ -24,6 +24,7 @@ public abstract class Tele extends OpModeBase {
 
     protected boolean manualShoot = false;
     private double loopTime;
+    private double initTime;
 
     public Tele() {
         super();
@@ -33,6 +34,7 @@ public abstract class Tele extends OpModeBase {
     public void init() {
         OPMODE_TYPE = OPMODE.Tele;
         super.init();
+        initTime = systemClock.seconds();
 
         drive.setPoseEstimate(MechConstants.TeleStartingPose);
     }
@@ -46,12 +48,13 @@ public abstract class Tele extends OpModeBase {
     public void start() {
         super.start();
         intake.extend();
+
     }
     @Override
     public void loop() {
         super.loop();
 
-        loopTime = systemClock.seconds() * 1000;
+        loopTime = systemClock.seconds();
 
         if (manualShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
             //whenever manual shooting or vertical intake running, drive slow
@@ -59,9 +62,12 @@ public abstract class Tele extends OpModeBase {
             driveModeButton.resetToggle();
 
         } else {
+            if (IntakeController.numRings.get() >= 3 && loopTime - initTime < 120) {
+                shootButton.runOnceBlocking(true, this::autoShot, () -> shootButton.resetToggle());
+            }
             shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
-            //TODO: FIX OPMODE STUCK LOOP TIMEOUT
+            //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
             driveModeButton.toggleLoop(
                     gameMap.DriveMode(),
                     () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
@@ -87,6 +93,10 @@ public abstract class Tele extends OpModeBase {
                 gameMap.SweepFloor(),
                 () -> vertIntake.sweepOut(),
                 () -> vertIntake.sweepIn());
+
+        resetIntakeCounterButton.runOnce(
+                gameMap.ResetIntakeCounter(),
+                () -> IntakeController.numRings.set(0));
 
         wobbleButton.toggle(
                 gameMap.Wobble(),
@@ -121,11 +131,10 @@ public abstract class Tele extends OpModeBase {
         drive.putPacketData("intake sensor", intake.getSensorReading());
 //        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
-        telemetry.addData("Intake Sensor", intake.getSensorReading());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
-        telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
+        telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
     }
 
     protected abstract void autoShot();
