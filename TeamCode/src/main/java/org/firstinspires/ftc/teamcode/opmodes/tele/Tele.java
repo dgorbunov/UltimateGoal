@@ -52,6 +52,7 @@ public abstract class Tele extends OpModeBase {
     @Override
     public void loop() {
         super.loop();
+
         loopTime = systemClock.seconds() * 1000;
 
         if (manualShoot || autoShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
@@ -69,7 +70,7 @@ public abstract class Tele extends OpModeBase {
             );
         }
 
-        drive.update();
+        if (!autoShoot) drive.update();
 
         intakeButton.toggle(
                 gameMap.Intake(),

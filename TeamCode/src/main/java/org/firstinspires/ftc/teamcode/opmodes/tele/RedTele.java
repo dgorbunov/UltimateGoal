@@ -26,7 +26,7 @@ public class RedTele extends Tele {
     }
 
     @Override
-    protected void autoShot() {
+    protected synchronized void autoShot() {
         autoShoot = true;
 
         drive.stop();
@@ -38,17 +38,16 @@ public class RedTele extends Tele {
             drive.turnAbsolute(0);
             drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPos.getX(), GoalShotPos.getY(), 0, 0.80));
             shooter.shootAsync(3, RPMGoal);
-        }
-        else {
+        } else {
             powerShot();
         }
         autoShoot = false;
     }
 
     @Override
-    protected void powerShot() {
+    protected synchronized void powerShot() {
         autoShoot = true;
-        telemetry.addData("Sequence","powerShot");
+        telemetry.addData("Sequence", "powerShot");
 
         drive.stop();
         intake.stopIntake();
@@ -87,13 +86,13 @@ public class RedTele extends Tele {
     }
 
     @Override
-    protected void manualShot() {
+    protected synchronized void  manualShot() {
         manualShoot = true;
 
         intake.stopIntake();
 
         shooter.shoot(3, RPMGoal);
-        while (shooter.shootingState){
+        while (shooter.shootingState) {
             Sleep.sleep(10);
         }
 
@@ -103,5 +102,4 @@ public class RedTele extends Tele {
     protected void localizeWithCorner() {
         drive.setPoseEstimate(new Pose2d(TopCornerPos, 0)); //front right corner
     }
-
 }
