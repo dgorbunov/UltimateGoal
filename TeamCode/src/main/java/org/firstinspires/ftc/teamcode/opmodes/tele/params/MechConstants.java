@@ -14,8 +14,8 @@ public class MechConstants {
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()
      */
 
-    public static double DriveFullPower = 0.85;
-    public static double DriveSlowPower = 0.18;
+    public static double DriveFullPower = 0.90;
+    public static double DriveSlowPower = 0.22;
 
     public static double RPMGoal = 3700;
     @Deprecated

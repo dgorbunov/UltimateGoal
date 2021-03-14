@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.R
 @Disabled
 public abstract class Tele extends OpModeBase {
 
-    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.TwoDrivers;
+    public static volatile GamepadMappings.DriverMode DriverMode = GamepadMappings.DriverMode.OneDriver;
 
     protected boolean autoShoot = false;
     protected boolean manualShoot = false;
@@ -54,7 +54,11 @@ public abstract class Tele extends OpModeBase {
         super.loop();
         loopTime = systemClock.seconds() * 1000;
 
-        if (!manualShoot && !autoShoot && !VertIntakeController.isRunning && !IntakeController.isRunning) {
+        if (manualShoot || autoShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
+            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+            driveModeButton.resetToggle();
+
+        } else {
             shootButton.runOnce(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
 
@@ -63,9 +67,6 @@ public abstract class Tele extends OpModeBase {
                     () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
                     () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
             );
-        } else {
-            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
-            driveModeButton.resetToggle();
         }
 
         drive.update();
@@ -132,13 +133,13 @@ public abstract class Tele extends OpModeBase {
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
         telemetry.addData("Intake Sensor", intake.getSensorReading());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
-        telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
+        telemetry.addData("Rings: W9idth", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
         telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime) + " ms");
     }
 
     protected abstract void autoShot();
-    protected abstract void manualPowerShot();
+    protected abstract void powerShot();
     protected abstract void manualShot();
     protected abstract void localizeWithCorner();
 

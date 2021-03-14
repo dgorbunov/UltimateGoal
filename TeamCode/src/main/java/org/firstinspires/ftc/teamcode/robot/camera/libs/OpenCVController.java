@@ -45,7 +45,8 @@ public class OpenCVController implements Controller{
                 // mode, because Vuforia often chooses high resolutions (such as 720p) which can be
                 // very CPU-taxing to rotate in software. GPU acceleration has been observed to cause
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
-                openCvCamera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+//                openCvCamera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+                //TODO: Evaluate if this is the cause of our crashes
                 setPipeline();
 
                 // We don't get to choose resolution, unfortunately. The width and height parameters

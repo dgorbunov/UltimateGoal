@@ -25,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.M
 public class PositionalAccuracyTest extends LinearOpMode {
 
     public enum StartPos {
-        RED_LEFT, RED_RIGHT
+        RED_LEFT, RED_RIGHT, RIGHT_TOP_CORNER
     }
 
     public static StartPos StartPosition = StartPos.RED_LEFT;
@@ -34,8 +34,8 @@ public class PositionalAccuracyTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         DrivetrainController drive = new DrivetrainController(hardwareMap);
         if (StartPosition == StartPos.RED_LEFT) drive.setPoseEstimate(new Pose2d(FieldConstants.RedLeft.StartingPos, Math.toRadians(0)));
-        else drive.setPoseEstimate(new Pose2d(FieldConstants.RedRight.StartingPos, Math.toRadians(0)));
-
+        else if (StartPosition == StartPos.RED_RIGHT) drive.setPoseEstimate(new Pose2d(FieldConstants.RedRight.StartingPos, Math.toRadians(0)));
+        else drive.setPoseEstimate(new Pose2d(FieldConstants.RedField.TopCornerPos, Math.toRadians(0)));
 
         waitForStart();
 
@@ -52,13 +52,5 @@ public class PositionalAccuracyTest extends LinearOpMode {
                 .build();
 
         drive.followTrajectory(traj);
-
-//        sleep(2000);
-//
-//        drive.followTrajectory(
-//                new TrajectoryBuilder(traj.end(), true, DrivetrainController.getMaxAngVelConstraint(), DrivetrainController.getMaxAccelConstraint())
-//                        .splineTo(new Vector2d(0, 0), Math.toRadians(180))
-//                        .build()
-//        );
     }
 }

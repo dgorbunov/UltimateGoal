@@ -52,6 +52,7 @@ public class FieldConstants {
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 7, RightWobblePos.getY());
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (12.5, TargetZoneC.getY());
+        public static final Vector2d TopCornerPos = new Vector2d(62.00, -62.50);
         public static final double SideWobbleXOffset = 0;
         public static final double SideWobbleYOffset = 7;
         public static final double FrontWobbleXOffset = -18;

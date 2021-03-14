@@ -20,7 +20,7 @@ public class BlueTele extends Tele {
     }
 
     @Override
-    protected void manualPowerShot() {
+    protected void powerShot() {
 
     }
 
