@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
+import static org.firstinspires.ftc.teamcode.robot.systems.IntakeController.numRings;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @Config
@@ -124,6 +125,12 @@ public class ShooterController implements Controller {
         powerShotCount++;
     }
 
+    public synchronized void powerShotStrafe(double RPM){
+        stopWheelOnFinish = false;
+        bumpRings(1);
+        powerShotCount++;
+    }
+
     private synchronized void checkSpeed(double RPM) {
         setRPM(RPM);
 
@@ -188,7 +195,8 @@ public class ShooterController implements Controller {
             retract();
         }
 
-        IntakeController.numRings.set(IntakeController.numRings.get() - ringCount);
+        numRings.set(numRings.get() - ringCount);
+        if (numRings.get() < 0) numRings.set(0);
 
         if (stopWheelOnFinish) stop();
     }
@@ -202,8 +210,6 @@ public class ShooterController implements Controller {
 //            dashboardTelemetry.addData("current RPM", RPM);
 //            dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
 //            dashboardTelemetry.addData("shooter power", shooter.getPower());
-//
-//            dashboardTelemetry.update();
 //        }
 //
 //        dashboardTelemetry.addData("shooter stopped", shooter.getPower());

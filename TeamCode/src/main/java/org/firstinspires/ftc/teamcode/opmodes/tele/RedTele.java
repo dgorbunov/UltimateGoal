@@ -38,6 +38,7 @@ public class RedTele extends Tele {
 
         shooter.spinUp(RPMGoal);
         sleep(150);
+        intake.stopWheels();
 
         drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
         //TODO: make linearHeading?

@@ -15,7 +15,7 @@ public class MechConstants {
      */
 
     public static double DriveFullPower = 0.90;
-    public static double DriveSlowPower = 0.22;
+    public static double DriveSlowPower = 0.20;
 
     public static double RPMGoal = 3700;
     @Deprecated
@@ -28,7 +28,6 @@ public class MechConstants {
         public static double AutoShootLine = -24.5;
         public static double GoalShotAngle = -9.5;
         public static double[] PowerShotAbsoluteAngles = {4,-3,-9.5}; //prev: {5,-3.5,-9.5}
-
     }
 
     @Config

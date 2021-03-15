@@ -56,7 +56,7 @@ public abstract class Tele extends OpModeBase {
 
         loopTime = systemClock.seconds();
 
-        if (manualShoot || (VertIntakeController.isRunning && !IntakeController.isRunning)) {
+        if (manualShoot || wobble.isDown) {
             //whenever manual shooting or vertical intake running, drive slow
             drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             driveModeButton.resetToggle();
@@ -68,11 +68,20 @@ public abstract class Tele extends OpModeBase {
             shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
-            driveModeButton.toggleLoop(
-                    gameMap.DriveMode(),
-                    () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
-                    () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
-            );
+            if  (VertIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+            else if (loopTime - initTime > 120) {
+                driveModeButton.toggleLoop(
+                        gameMap.DriveMode(),
+                        () -> drive.driveFieldCentric(gamepad1, 1.0, Auto.getAlliance()),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
+                );
+            } else {
+                driveModeButton.toggleLoop(
+                        gameMap.DriveMode(),
+                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
+                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
+                );
+            }
         }
 
         drive.update();

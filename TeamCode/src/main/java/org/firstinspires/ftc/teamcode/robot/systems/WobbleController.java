@@ -17,6 +17,7 @@ public class WobbleController implements Controller {
     private Servo wobbleArm;
     private Servo wobbleSide;
     public static String ControllerName;
+    public boolean isDown = false;
 
     //Side Wobble Dropper
     public static double SideHoldPos = 0.8;
@@ -114,9 +115,11 @@ public class WobbleController implements Controller {
         wobbleGrip.setPosition(GripReleasePos);
     }
     public void pickup(){
+        isDown = false;
         wobbleArm.setPosition(ArmPickupPos);
     }
     public void drop(){
+        isDown = true;
         wobbleArm.setPosition(ArmDropPos);
     }
     public void sideRelease() {

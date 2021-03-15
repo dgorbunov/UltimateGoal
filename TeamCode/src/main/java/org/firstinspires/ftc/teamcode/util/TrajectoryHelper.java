@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
 import java.util.Arrays;
 
@@ -155,6 +156,24 @@ public class TrajectoryHelper {
                         )
                 ),
                 new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        return trajectory;
+    }
+
+    public static Trajectory buildPowerShotStrafeTrajectory(DrivetrainController drive, ShooterController shooter, double RPM, Vector2d pos, double heading, double y1, double y2, double y3, double speed) {
+        Trajectory trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint())
+                .lineToLinearHeading(new Pose2d(pos, Math.toRadians(heading)),
+                        new MinVelocityConstraint(
+                                Arrays.asList(
+                                        new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                        new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
+                                )
+                        ),
+                        new ProfileAccelerationConstraint(speed * DriveConstants.MAX_ACCEL))
+                .addSpatialMarker(new Vector2d(pos.getX(), y1), () -> shooter.powerShotStrafe(RPM))
+                .addSpatialMarker(new Vector2d(pos.getX(), y2), () -> shooter.powerShotStrafe(RPM))
+                .addSpatialMarker(new Vector2d(pos.getX(), y3), () -> shooter.powerShotStrafe(RPM))
                 .build();
 
         return trajectory;

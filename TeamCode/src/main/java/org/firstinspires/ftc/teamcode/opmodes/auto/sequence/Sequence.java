@@ -17,6 +17,10 @@ import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotStrafePos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY1;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY2;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY3;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildBackTrajectory;
@@ -227,33 +231,17 @@ public abstract class Sequence {
                 sleep(sleepDelay);
             }
         }
+        shooter.stop();
     }
 
     public void powerShotStrafe(double RPM) {
-        telemetry.addData("Sequence", "powerShot");
+        telemetry.addData("Sequence", "powerShotStrafe");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        double sleepDelay = 200;
 
         shooter.spinUp(RPM);
-        sleep(sleepDelay);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
-        sleep(sleepDelay);
-
-        boolean twoRings = false; //hit three powershots with two rings
-        if (twoRings) {
-            shooter.powerShot(RPM);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.65);
-            shooter.powerShot(RPM);
-        } else {
-            shooter.powerShot(RPM);
-            sleep(sleepDelay);
-            for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
-                sleep(sleepDelay);
-                shooter.powerShot(RPM);
-                sleep(sleepDelay);
-            }
-        }
+        drive.followTrajectory(TrajectoryHelper.buildPowerShotStrafeTrajectory(drive, shooter, RPM, PowerShotStrafePos, 0,
+                PowerShotY1, PowerShotY2, PowerShotY3, 0.85));
+        shooter.stop();
     }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {

@@ -95,6 +95,10 @@ public class IntakeController implements Controller {
         stopSweeper();
     }
 
+    public void stopWheels() {
+        intake2.setPower(0);
+    }
+
     public void stopIntake(boolean stopSweeper) {
         isRunning = false;
         intake.setPower(0);

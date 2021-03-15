@@ -44,6 +44,7 @@ public class FieldConstants {
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Vector2d GoalShotPos = new Vector2d(-4, -41);
         public static final Vector2d PowerShotPos = new Vector2d(-4, -15.5);
+        public static final Vector2d PowerShotStrafePos = new Vector2d(-4, -8);
         public static final Vector2d IntakeOnePos = RingPos;
         public static final Vector2d IntakeFourPos = new Vector2d(-20, -46.50);
         public static final Vector2d LeftWobblePos = new Vector2d(-37.00, -21);
@@ -60,6 +61,9 @@ public class FieldConstants {
         public static final double SideWobbleYOffset = 7;
         public static final double FrontWobbleXOffset = -18;
         public static final double FrontWobbleYOffset = -2;
+        public static final double PowerShotY1 = -10;
+        public static final double PowerShotY2 = -15;
+        public static final double PowerShotY3 = -20;
     }
 
     @Config
