@@ -26,8 +26,13 @@ public class ShooterController implements Controller {
 
     public static final double BumpPosition = 0.6;
     public static final double RetractPosition = 0.35;
+    public static double kP;
+    public static double kI;
+    public static double kD;
+    public static double F;
 
     public volatile boolean shootingState;
+    private volatile double targetRPM;
     private boolean stopWheelOnFinish = true;
     private int powerShotCount = 0;
 
@@ -54,24 +59,22 @@ public class ShooterController implements Controller {
     public void init() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
-
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
+        shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
+        //TODO: shooter PID
 
         //this is acting as our state variable
         shooter.setMotorDisable();
-
         retract();
     }
 
     @Override
-    public void start() {
-
-    }
+    public void start() { }
 
     @Override
     public void stop() {
-        //wait until shooting is finished
+        targetRPM = 0;
         shooter.setPower(0);
         shooter.setMotorDisable();
         bumper.setPosition(RetractPosition);
@@ -109,6 +112,7 @@ public class ShooterController implements Controller {
         stopWheelOnFinish = true;
 
         checkSpeed(RPM);
+        sleep(100);
         bumpRings(ringCount);
     }
 
@@ -116,11 +120,11 @@ public class ShooterController implements Controller {
     public synchronized void powerShot(double RPM){
         stopWheelOnFinish = false;
 
-        if (powerShotCount == 0 || powerShotCount == 3) {
-            checkSpeed(RPM);
-            powerShotCount = 0;
-        }
-        sleep(50); //buffer
+//        if (powerShotCount == 0 || powerShotCount == 3) {
+//            checkSpeed(RPM);
+//            powerShotCount = 0;
+//        }
+        sleep(125); //buffer
         bumpRings(1);
         powerShotCount++;
     }
@@ -201,24 +205,18 @@ public class ShooterController implements Controller {
         if (stopWheelOnFinish) stop();
     }
 
-    public synchronized void telemetry(){
-//        while (shootingState) {
-//            double velocity = shooter.getVelocity();
-//            double RPM = velocity / TicksPerRev * 60;
-//            double velocityRad = RPM * 2 * Math.PI / 60;
-//            dashboardTelemetry.addData("target RPM", MotorRPM);
-//            dashboardTelemetry.addData("current RPM", RPM);
-//            dashboardTelemetry.addData("tangential velocity (m/s)", velocityRad * wheelRadius);
-//            dashboardTelemetry.addData("shooter power", shooter.getPower());
-//        }
-//
-//        dashboardTelemetry.addData("shooter stopped", shooter.getPower());
-//        dashboardTelemetry.update();
+    public double getCurrentRPM(){
+        return shooter.getVelocity() / TicksPerRev * 60;
+    }
+
+    public double getTargetRPM() {
+        return targetRPM;
     }
 
     private void setRPM(double RPM) {
+        targetRPM = RPM;
         shooter.setMotorEnable();
-        shooter.setVelocity(TicksPerSecond(RPM));
+        shooter.setVelocity(TicksPerSecond(targetRPM));
     }
 
     private double TicksPerSecond(double RPM){

@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMAuto;
 
 public class RedLeftSequence extends Sequence {
 
@@ -46,17 +46,17 @@ public class RedLeftSequence extends Sequence {
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMGoal, 1));
+            actions.add(() -> shootSequence(RedField.GoalShotPos, -4, RPMAuto, 1));
         }
         else if (ringCount == 4) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMGoal, 3));
+            actions.add(() -> shootSequence(RedField.GoalShotPos, -4, RPMAuto, 3));
         }
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
 
-        actions.add(() -> moveToWobble(RedField.RightWobbleIntermediate));
+        actions.add(() -> moveToWobble(RedField.RightWobbleIntermediate, ringCount));
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 

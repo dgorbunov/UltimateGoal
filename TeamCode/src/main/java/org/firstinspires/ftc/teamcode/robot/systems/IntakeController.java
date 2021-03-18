@@ -149,8 +149,17 @@ public class IntakeController implements Controller {
         }
     }
 
+    public void runWheels(DcMotorEx.Direction Direction) {
+        if (Direction == DcMotorSimple.Direction.FORWARD) {
+            intake2.setPower(Intake2Power);
+        }
+        else {
+            intake2.setPower(-Intake2Power);
+        }
+    }
+
     private class SensorThread extends Thread {
-        public long SENSOR_POLLING_RATE = 75;
+        public long SENSOR_POLLING_RATE = 50;
         private DistanceUnit unit;
         private volatile boolean isRunning = false;
         boolean ringState;
@@ -179,6 +188,7 @@ public class IntakeController implements Controller {
                 }
             }
             lastSensorReading = 0;
+            interrupt();
         }
         public void stopThread() {
             isRunning = false;

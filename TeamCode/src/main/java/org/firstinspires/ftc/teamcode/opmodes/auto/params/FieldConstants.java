@@ -46,10 +46,10 @@ public class FieldConstants {
         public static final Vector2d PowerShotPos = new Vector2d(-4, -15.5);
         public static final Vector2d PowerShotStrafePos = new Vector2d(-4, -8);
         public static final Vector2d IntakeOnePos = RingPos;
-        public static final Vector2d IntakeFourPos = new Vector2d(-20, -46.50);
-        public static final Vector2d LeftWobblePos = new Vector2d(-37.00, -21);
+        public static final Vector2d IntakeFourPos = new Vector2d(-17.65, -46.50);
+        public static final Vector2d LeftWobblePos = new Vector2d(-36, -20);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 7, LeftWobblePos.getY());
-        public static final Vector2d RightWobblePos = new Vector2d(-37.00, -44);
+        public static final Vector2d RightWobblePos = new Vector2d(-36, -44);
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 7, RightWobblePos.getY());
         public static final Vector2d EndingPosition = new Vector2d (10, -30);
         public static final Vector2d EndingPositionFour = new Vector2d (12.5, TargetZoneC.getY());

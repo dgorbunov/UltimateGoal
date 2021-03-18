@@ -82,7 +82,7 @@ public class RedRightSequence extends Sequence {
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
 
-        actions.add(() -> moveToWobble(RedField.LeftWobbleIntermediate));
+        actions.add(() -> moveToWobble(RedField.LeftWobbleIntermediate, ringCount));
         actions.add(() -> approachWobble(RedField.LeftWobblePos));
         actions.add(() -> pickupWobble());
 

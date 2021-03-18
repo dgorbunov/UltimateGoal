@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -55,21 +54,22 @@ public abstract class Tele extends OpModeBase {
         super.loop();
 
         loopTime = systemClock.seconds();
+        double matchTime = loopTime - initTime;
 
-        if (manualShoot || wobble.isDown) {
+        if (manualShoot) {
             //whenever manual shooting or vertical intake running, drive slow
             drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             driveModeButton.resetToggle();
 
         } else {
-            if (IntakeController.numRings.get() >= 3 && loopTime - initTime < 120) {
+            if (IntakeController.numRings.get() >= 3 && matchTime < 85) {
                 shootButton.runOnceBlocking(true, this::autoShot, () -> shootButton.resetToggle());
             }
             shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
-            if  (VertIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
-            else if (loopTime - initTime > 120) {
+//            if  (VertIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+            if (matchTime > 85) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
                         () -> drive.driveFieldCentric(gamepad1, 1.0, Auto.getAlliance()),
@@ -138,10 +138,13 @@ public abstract class Tele extends OpModeBase {
         );
 
         drive.putPacketData("intake sensor", intake.getSensorReading());
+        drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
+        drive.putPacketData("target RPM", shooter.getTargetRPM());
 //        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
+        telemetry.addLine("<strong>Match time: </strong>" + Math.round(matchTime));
         telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
         telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
     }

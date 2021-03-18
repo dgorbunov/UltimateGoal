@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Actions;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotStrafePos;
@@ -151,14 +152,22 @@ public abstract class Sequence {
         wobble.pickupAuto();
     }
 
-    public void moveToWobble(Vector2d pos) {
+    public void moveToWobble(Vector2d pos, int numRings) {
         telemetry.addData("Sequence","moveToWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
 
-        drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+
         //TODO: remove or use less backup
         wobble.readyToPickup();
-        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.85));
+        if (numRings == 1) {
+            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+//            drive.turnAbsolute(175);
+//            drive.followTrajectory(buildLinearTrajectory(drive, drive.getPoseEstimate().getX(), pos.getY(), 180));
+            drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.65));
+        } else {
+            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+            drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.85));
+        }
     }
 
     public void approachWobble(Vector2d wobblePos) {
@@ -213,19 +222,21 @@ public abstract class Sequence {
 
         shooter.spinUp(RPM);
         sleep(sleepDelay);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
-        sleep(sleepDelay);
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.55);
+        sleep(450);
+        //TODO: TURN TO FACE POINT
+        //TODO: INCREASE ACCURACY IN DRIVETRAIN/SLOW DOWN MORE?
 
         boolean twoRings = false; //hit three powershots with two rings
         if (twoRings) {
             shooter.powerShot(RPM);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.65);
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.55);
             shooter.powerShot(RPM);
         } else {
             shooter.powerShot(RPM);
             sleep(sleepDelay);
             for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
+                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.55);
                 sleep(sleepDelay);
                 shooter.powerShot(RPM);
                 sleep(sleepDelay);
@@ -272,9 +283,14 @@ public abstract class Sequence {
                 intake.extend();
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.60));
-                while (IntakeController.numRings.get() < 3 && drive.isBusy()) drive.update();
+                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.35));
+                while (IntakeController.numRings.get() < 3 && drive.isBusy()) {
+                    drive.update();
+                    telemetry.addData("NumRings:", IntakeController.numRings.get());
+                    telemetry.update();
+                }
                 drive.stop();
+                intake.runWheels(REVERSE);
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");

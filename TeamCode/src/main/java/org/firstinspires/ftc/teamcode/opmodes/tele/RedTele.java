@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
@@ -14,10 +13,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPosTele;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.IntakePos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Shooter;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TeleTrajectorySpeed;
@@ -37,12 +34,12 @@ public class RedTele extends Tele {
         vertIntake.stop();
 
         shooter.spinUp(RPMGoal);
-        sleep(150);
         intake.stopWheels();
 
+//        drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
+        //TODO: fix opmode timeout. make trajectory async
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPosTele, GoalShotAngle, TeleTrajectorySpeed));
         drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
-        //TODO: make linearHeading?
-        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPosTele, Red.GoalShotAngle, TeleTrajectorySpeed));
         intake.stopIntake(false);
         shooter.shoot(3, RPMGoal);
         IntakeController.stopSweeper();
@@ -50,37 +47,25 @@ public class RedTele extends Tele {
 
     @Override
     protected synchronized void powerShot() {
-        telemetry.addData("Sequence", "powerShot");
-
         drive.stop();
         vertIntake.stop();
 
-        ShooterController shooter = controllers.get(ShooterController.class, Shooter);
         double sleepDelay = 200;
-
         shooter.spinUp(RPMPowerShot);
+        intake.stopWheels();
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, 0, TeleTrajectorySpeed));
         intake.stopIntake(false);
 
-        sleep(sleepDelay);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.75);
+        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
         sleep(sleepDelay);
 
-        boolean twoRings = false; //hit three powershots with two rings
-        if (twoRings) {
-            shooter.powerShot(RPMPowerShot);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.75);
-            shooter.powerShot(RPMPowerShot);
-        } else {
+        shooter.powerShot(RPMPowerShot);
+        sleep(sleepDelay);
+        for (int i = 1; i < 3; i++) {
+            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
+            sleep(sleepDelay);
             shooter.powerShot(RPMPowerShot);
             sleep(sleepDelay);
-
-            for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.75);
-                sleep(sleepDelay);
-                shooter.powerShot(RPMPowerShot);
-                sleep(sleepDelay);
-            }
         }
 
         sleep(50); //buffer
