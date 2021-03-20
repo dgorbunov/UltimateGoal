@@ -158,14 +158,15 @@ public abstract class Sequence {
 
 
         //TODO: remove or use less backup
-        wobble.readyToPickup();
         if (numRings == 1) {
             drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+            wobble.readyToPickup();
 //            drive.turnAbsolute(175);
 //            drive.followTrajectory(buildLinearTrajectory(drive, drive.getPoseEstimate().getX(), pos.getY(), 180));
             drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.65));
         } else {
             drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+            wobble.readyToPickup();
             drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.85));
         }
     }
@@ -182,10 +183,8 @@ public abstract class Sequence {
         spinUp(RPM);
         drive.followTrajectory(buildLinearTrajectory(drive, position.getX(), position.getY(), targetHeading));
 
-        intake.stopIntake(false);
-
         shooter.shoot(numRings, RPM);
-        IntakeController.stopSweeper();
+        intake.stopIntake();
     }
 
     public void spinUp(double RPM){

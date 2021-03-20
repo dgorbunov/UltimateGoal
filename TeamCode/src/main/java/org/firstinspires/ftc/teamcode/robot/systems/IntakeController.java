@@ -33,11 +33,11 @@ public class IntakeController implements Controller {
     public static volatile AtomicInteger numRings = new AtomicInteger(0);
     public static int numRingsStale;
 
-    public static double ArmStartPos = 0.1;
-    public static double ArmDropPos = 0.73;
+    public static double ArmStartPos = 0.25;
+    public static double ArmDropPos = 0.85;
     public static double IntakePower = 0.6;
     public static double Intake2Power = 0.6;
-    public static double SweeperPower = 1;
+    public static double SweeperPower = 0.8;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -158,6 +158,12 @@ public class IntakeController implements Controller {
         }
     }
 
+    private void speak() {
+        //TODO: crashing
+        numRingsStale = numRings.get();
+        telemetry.speak(numRingsStale + " Rings");
+    }
+
     private class SensorThread extends Thread {
         public long SENSOR_POLLING_RATE = 50;
         private DistanceUnit unit;
@@ -178,6 +184,7 @@ public class IntakeController implements Controller {
                     if (!ringState && lastSensorReading < SensorThreshold) {
                         ringState = true;
                         numRings.getAndIncrement();
+//                        speak();
                         telemetry.addData("Num Rings Intaked: ", numRings.get());
                     } else if (ringState && lastSensorReading >= SensorThreshold) ringState = false;
                 } catch (InterruptedException e) {

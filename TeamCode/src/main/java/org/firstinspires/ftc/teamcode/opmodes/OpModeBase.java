@@ -38,12 +38,13 @@ public class OpModeBase extends OpMode {
     protected Button shootButton = new Button();
     protected Button shootManButton = new Button();
     protected Button driveModeButton = new Button();
-    protected Button wobbleAlignButton = new Button();
+    protected Button incrementLeftButton = new Button();
+    protected Button incrementRightButton = new Button();
 
     protected DrivetrainController drive;
     protected IntakeController intake;
     protected ShooterController shooter;
-    protected VertIntakeController vertIntake;
+    protected VertIntakeController verticalIntake;
     protected WobbleController wobble;
     protected HubController hub;
     protected CameraController camera;
@@ -91,7 +92,7 @@ public class OpModeBase extends OpMode {
         hub = controllers.get(HubController.class, FieldConstants.Hub);
         shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         intake = controllers.get(IntakeController.class, FieldConstants.Intake);
-        vertIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
+        verticalIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
         wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
         camera = controllers.get(CameraController.class, FieldConstants.Camera);
 

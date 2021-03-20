@@ -62,9 +62,9 @@ public abstract class Tele extends OpModeBase {
             driveModeButton.resetToggle();
 
         } else {
-            if (IntakeController.numRings.get() >= 3 && matchTime < 85) {
-                shootButton.runOnceBlocking(true, this::autoShot, () -> shootButton.resetToggle());
-            }
+//            if (IntakeController.numRings.get() >= 3 && matchTime < 85) {
+//                shootButton.runOnceBlocking(true, this::autoShot, () -> shootButton.resetToggle());
+//            }
             shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
@@ -86,6 +86,16 @@ public abstract class Tele extends OpModeBase {
 
         drive.update();
 
+        incrementLeftButton.runOnceBlocking(
+                gameMap.IncrementLeft(),
+                () -> MechConstants.Red.incrementGoalShotAngle(0.4)
+        );
+
+        incrementRightButton.runOnceBlocking(
+                gameMap.IncrementRight(),
+                () -> MechConstants.Red.incrementGoalShotAngle(-0.4)
+        );
+
         intakeButton.toggle(
                 gameMap.Intake(),
                 () -> intake.run(FORWARD),
@@ -94,14 +104,14 @@ public abstract class Tele extends OpModeBase {
 
         vertIntakeButton.toggle(
                 gameMap.VertIntake(),
-                () -> vertIntake.run(FORWARD),
-                () -> vertIntake.run(REVERSE),
-                () -> vertIntake.stop());
+                () -> verticalIntake.run(FORWARD),
+                () -> verticalIntake.run(REVERSE),
+                () -> verticalIntake.stop());
 
         sweepFloorButton.toggle(
                 gameMap.SweepFloor(),
-                () -> vertIntake.sweepOut(),
-                () -> vertIntake.sweepIn());
+                () -> verticalIntake.sweepOut(),
+                () -> verticalIntake.sweepIn());
 
         resetIntakeCounterButton.runOnce(
                 gameMap.ResetIntakeCounter(),
@@ -132,7 +142,7 @@ public abstract class Tele extends OpModeBase {
         stopIntakeButton.runOnce(
                 gameMap.StopAllIntakes(),
                 () -> intake.stopIntake(),
-                () -> vertIntake.stop(),
+                () -> verticalIntake.stop(),
                 () -> intakeButton.resetToggle(),
                 () -> vertIntakeButton.resetToggle()
         );
@@ -142,6 +152,7 @@ public abstract class Tele extends OpModeBase {
         drive.putPacketData("target RPM", shooter.getTargetRPM());
 //        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
+        telemetry.addLine("<strong>Goal angle: </strong>" + MechConstants.Red.GoalShotAngle);
         telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
         telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetry.addLine("<strong>Match time: </strong>" + Math.round(matchTime));

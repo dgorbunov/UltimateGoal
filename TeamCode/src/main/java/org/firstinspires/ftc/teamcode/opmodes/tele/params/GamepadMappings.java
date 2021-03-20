@@ -29,6 +29,10 @@ public class GamepadMappings {
     public boolean AutoIntake() {
         return gamepad1.x;
     }
+    public boolean IncrementLeft() { return gamepad1.dpad_up; }
+    public boolean IncrementRight() {
+        return gamepad1.dpad_down;
+    }
     public boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
         return gamepad2.back;

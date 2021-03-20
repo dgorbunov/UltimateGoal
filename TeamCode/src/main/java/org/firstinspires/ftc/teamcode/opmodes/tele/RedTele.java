@@ -31,15 +31,15 @@ public class RedTele extends Tele {
     @Override
     protected synchronized void autoShot() {
         drive.stop();
-        vertIntake.stop();
+        verticalIntake.stop();
 
         shooter.spinUp(RPMGoal);
         intake.stopWheels();
 
-//        drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
         //TODO: fix opmode timeout. make trajectory async
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, GoalShotPosTele, GoalShotAngle, TeleTrajectorySpeed));
         drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
+        sleep(250);
         intake.stopIntake(false);
         shooter.shoot(3, RPMGoal);
         IntakeController.stopSweeper();
@@ -48,14 +48,15 @@ public class RedTele extends Tele {
     @Override
     protected synchronized void powerShot() {
         drive.stop();
-        vertIntake.stop();
+        verticalIntake.stop();
 
         double sleepDelay = 200;
         shooter.spinUp(RPMPowerShot);
         intake.stopWheels();
-        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, 0, TeleTrajectorySpeed));
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, PowerShotAbsoluteAngles[0], TeleTrajectorySpeed));
         intake.stopIntake(false);
 
+        sleep(sleepDelay);
         drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
         sleep(sleepDelay);
 
