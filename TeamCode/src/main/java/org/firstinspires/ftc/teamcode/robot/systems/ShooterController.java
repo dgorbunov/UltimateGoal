@@ -187,7 +187,7 @@ public class ShooterController implements Controller {
     }
 
     private synchronized void checkSpeed(double RPM) {
-        double ADMISSIBLE_ERROR = RPMtoTPS(30);
+        double ADMISSIBLE_ERROR = RPMtoTPS(25);
         double targetTPS = RPMtoTPS(targetRPM);
 
         NanoClock systemClock = NanoClock.system();

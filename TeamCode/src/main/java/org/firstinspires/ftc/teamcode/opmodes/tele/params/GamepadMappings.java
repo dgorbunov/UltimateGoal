@@ -16,10 +16,8 @@ public class GamepadMappings {
         this.gamepad2 = gamepad2;
     }
 
-    public boolean DriveMode() { return gamepad1.right_bumper; }
-    public boolean Shoot() {
-        return gamepad1.a && !gamepad1.start;
-    }
+    public boolean DriveMode() { return gamepad1.right_bumper && !gamepad1.left_bumper; }
+    public boolean Shoot() { return gamepad1.a && !gamepad1.start; }
     public boolean ShootManual() {
         return gamepad1.y;
     }
