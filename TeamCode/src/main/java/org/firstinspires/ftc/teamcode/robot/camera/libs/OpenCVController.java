@@ -46,7 +46,6 @@ public class OpenCVController implements Controller{
                 // very CPU-taxing to rotate in software. GPU acceleration has been observed to cause
                 // issues on some devices, though, so if you experience issues you may wish to disable it.
 //                openCvCamera.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                //TODO: Evaluate if this is the cause of our crashes
 
                 setPipeline();
 
@@ -102,10 +101,19 @@ public class OpenCVController implements Controller{
     }
 
     public double getWobbleDisplacement() {
-       return wobbleDetector.getDisplacementFromCenter();
+       if (wobbleDetector != null) return wobbleDetector.getDisplacementFromCenter();
+       else return 0;
     }
 
-    public double getVerticalRingDisplacement() { return verticalDetector.getDisplacementFromCenter(); }
+    public double getVerticalRingDisplacement() {
+        if (verticalDetector != null) return verticalDetector.getDisplacementFromCenter();
+        else return 0;
+    }
+
+    public double getHorizontalRingDisplacement() {
+        if (ringDetector != null) return ringDetector.getDisplacementFromCenter();
+        else return 0;
+    }
 
     @Override
     public void init() {
@@ -121,7 +129,6 @@ public class OpenCVController implements Controller{
 
     @Override
     public void stop() {
-//        openCvCamera.stopStreaming(); //TODO: this is crashing
         FtcDashboard.getInstance().stopCameraStream();
     }
 

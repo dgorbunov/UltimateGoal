@@ -488,7 +488,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             controller.setOutputBounds(-ALIGNMENT_POWER, ALIGNMENT_POWER);
             controller.setTargetAcceleration(ALIGNMENT_ACCEL);
             controller.setTargetVelocity(ALIGNMENT_VEL); //MAX_VEL / k? MAX_ACCEL / k as well?
-            if (object == VERTICAL_RING) controller.update(camera.getRingDisplacement());
+            if (object == VERTICAL_RING) controller.update(camera.getVerticalRingDisplacement());
             else controller.update(camera.getWobbleDisplacement());
 
             NanoClock clock = NanoClock.system();
@@ -498,7 +498,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
             while (clock.seconds() - startTime <= ALIGNMENT_MAX_TIME && VerticalRingDetector.getRingWidth() != 0){
 //                if (Math.abs(controller.getLastError()) > alignmentThreshold) {
                     double correction;
-                    if (object == VERTICAL_RING) correction = controller.update(camera.getRingDisplacement());
+                    if (object == VERTICAL_RING) correction = controller.update(camera.getVerticalRingDisplacement());
                     else correction = controller.update(camera.getWobbleDisplacement());
 
                     strafe(-correction); //or: rotate()

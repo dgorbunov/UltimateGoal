@@ -27,6 +27,9 @@ public class RingDetector extends OpenCvPipeline {
     private static final Scalar lowerOrange = new Scalar(0.0, 141.0, 0.0);
     private static final Scalar upperOrange = new Scalar(255.0, 230.0, 95.0);
 
+    private double centerX;
+    private double centerY;
+
     private int CAMERA_WIDTH = 640;
     private static double HORIZON = 200; //(100.0 / 320.0) * CAMERA_WIDTH;
     private static double MIN_CONTOUR_WIDTH = 80; // (50.0 / 320.0) * CAMERA_WIDTH
@@ -55,6 +58,14 @@ public class RingDetector extends OpenCvPipeline {
 
     public String getRingCountStr() {
         return ringCountStr;
+    }
+
+    public double getCameraCenterX() {
+        return (double)CAMERA_WIDTH / 2;
+    }
+
+    public double getDisplacementFromCenter() {
+        return centerX - getCameraCenterX();
     }
 
     @Override
@@ -104,8 +115,15 @@ public class RingDetector extends OpenCvPipeline {
                 copy.release(); // releasing the buffer of the copy of the contour, since after use, it is no longer needed
             }
 
-            /**drawing widest bounding rectangle to ret in blue**/
-            Imgproc.rectangle(ret, maxRect, new Scalar(0.0, 0.0, 255.0), 4);
+            /**drawing widest bounding rectangle to ret**/
+            Scalar color = new Scalar(0,255,255);
+            Imgproc.rectangle(ret, maxRect, color, 4);
+
+            centerX = maxRect.x + (double)maxRect.width/2;
+            centerY = maxRect.y + (double)maxRect.height/2;
+
+            Point center = new Point(centerX, centerY);
+            Imgproc.drawMarker(ret, center, color, 0, 35);
 
             /** drawing a red line to show the horizon (any above the horizon is not checked to be a ring stack **/
             Imgproc.line(

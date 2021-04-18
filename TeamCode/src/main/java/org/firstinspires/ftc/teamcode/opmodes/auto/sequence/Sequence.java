@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
@@ -130,6 +131,23 @@ public abstract class Sequence {
 
     public void moveSpline(Vector2d vector, double targetHeading, double startTangent, double endTangent) {
         drive.followTrajectory(buildSplineLinearHeadingTrajectory(drive, startTangent, endTangent, new Pose2d(vector,targetHeading)));
+    }
+
+    public void alignWithRing() {
+        telemetry.addData("Sequence","alignWithRing");
+        CameraController camera = controllers.get(CameraController.class, FieldConstants.Camera);
+//        Trajectory turn;
+//
+//        if (camera.getHorizontalRingDisplacement() > 10) { //ring right
+//            //TODO: turn right trajectory
+//        } else {
+//            //TODO: turn left trajectory
+//        }
+//        while (Math.abs(camera.getHorizontalRingDisplacement()) > 10) {
+//            drive.followTrajectoryAsync(turn);
+//            drive.update();
+//        }
+//        drive.stop();
     }
 
     public void dropWobble() {

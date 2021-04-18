@@ -79,7 +79,9 @@ public class CameraController implements Controller {
 
     public double getWobbleDisplacement() { return openCV.getWobbleDisplacement(); }
 
-    public double getRingDisplacement() { return openCV.getVerticalRingDisplacement(); }
+    public double getVerticalRingDisplacement() { return openCV.getVerticalRingDisplacement(); }
+
+    public double getHorizontalRingDisplacement() { return openCV.getHorizontalRingDisplacement(); }
 
     @Nullable
     public Pose2d getRobotPosition() {
