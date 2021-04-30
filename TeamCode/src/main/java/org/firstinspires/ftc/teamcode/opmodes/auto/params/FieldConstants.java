@@ -57,6 +57,7 @@ public class FieldConstants {
         public static final Vector2d LocalizePos = new Vector2d(14.75, -40.25);
         public static final Vector2d IntakePos = new Vector2d(-4, -24);
         public static final Vector2d GoalShotPosTele = IntakePos;
+        public static final Vector2d GoalPos = new Vector2d(72, -36);
         public static final double SideWobbleXOffset = 0;
         public static final double SideWobbleYOffset = 7;
         public static final double FrontWobbleXOffset = -18;

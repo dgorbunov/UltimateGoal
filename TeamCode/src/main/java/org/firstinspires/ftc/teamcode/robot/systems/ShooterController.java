@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -30,10 +32,10 @@ public class ShooterController implements Controller {
     private final double wheelRadius = 0.051; //meters
 
     public static double MAX_VEL;
-    public static double kP = 0;
-    public static double kI = 0;
-    public static double kD = 0;
-    public static double F = 0;
+    public static double kP = 2;
+    public static double kI = 0.25;
+    public static double kD = 5.4;
+    public static double F = 11.7;
     public static boolean useAutomaticPID = false;
 
     public volatile boolean shootingState;
@@ -47,10 +49,11 @@ public class ShooterController implements Controller {
 
     private DcMotorEx shooter;
     private Servo bumper;
+    private Servo turret;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public ShooterController (HardwareMap hardwareMap, Telemetry telemetry) {
+    public ShooterController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
@@ -60,11 +63,13 @@ public class ShooterController implements Controller {
     public void init() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
+        turret = hardwareMap.get(Servo.class, "turret");
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
 
 //        if (useAutomaticPID) setPID();
-//        shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
+        shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
+        //TODO: re-tune
         telemetry.addData("F", F);
 
         //this is acting as our state variable
@@ -93,6 +98,10 @@ public class ShooterController implements Controller {
         kD = 0;
     }
 
+    public void updateTurret(Pose2d currentPos, Vector2d targetPos) {
+        turret.setPosition(1);
+    }
+
     public void setVelocityPIDFCoefficients(double kP, double kI, double kD, double F) {
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
     }
@@ -118,28 +127,6 @@ public class ShooterController implements Controller {
         }
     }
 
-//    class TelemetryThread extends Thread {
-//        double POLLING_RATE = 30;
-//        private DrivetrainController drive;
-//        boolean isAlive = true;
-//
-//        TelemetryThread(DrivetrainController drive) {
-//            this.drive = drive;
-//        }
-//        //TODO: Do this properly eventually
-//
-//        public void run() {
-//            while (isAlive)
-//            Sleep.sleep(POLLING_RATE);
-//            drive.putPacketData("shooter rpm", getCurrentRPM());
-//            drive.update();
-//        }
-//
-//        public void stopThread() {
-//            isAlive = false;
-//        }
-//    }
-
     public synchronized void shootAsync(int ringCount, double RPM){
         shootingState = true;
         stopWheelOnFinish = true;
@@ -154,19 +141,6 @@ public class ShooterController implements Controller {
         checkSpeed(RPM);
         bumpRings(ringCount);
     }
-
-//    public void shootWithTelemetry(DrivetrainController drive, int ringCount, double RPM){
-//        shootingState = true;
-//        stopWheelOnFinish = true;
-//
-//        TelemetryThread thread = new TelemetryThread(drive);
-//        thread.start();
-//        setRPM(RPM);
-//        checkSpeed(RPM);
-//        sleep(100);
-//        bumpRings(ringCount);
-//        thread.stopThread();
-//    }
 
     public synchronized void powerShot(double RPM){
         stopWheelOnFinish = false;

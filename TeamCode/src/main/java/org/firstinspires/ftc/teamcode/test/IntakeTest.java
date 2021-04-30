@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Config
-@TeleOp(name="VerticalTest", group="Iterative Opmode")
-public class VerticalTest extends OpMode {
+@TeleOp(name="IntakeTest", group="Iterative Opmode")
+public class IntakeTest extends OpMode {
 
     DcMotor intake1;
     DcMotor intake2;

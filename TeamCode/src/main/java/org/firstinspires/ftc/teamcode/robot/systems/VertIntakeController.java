@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
 @Config
+@Deprecated
 public class VertIntakeController implements Controller{
     private Telemetry telemetry;
     private HardwareMap hardwareMap;

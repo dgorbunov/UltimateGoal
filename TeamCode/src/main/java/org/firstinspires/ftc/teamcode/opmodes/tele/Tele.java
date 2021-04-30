@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
 
@@ -146,6 +147,8 @@ public abstract class Tele extends OpModeBase {
                 () -> intakeButton.resetToggle(),
                 () -> vertIntakeButton.resetToggle()
         );
+
+        shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
 
         drive.putPacketData("intake sensor", intake.getSensorReading());
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
