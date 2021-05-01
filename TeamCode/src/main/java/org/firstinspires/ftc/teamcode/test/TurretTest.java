@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 
 @Config
-@TeleOp(name="IntakeTest", group="Iterative Opmode")
+@TeleOp(name="TurretTest", group="Iterative Opmode")
 public class TurretTest extends OpMode {
 
     public static double centerPos = 0.5;
@@ -31,7 +31,7 @@ public class TurretTest extends OpMode {
 
     @Override
     public void init() {
-        turret = hardwareMap.get(Servo.class, "turret");
+        turret = hardwareMap.get(Servo.class, "side_wobble");
         turret.setPosition(centerPos);
     }
 
@@ -53,6 +53,6 @@ public class TurretTest extends OpMode {
     }
 
     public void stop() {
-
+        turret.setPosition(centerPos);
     }
 }

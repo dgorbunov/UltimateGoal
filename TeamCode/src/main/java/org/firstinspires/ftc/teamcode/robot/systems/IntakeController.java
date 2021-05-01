@@ -184,7 +184,6 @@ public class IntakeController implements Controller {
                     if (!ringState && lastSensorReading < SensorThreshold) {
                         ringState = true;
                         numRings.getAndIncrement();
-//                        speak();
                         telemetry.addData("Num Rings Intaked: ", numRings.get());
                     } else if (ringState && lastSensorReading >= SensorThreshold) ringState = false;
                 } catch (InterruptedException e) {

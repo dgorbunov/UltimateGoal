@@ -153,6 +153,7 @@ public abstract class Tele extends OpModeBase {
         drive.putPacketData("intake sensor", intake.getSensorReading());
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
         drive.putPacketData("target RPM", shooter.getTargetRPM());
+        drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));
 //        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
         telemetry.addData("Rings Intaked", IntakeController.getNumRings());
         telemetry.addLine("<strong>Goal angle: </strong>" + MechConstants.Red.GoalShotAngle);

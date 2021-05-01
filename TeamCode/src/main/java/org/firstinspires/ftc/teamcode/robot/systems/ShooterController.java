@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.systems;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,8 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.robot.systems.IntakeController.numRings;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
@@ -43,13 +46,31 @@ public class ShooterController implements Controller {
     private boolean stopWheelOnFinish = true;
     private int powerShotCount = 0;
 
+    public static double centerPos = 0.5;
+    public static double turretMaxAngle = 180;
+    public static double turretLowerLimit = 0.25;
+    public static double turretUpperLimit = 0.75;
+    public Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
+    public Vector2d targetPos = GoalPos;
+    private TurretThread turretThread = new TurretThread();
+
+    /**
+     * Origin in center
+     * ===========================
+     * |               | 0 deg
+     * |               |
+     * |               |
+     * |               |
+     * |             _____
+     * | -90 -------|  •  |---------- +90 deg
+     */
+
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
     public static String ControllerName;
 
     private DcMotorEx shooter;
     private Servo bumper;
-    private Servo turret;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
@@ -63,9 +84,9 @@ public class ShooterController implements Controller {
     public void init() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
-        turret = hardwareMap.get(Servo.class, "turret");
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
+        turretThread.start();
 
 //        if (useAutomaticPID) setPID();
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
@@ -86,6 +107,7 @@ public class ShooterController implements Controller {
         shooter.setPower(0);
         shooter.setMotorDisable();
         bumper.setPosition(RetractPosition);
+        turretThread.killThread();
         shootingState = false;
     }
 
@@ -98,12 +120,49 @@ public class ShooterController implements Controller {
         kD = 0;
     }
 
-    public void updateTurret(Pose2d currentPos, Vector2d targetPos) {
-        turret.setPosition(1);
+    public void updateTurret(Pose2d robotPos, Vector2d targetPos) {
+        this.robotPos = robotPos;
+        this.targetPos = targetPos;
+    }
+
+    private double turnTurretAbsolute(double deg) {
+        double targetPosition = deg / turretMaxAngle + centerPos;
+        if (targetPosition > turretUpperLimit) targetPosition = turretUpperLimit;
+        else if (targetPosition < turretLowerLimit) targetPosition = turretLowerLimit;
+        return targetPosition;
     }
 
     public void setVelocityPIDFCoefficients(double kP, double kI, double kD, double F) {
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
+    }
+
+    class TurretThread extends Thread {
+        private Servo turret;
+        int UPDATE_RATE = 50;
+        boolean isRunning = true;
+
+        public void run() {
+            turret = hardwareMap.get(Servo.class, "side_wobble");
+            turret.setPosition(centerPos);
+            while (isRunning) {
+                try {
+                    sleep(UPDATE_RATE);
+                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading()));
+                    turret.setPosition(turnTurretAbsolute(deg));
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                    RobotLog.addGlobalWarningMessage("turret interrupted");
+                }
+
+            }
+            turret.setPosition(centerPos);
+            interrupt();
+        }
+
+        public void killThread() {
+            isRunning = false;
+        }
     }
 
     class ShooterThread extends Thread {
