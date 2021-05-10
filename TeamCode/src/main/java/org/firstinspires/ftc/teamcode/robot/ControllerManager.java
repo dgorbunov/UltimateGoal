@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class ControllerManager implements Controller{
         add(new DrivetrainController(hardwareMap, telemetry), FieldConstants.Drive);
         add(new HubController(hardwareMap, telemetry), FieldConstants.Hub);
         add(new IntakeController(hardwareMap, telemetry), FieldConstants.Intake);
-        add(new VertIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
+        add(new RearIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
         add(new ShooterController(hardwareMap, telemetry), FieldConstants.Shooter);
         add(new WobbleController(hardwareMap, telemetry), FieldConstants.Wobble);
     }

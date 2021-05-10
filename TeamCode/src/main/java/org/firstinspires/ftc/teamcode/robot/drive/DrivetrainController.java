@@ -43,7 +43,7 @@ import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
@@ -356,7 +356,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
-        if (!VertIntakeController.isRunning) packet.put("alignmentError", 0);
+        if (!RearIntakeController.isRunning) packet.put("alignmentError", 0);
 
         switch (mode) {
             case IDLE:

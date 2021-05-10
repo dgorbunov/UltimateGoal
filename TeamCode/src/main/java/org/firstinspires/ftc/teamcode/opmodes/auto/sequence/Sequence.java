@@ -285,7 +285,6 @@ public abstract class Sequence {
                 telemetry.addData("Sequence", "intake 1 ring");
 //                drive.turn(Math.toRadians(heading));
                 drive.turnToFacePoint(position);
-                intake.extend();
                 intake.run(FORWARD);
 
                 drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.85));
@@ -297,7 +296,6 @@ public abstract class Sequence {
                 telemetry.addData("Sequence", "intake 4 rings");
 //                drive.turn(Math.toRadians(heading));
                 drive.turnToFacePoint(new Vector2d(position.getX() + 3, position.getY()));
-                intake.extend();
                 intake.run(FORWARD);
 
                 drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.35));

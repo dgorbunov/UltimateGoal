@@ -46,10 +46,11 @@ public class ShooterController implements Controller {
     private boolean stopWheelOnFinish = true;
     private int powerShotCount = 0;
 
-    public static double centerPos = 0.5;
+    public static double centerPos = 0.45;
     public static double turretMaxAngle = 180;
-    public static double turretLowerLimit = 0.25;
-    public static double turretUpperLimit = 0.75;
+    public static double turretLeftLimit = -40;
+    public static double turretRightLimit = 15;
+    public static int turretUpdateRate = 20;
     public Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
     public Vector2d targetPos = GoalPos;
     private TurretThread turretThread = new TurretThread();
@@ -65,8 +66,19 @@ public class ShooterController implements Controller {
      * | -90 -------|  •  |---------- +90 deg
      */
 
-    public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
 
+    /**
+     * Servo positions
+     * ===========================
+     * |               | centerPos
+     * |               |
+     * |               |
+     * |               |
+     * |             _____
+     * | 1   -------|  •  |---------- 0
+     */
+
+    public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
     public static String ControllerName;
 
     private DcMotorEx shooter;
@@ -126,28 +138,36 @@ public class ShooterController implements Controller {
     }
 
     private double turnTurretAbsolute(double deg) {
-        double targetPosition = deg / turretMaxAngle + centerPos;
-        if (targetPosition > turretUpperLimit) targetPosition = turretUpperLimit;
-        else if (targetPosition < turretLowerLimit) targetPosition = turretLowerLimit;
-        return targetPosition;
+        double degree = deg;
+        boolean reversed = false; //if reversed, servo range is 0 to 1 right to left
+        double multiplier = 1;
+        if (reversed) multiplier = -1;
+
+        if (degree > multiplier * turretRightLimit) degree = multiplier * turretRightLimit;
+        else if (degree < multiplier * turretLeftLimit) degree = multiplier * turretLeftLimit;
+        return multiplier * ((degree / turretMaxAngle) + centerPos);
     }
 
     public void setVelocityPIDFCoefficients(double kP, double kI, double kD, double F) {
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
     }
 
+    @Config
     class TurretThread extends Thread {
         private Servo turret;
-        int UPDATE_RATE = 50;
         boolean isRunning = true;
 
         public void run() {
-            turret = hardwareMap.get(Servo.class, "side_wobble");
+            turret = hardwareMap.get(Servo.class, "turret");
             turret.setPosition(centerPos);
             while (isRunning) {
                 try {
-                    sleep(UPDATE_RATE);
-                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading()));
+                    sleep(turretUpdateRate);
+                    //Roadrunner uses inverted x/y axes
+                    double dX = Math.abs(targetPos.getY() - robotPos.getY());
+                    double dY = Math.abs(targetPos.getX() - robotPos.getX());
+                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY));
+//                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading()));
                     turret.setPosition(turnTurretAbsolute(deg));
                 }
                 catch (InterruptedException e) {

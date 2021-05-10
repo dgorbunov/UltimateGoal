@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
-import org.firstinspires.ftc.teamcode.robot.systems.VertIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
@@ -44,7 +44,7 @@ public class OpModeBase extends OpMode {
     protected DrivetrainController drive;
     protected IntakeController intake;
     protected ShooterController shooter;
-    protected VertIntakeController verticalIntake;
+    protected RearIntakeController verticalIntake;
     protected WobbleController wobble;
     protected HubController hub;
     protected CameraController camera;
@@ -92,7 +92,7 @@ public class OpModeBase extends OpMode {
         hub = controllers.get(HubController.class, FieldConstants.Hub);
         shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         intake = controllers.get(IntakeController.class, FieldConstants.Intake);
-        verticalIntake = controllers.get(VertIntakeController.class, FieldConstants.VertIntake);
+        verticalIntake = controllers.get(RearIntakeController.class, FieldConstants.VertIntake);
         wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
         camera = controllers.get(CameraController.class, FieldConstants.Camera);
 

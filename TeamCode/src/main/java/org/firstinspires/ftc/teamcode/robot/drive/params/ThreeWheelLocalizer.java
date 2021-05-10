@@ -69,8 +69,8 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
             frontEncoder = new Encoder(new MockDcMotorEx("right_front"));
         } else {
             leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake")); //Original: left_rear
-            rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "vIntake")); //Original: right_rear
-            frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake2")); //Original: right_front
+            rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake2")); //Original: right_rear
+            frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rear_intake")); //Original: right_front
         }
 
         frontEncoder.setDirection(Encoder.Direction.REVERSE);

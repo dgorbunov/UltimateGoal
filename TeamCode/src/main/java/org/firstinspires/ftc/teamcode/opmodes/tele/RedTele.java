@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
-import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
@@ -42,7 +41,6 @@ public class RedTele extends Tele {
         sleep(250);
         intake.stopIntake(false);
         shooter.shoot(3, RPMGoal);
-        IntakeController.stopSweeper();
     }
 
     @Override
@@ -70,7 +68,6 @@ public class RedTele extends Tele {
         }
 
         sleep(50); //buffer
-        IntakeController.stopSweeper();
         shooter.stop();
     }
 
@@ -84,7 +81,6 @@ public class RedTele extends Tele {
             Sleep.sleep(10);
         }
 
-        IntakeController.stopSweeper();
         manualShoot = false;
     }
 

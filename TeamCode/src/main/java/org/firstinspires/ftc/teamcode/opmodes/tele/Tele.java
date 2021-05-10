@@ -45,11 +45,8 @@ public abstract class Tele extends OpModeBase {
     }
 
     @Override
-    public void start() {
-        super.start();
-        intake.extend();
+    public void start() { super.start(); }
 
-    }
     @Override
     public void loop() {
         super.loop();
@@ -69,7 +66,7 @@ public abstract class Tele extends OpModeBase {
             shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
             shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
-//            if  (VertIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+//            if  (RearIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             if (matchTime > 85) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
@@ -109,10 +106,6 @@ public abstract class Tele extends OpModeBase {
                 () -> verticalIntake.run(REVERSE),
                 () -> verticalIntake.stop());
 
-        sweepFloorButton.toggle(
-                gameMap.SweepFloor(),
-                () -> verticalIntake.sweepOut(),
-                () -> verticalIntake.sweepIn());
 
         resetIntakeCounterButton.runOnce(
                 gameMap.ResetIntakeCounter(),
@@ -150,7 +143,7 @@ public abstract class Tele extends OpModeBase {
 
         shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
 
-        drive.putPacketData("intake sensor", intake.getSensorReading());
+//        drive.putPacketData("intake sensor", intake.getSensorReading());
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
         drive.putPacketData("target RPM", shooter.getTargetRPM());
         drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));

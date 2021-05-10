@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,8 +21,9 @@ public class IntakeController implements Controller {
     private HardwareMap hardwareMap;
     private DcMotorEx intake;
     private DcMotorEx intake2;
-    private Servo arm;
-    private static CRServo sweeper;
+    private static CRServo topRoller;
+    private static CRServo leftRoller;
+    private static CRServo rightRoller;
     private DistanceSensor intakeSensor;
 
     public static String ControllerName;
@@ -33,19 +33,19 @@ public class IntakeController implements Controller {
     public static volatile AtomicInteger numRings = new AtomicInteger(0);
     public static int numRingsStale;
 
-    public static double ArmStartPos = 0.25;
-    public static double ArmDropPos = 0.85;
-    public static double IntakePower = 0.6;
-    public static double Intake2Power = 0.6;
-    public static double SweeperPower = 0.8;
+    public static double IntakePower = 0.8;
+    public static double Intake2Power = 1.0;
+    public static double RollerPower = 1.0;
+    public static double HorizontalPower = 1.0;
 
     /*
     * Do not change motor direction to avoid breaking odometry
     * which uses the same encoder ports
     * */
 
-    public static Servo.Direction ArmDirection = Servo.Direction.REVERSE;
-    public static CRServo.Direction SweeperDirection = CRServo.Direction.REVERSE;
+    public static CRServo.Direction topRollerDirection = CRServo.Direction.REVERSE;
+    public static CRServo.Direction leftRollerDirection = CRServo.Direction.FORWARD;
+    public static CRServo.Direction rightRollerDirection = CRServo.Direction.FORWARD;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -55,20 +55,22 @@ public class IntakeController implements Controller {
 
     @Override
     public void init() {
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
-        intake2 = hardwareMap.get(DcMotorEx.class, "intake2");
-        arm = hardwareMap.get(Servo.class, "intake_arm");
-        sweeper = hardwareMap.get(CRServo.class, "sweeper");
-        intakeSensor = hardwareMap.get(DistanceSensor.class, "intake_sensor");
+        //TODO: fix swapped naming
+        intake = hardwareMap.get(DcMotorEx.class, "intake2");
+        intake2 = hardwareMap.get(DcMotorEx.class, "intake");
+        topRoller = hardwareMap.get(CRServo.class, "top_roller");
+        leftRoller = hardwareMap.get(CRServo.class, "left_roller");
+        rightRoller = hardwareMap.get(CRServo.class, "right_roller");
+//        intakeSensor = hardwareMap.get(DistanceSensor.class, "intake_sensor");
 
-        arm.setDirection(ArmDirection);
-        sweeper.setDirection(SweeperDirection);
+        topRoller.setDirection(topRollerDirection);
+        leftRoller.setDirection(leftRollerDirection);
+        rightRoller.setDirection(rightRollerDirection);
 
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        retract();
     }
 
     @Override
@@ -76,47 +78,29 @@ public class IntakeController implements Controller {
 
     }
 
-    public void extend() {
-        arm.setPosition(ArmDropPos);
-    }
-    public void retract() { arm.setPosition(ArmStartPos); }
-
     @Override
     public void stop() {
         stopIntake();
-        retract();
     }
 
     public void stopIntake() {
         isRunning = false;
         intake.setPower(0);
         intake2.setPower(0);
-        sensorThread.stopThread();
-        stopSweeper();
+        topRoller.setPower(0);
+        leftRoller.setPower(0);
+        rightRoller.setPower(0);
+//        sensorThread.stopThread();
     }
 
     public void stopWheels() {
         intake2.setPower(0);
     }
 
+    @Deprecated
     public void stopIntake(boolean stopSweeper) {
-        isRunning = false;
-        intake.setPower(0);
-        intake2.setPower(0);
-        sensorThread.stopThread();
-        if (stopSweeper) stopSweeper();
-    }
-
-    public static void startSweeper() {
-        sweeper.setPower(SweeperPower);
-    }
-
-    private static void startSweeper(double power) {
-        if (!VertIntakeController.isRunning) sweeper.setPower(power);
-    }
-
-    public static void stopSweeper() {
-        if (!isRunning && !VertIntakeController.isRunning) sweeper.setPower(0);
+        stopIntake();
+//        sensorThread.stopThread();
     }
 
     public static int getNumRings() {
@@ -124,9 +108,9 @@ public class IntakeController implements Controller {
         return numRingsStale;
     }
 
-    public double getSensorReading() {
-        return sensorThread.lastSensorReading;
-    }
+//    public double getSensorReading() {
+//        return sensorThread.lastSensorReading;
+//    }
 
     public void runAuto(DcMotorEx.Direction Direction) {
         new AutomaticIntakeThread(Direction).start();
@@ -134,27 +118,31 @@ public class IntakeController implements Controller {
 
     public void run(DcMotorEx.Direction Direction) {
         isRunning = true;
-        if (!sensorThread.isAlive()) sensorThread.start();
+//        if (!sensorThread.isAlive()) sensorThread.start();
         telemetry.addData(ControllerName, "Intaking");
 
         if (Direction == DcMotorSimple.Direction.FORWARD) {
-            intake.setPower(IntakePower);
-            intake2.setPower(Intake2Power);
-            startSweeper(SweeperPower);
-        }
-        else {
             intake.setPower(-IntakePower);
             intake2.setPower(-Intake2Power);
-            startSweeper(-SweeperPower);
+            topRoller.setPower(-RollerPower);
+            leftRoller.setPower(-HorizontalPower);
+            rightRoller.setPower(-HorizontalPower);
+        }
+        else {
+            intake.setPower(IntakePower);
+            intake2.setPower(Intake2Power);
+            topRoller.setPower(RollerPower);
+            leftRoller.setPower(HorizontalPower);
+            rightRoller.setPower(HorizontalPower);
         }
     }
 
     public void runWheels(DcMotorEx.Direction Direction) {
         if (Direction == DcMotorSimple.Direction.FORWARD) {
-            intake2.setPower(Intake2Power);
+            intake2.setPower(-Intake2Power);
         }
         else {
-            intake2.setPower(-Intake2Power);
+            intake2.setPower(Intake2Power);
         }
     }
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Sleep;
 @TeleOp(name="TurretTest", group="Iterative Opmode")
 public class TurretTest extends OpMode {
 
-    public static double centerPos = 0.5;
+    public static double centerPos = 0.45;
     public static double turretMaxAngle = 180;
     public static double turretLowerLimit = 0.25;
     public static double turretUpperLimit = 0.75;
