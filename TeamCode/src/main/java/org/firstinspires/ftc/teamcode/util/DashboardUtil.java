@@ -44,6 +44,13 @@ public class DashboardUtil {
         drawSampledPath(canvas, path, DEFAULT_RESOLUTION);
     }
 
+    public static void drawTurretLine(Canvas canvas, Pose2d robot, Vector2d goal) {
+        canvas.setStroke("#00ff08");
+        double[] x = {robot.getX() + ROBOT_RADIUS, ROBOT_RADIUS * Math.cos(robot.getHeading()) + robot.getX(), goal.getX(), robot.getX() + ROBOT_RADIUS};
+        double[] y = {robot.getY(), ROBOT_RADIUS * Math.sin(robot.getHeading()) + robot.getY(), goal.getY(), robot.getY()};
+        canvas.strokePolyline(x, y);
+    }
+
     public static void drawRobot(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);
         Vector2d v = pose.headingVec().times(ROBOT_RADIUS);

@@ -201,7 +201,7 @@ public abstract class Sequence {
         spinUp(RPM);
         drive.followTrajectory(buildLinearTrajectory(drive, position.getX(), position.getY(), targetHeading));
 
-        shooter.shoot(numRings, RPM);
+        shooter.shoot(numRings, RPM, true);
         intake.stopIntake();
     }
 
@@ -219,7 +219,7 @@ public abstract class Sequence {
         telemetry.addData("Sequence","shootRings: " + numRings);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         drive.turnAbsolute(0, 0.75);
-        shooter.shoot(numRings, RPM);
+        shooter.shoot(numRings, RPM, true);
     }
 
     public void backOffFromWobbles (double distance) {
@@ -237,8 +237,6 @@ public abstract class Sequence {
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         double sleepDelay = 200;
 
-        shooter.spinUp(RPM);
-        sleep(sleepDelay);
         drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.55);
         sleep(450);
         //TODO: TURN TO FACE POINT

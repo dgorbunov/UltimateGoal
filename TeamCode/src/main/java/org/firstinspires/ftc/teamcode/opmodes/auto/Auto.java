@@ -62,10 +62,10 @@ public class Auto extends OpModeBase {
         super.start();
 
             try {
-                telemetry.addLine("Initializing sequence: " + getSequenceName(currentSequence));
+                telemetryd.addLine("Initializing sequence: " + getSequenceName(currentSequence));
                 currentSequence.init(ringCount);
 
-                telemetry.addLine("Executing sequence: " + getSequenceName(currentSequence));
+                telemetryd.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
                 // execute runs async
                 currentSequence.execute();
@@ -118,16 +118,16 @@ public class Auto extends OpModeBase {
     private void makeSequences() {
         synchronized (lock) {
             sequences.put(makeSequenceName(Red, Left),
-                    new RedLeftSequence(controllers, telemetry));
+                    new RedLeftSequence(controllers, telemetryd));
 
             sequences.put(makeSequenceName(Red, Right),
-                    new RedRightSequence(controllers, telemetry));
+                    new RedRightSequence(controllers, telemetryd));
 
             sequences.put(makeSequenceName(Blue, Left),
-                    new BlueLeftSequence(controllers, telemetry));
+                    new BlueLeftSequence(controllers, telemetryd));
 
             sequences.put(makeSequenceName(Blue, Right),
-                    new BlueRightSequence(controllers, telemetry));
+                    new BlueRightSequence(controllers, telemetryd));
         }
     }
 
@@ -145,12 +145,12 @@ public class Auto extends OpModeBase {
             return;
         }
 
-        telemetry.addData("Camera returned rings", camera.getRingCountStr());
+        telemetryd.addData("Camera returned rings", camera.getRingCountStr());
 
         int rings = camera.getRingCount();
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1); //if null return -1
-            telemetry.addData("Camera returned rings", ringCount);
+            telemetryd.addData("Camera returned rings", ringCount);
         }
     }
 }

@@ -55,6 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_ACCEL;
@@ -346,6 +347,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         Canvas fieldOverlay = packet.fieldOverlay();
         sendExternalPacketData(packet);
         if (drawRings) drawRings(fieldOverlay);
+        DashboardUtil.drawTurretLine(fieldOverlay, getPoseEstimate(), GoalPos);
 
         packet.put("mode", mode);
 

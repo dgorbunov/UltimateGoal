@@ -30,7 +30,7 @@ public class RedTele extends Tele {
     @Override
     protected synchronized void autoShot() {
         drive.stop();
-        verticalIntake.stop();
+        rearIntake.stop();
 
         shooter.spinUp(RPMGoal);
         intake.stopWheels();
@@ -40,13 +40,13 @@ public class RedTele extends Tele {
         drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
         sleep(250);
         intake.stopIntake(false);
-        shooter.shoot(3, RPMGoal);
+        shooter.shoot(3, RPMGoal, true);
     }
 
     @Override
     protected synchronized void powerShot() {
         drive.stop();
-        verticalIntake.stop();
+        rearIntake.stop();
 
         double sleepDelay = 200;
         shooter.spinUp(RPMPowerShot);
@@ -76,7 +76,7 @@ public class RedTele extends Tele {
         manualShoot = true;
         intake.stopIntake(false);
 
-        shooter.shoot(3, RPMGoal);
+        shooter.shoot(3, RPMGoal, true);
         while (shooter.shootingState) {
             Sleep.sleep(10);
         }

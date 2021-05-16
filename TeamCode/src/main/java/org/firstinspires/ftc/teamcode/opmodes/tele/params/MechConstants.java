@@ -17,16 +17,16 @@ public class MechConstants {
     public static double DriveFullPower = 0.90;
     public static double DriveSlowPower = 0.16;
 
-    public static double RPMGoal = 3750;
+    public static double RPMGoal = 3175;
     public static double RPMAuto = 3850;
     @Deprecated
     public static double RPMGoalFromStack = 3600;
-    public static double RPMPowerShot = 3435; //~3300-3400
+    public static double RPMPowerShot = 3600; //~3300-3400
+    public static double TurretOffsetAdjustment = 3;
     public static double TeleTrajectorySpeed = 0.95;
 
     @Config
     public static class Red {
-        public static double AutoShootLine = -24.5;
         public static double GoalShotAngle = -12.0;
         public static double[] PowerShotAbsoluteAngles = {3,-6.5,-11.5}; //prev: {5,-3.5,-9.5}
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.systems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
@@ -28,29 +29,31 @@ public class ShooterController implements Controller {
     public static volatile double Delay1 = 750;
     public static volatile double Delay2 = 750;
 
-    public static final double BumpPosition = 0.6;
-    public static final double RetractPosition = 0.35;
+    public static double BumpPosition = 0.3;
+    public static double RetractPosition = 0.38;
 
-    private final double TicksPerRev = 28; //Do not modify
-    private final double wheelRadius = 0.051; //meters
+    private final double TICKS_PER_REV = 28; //Do not modify
 
     public static double MAX_VEL;
     public static double kP = 2;
     public static double kI = 0.25;
     public static double kD = 5.4;
     public static double F = 11.7;
-    public static boolean useAutomaticPID = false;
+    public static double PID_ADMISSIBLE_ERROR = 40 ; //in RPM
 
     public volatile boolean shootingState;
     private volatile double targetRPM;
     private boolean stopWheelOnFinish = true;
     private int powerShotCount = 0;
+    private static volatile boolean limitHit;
 
-    public static double centerPos = 0.45;
-    public static double turretMaxAngle = 180;
-    public static double turretLeftLimit = -40;
-    public static double turretRightLimit = 15;
-    public static int turretUpdateRate = 20;
+    public static double TURRET_CENTER_POS = 0.41;
+    public static double TURRET_OFFSET = 6;
+    public static double TURRET_MAX_ANGLE = 140;
+    public static double TURRET_RIGHT_LIMIT = -17;
+    public static double TURRET_LEFT_LIMIT = 75;
+    public static int TURRET_UPDATE_RATE = 15;
+
     public Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
     public Vector2d targetPos = GoalPos;
     private TurretThread turretThread = new TurretThread();
@@ -85,9 +88,11 @@ public class ShooterController implements Controller {
     private Servo bumper;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
+    private MultipleTelemetry telemetryd;
 
-    public ShooterController(HardwareMap hardwareMap, Telemetry telemetry) {
+    public ShooterController(HardwareMap hardwareMap, Telemetry telemetry, MultipleTelemetry telemetryd) {
         this.telemetry = telemetry;
+        this.telemetryd = telemetryd;
         this.hardwareMap = hardwareMap;
         ControllerName = getClass().getSimpleName();
     }
@@ -100,7 +105,6 @@ public class ShooterController implements Controller {
         shooter.setDirection(Direction);
         turretThread.start();
 
-//        if (useAutomaticPID) setPID();
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
         //TODO: re-tune
         telemetry.addData("F", F);
@@ -115,11 +119,15 @@ public class ShooterController implements Controller {
 
     @Override
     public void stop() {
+        stopShooter();
+        turretThread.killThread();
+    }
+
+    private void stopShooter() {
         targetRPM = 0;
         shooter.setPower(0);
         shooter.setMotorDisable();
         bumper.setPosition(RetractPosition);
-        turretThread.killThread();
         shootingState = false;
     }
 
@@ -139,13 +147,17 @@ public class ShooterController implements Controller {
 
     private double turnTurretAbsolute(double deg) {
         double degree = deg;
-        boolean reversed = false; //if reversed, servo range is 0 to 1 right to left
-        double multiplier = 1;
-        if (reversed) multiplier = -1;
 
-        if (degree > multiplier * turretRightLimit) degree = multiplier * turretRightLimit;
-        else if (degree < multiplier * turretLeftLimit) degree = multiplier * turretLeftLimit;
-        return multiplier * ((degree / turretMaxAngle) + centerPos);
+        if (degree > TURRET_LEFT_LIMIT) {
+            degree = TURRET_LEFT_LIMIT;
+            limitHit = true;
+        }
+        else if (degree < TURRET_RIGHT_LIMIT) {
+            degree = TURRET_RIGHT_LIMIT;
+            limitHit = true;
+        }
+        else limitHit = false;
+        return ((degree / TURRET_MAX_ANGLE) + TURRET_CENTER_POS);
     }
 
     public void setVelocityPIDFCoefficients(double kP, double kI, double kD, double F) {
@@ -156,19 +168,25 @@ public class ShooterController implements Controller {
     class TurretThread extends Thread {
         private Servo turret;
         boolean isRunning = true;
+        boolean limitSpeak;
 
         public void run() {
             turret = hardwareMap.get(Servo.class, "turret");
-            turret.setPosition(centerPos);
+            turret.setPosition(TURRET_CENTER_POS);
             while (isRunning) {
                 try {
-                    sleep(turretUpdateRate);
+                    sleep(TURRET_UPDATE_RATE);
                     //Roadrunner uses inverted x/y axes
-                    double dX = Math.abs(targetPos.getY() - robotPos.getY());
-                    double dY = Math.abs(targetPos.getX() - robotPos.getX());
-                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY));
-//                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading()));
+                    double dX = targetPos.getY() - robotPos.getY();
+                    double dY = targetPos.getX() - robotPos.getX();
+                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY)) - TURRET_OFFSET;
+//                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())); //for testing
                     turret.setPosition(turnTurretAbsolute(deg));
+
+                    if (!limitSpeak && limitHit) {
+                        limitSpeak = true;
+                        telemetry.speak("limit");
+                    } else if (limitSpeak && !limitHit) limitSpeak = false;
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
@@ -176,7 +194,7 @@ public class ShooterController implements Controller {
                 }
 
             }
-            turret.setPosition(centerPos);
+            turret.setPosition(TURRET_CENTER_POS);
             interrupt();
         }
 
@@ -212,9 +230,9 @@ public class ShooterController implements Controller {
         new ShooterThread(ringCount, RPM).start();
     }
 
-    public void shoot(int ringCount, double RPM){
+    public void shoot(int ringCount, double RPM, boolean stop){
         shootingState = true;
-        stopWheelOnFinish = true;
+        stopWheelOnFinish = stop;
 
         setRPM(RPM);
         checkSpeed(RPM);
@@ -240,7 +258,7 @@ public class ShooterController implements Controller {
     }
 
     private synchronized void checkSpeed(double RPM) {
-        double ADMISSIBLE_ERROR = RPMtoTPS(25);
+        double ADMISSIBLE_ERROR = RPMtoTPS(PID_ADMISSIBLE_ERROR);
         double targetTPS = RPMtoTPS(targetRPM);
 
         NanoClock systemClock = NanoClock.system();
@@ -312,7 +330,8 @@ public class ShooterController implements Controller {
         numRings.set(numRings.get() - ringCount);
         if (numRings.get() < 0) numRings.set(0);
 
-        if (stopWheelOnFinish) stop();
+        shootingState = false;
+        if (stopWheelOnFinish) stopShooter();
     }
 
     private void bumpRings(int ringCount){
@@ -354,11 +373,16 @@ public class ShooterController implements Controller {
         numRings.set(numRings.get() - ringCount);
         if (numRings.get() < 0) numRings.set(0);
 
-        if (stopWheelOnFinish) stop();
+        shootingState = false;
+        if (stopWheelOnFinish) stopShooter();
+    }
+
+    public void incrementTurretOffset(double inc) {
+        TURRET_OFFSET += inc;
     }
 
     public double getCurrentRPM(){
-        return shooter.getVelocity() / TicksPerRev * 60;
+        return shooter.getVelocity() / TICKS_PER_REV * 60;
     }
 
     public double getTargetRPM() {
@@ -372,7 +396,7 @@ public class ShooterController implements Controller {
     }
 
     private double RPMtoTPS(double RPM){
-        return RPM * TicksPerRev / 60;
+        return RPM * TICKS_PER_REV / 60;
     }
 
     private void bump() {

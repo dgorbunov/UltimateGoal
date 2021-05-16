@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,8 +11,8 @@ import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 
 import java.util.HashMap;
@@ -23,19 +24,21 @@ public class ControllerManager implements Controller{
     private Map<String, Controller> controllers = new HashMap<>();
     protected final Object lock = new Object();
     Telemetry telemetry;
+    MultipleTelemetry telemetryd;
 
-    public ControllerManager(Telemetry telemetry) {
+    public ControllerManager(Telemetry telemetry, MultipleTelemetry telemetryd) {
         this.telemetry = telemetry;
+        this.telemetryd = telemetryd;
     }
 
-    public void make(HardwareMap hardwareMap, Telemetry telemetry){
-        add(new CameraController(hardwareMap, telemetry), FieldConstants.Camera);
-        add(new DrivetrainController(hardwareMap, telemetry), FieldConstants.Drive);
-        add(new HubController(hardwareMap, telemetry), FieldConstants.Hub);
-        add(new IntakeController(hardwareMap, telemetry), FieldConstants.Intake);
-        add(new RearIntakeController(hardwareMap, telemetry), FieldConstants.VertIntake);
-        add(new ShooterController(hardwareMap, telemetry), FieldConstants.Shooter);
-        add(new WobbleController(hardwareMap, telemetry), FieldConstants.Wobble);
+    public void make(HardwareMap hardwareMap, Telemetry telemetry, MultipleTelemetry telemetryd){
+        add(new CameraController(hardwareMap, telemetryd), FieldConstants.Camera);
+        add(new DrivetrainController(hardwareMap, telemetryd), FieldConstants.Drive);
+        add(new HubController(hardwareMap, telemetryd), FieldConstants.Hub);
+        add(new IntakeController(hardwareMap, telemetryd), FieldConstants.Intake);
+        add(new RearIntakeController(hardwareMap, telemetryd), FieldConstants.VertIntake);
+        add(new ShooterController(hardwareMap, telemetry, telemetryd), FieldConstants.Shooter);
+        add(new WobbleController(hardwareMap, telemetryd), FieldConstants.Wobble);
     }
 
     public void add(Controller controller, String controllerName) {
@@ -50,7 +53,7 @@ public class ControllerManager implements Controller{
             controllerName = controllerName.trim().toLowerCase();
             T result = tryGet(classOrInterface, controllerName);
             if (result == null) {
-                telemetry.addData("ControllerManager", String.format("Unable to find a controller with controllerName \"%s\" and type %s",
+                telemetryd.addData("ControllerManager", String.format("Unable to find a controller with controllerName \"%s\" and type %s",
                             controllerName,
                             classOrInterface.getSimpleName()));
             }
@@ -83,7 +86,7 @@ public class ControllerManager implements Controller{
     @Override
     public void init() {
         synchronized (lock) {
-            telemetry.addData("ControllerManager", "init");
+            telemetryd.addData("ControllerManager", "init");
             for (Map.Entry<String, Controller> entry : controllers.entrySet()) {
                 Controller c = (Controller) entry.getValue();
                 c.init();
@@ -94,7 +97,7 @@ public class ControllerManager implements Controller{
     @Override
     public void start() {
         synchronized (lock) {
-            telemetry.addData("ControllerManager", "start");
+            telemetryd.addData("ControllerManager", "start");
             for (Map.Entry<String, Controller> entry : controllers.entrySet()) {
                 Controller c = (Controller) entry.getValue();
                 c.start();
@@ -105,7 +108,7 @@ public class ControllerManager implements Controller{
     @Override
     public void stop() {
         synchronized (lock) {
-            telemetry.addData("ControllerManager", "stop");
+            telemetryd.addData("ControllerManager", "stop");
             for (Map.Entry<String, Controller> entry : controllers.entrySet()) {
                 Controller c = (Controller) entry.getValue();
                 c.stop();

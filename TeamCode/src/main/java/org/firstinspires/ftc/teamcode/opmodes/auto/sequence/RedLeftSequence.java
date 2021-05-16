@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
@@ -36,7 +35,7 @@ public class RedLeftSequence extends Sequence {
         }
 
         actions.add(() -> spinUp(MechConstants.RPMPowerShot));
-        actions.add(() -> moveSplineCustomSpeed(PowerShotPos, 0, 40, -10, 0.90));
+//        actions.add(() -> moveSplineCustomSpeed(PowerShotPos, 0, 40, -10, 0.90));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
 //        actions.add(() -> powerShotStrafe(MechConstants.RPMPowerShot));
 

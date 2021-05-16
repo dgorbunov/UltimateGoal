@@ -9,12 +9,15 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TurretOffsetAdjustment;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
 @Disabled
@@ -37,6 +40,7 @@ public abstract class Tele extends OpModeBase {
         initTime = systemClock.seconds();
 
         drive.setPoseEstimate(MechConstants.TeleStartingPose);
+        shooter.spinUp(RPMGoal);
     }
 
     @Override
@@ -45,7 +49,9 @@ public abstract class Tele extends OpModeBase {
     }
 
     @Override
-    public void start() { super.start(); }
+    public void start() {
+        super.start();
+    }
 
     @Override
     public void loop() {
@@ -54,19 +60,14 @@ public abstract class Tele extends OpModeBase {
         loopTime = systemClock.seconds();
         double matchTime = loopTime - initTime;
 
-        if (manualShoot) {
-            //whenever manual shooting or vertical intake running, drive slow
-            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
-            driveModeButton.resetToggle();
+//        if (shooter.shootingState) {
+//            //whenever shooting, drive slow
+//            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
+//            driveModeButton.resetToggle();
 
-        } else {
-//            if (IntakeController.numRings.get() >= 3 && matchTime < 85) {
-//                shootButton.runOnceBlocking(true, this::autoShot, () -> shootButton.resetToggle());
-//            }
-            shootButton.runOnceBlocking(gameMap.Shoot(), this::autoShot, () -> shootButton.resetToggle());
-            shootManButton.runOnce(gameMap.ShootManual(), this::manualShot);
+//        } else {
+            shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false));
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
-//            if  (RearIntakeController.isRunning && !IntakeController.isRunning) drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
             if (matchTime > 85) {
                 driveModeButton.toggleLoop(
                         gameMap.DriveMode(),
@@ -80,32 +81,23 @@ public abstract class Tele extends OpModeBase {
                         () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
                 );
             }
-        }
+//        }
 
         drive.update();
 
         incrementLeftButton.runOnceBlocking(
                 gameMap.IncrementLeft(),
-                () -> MechConstants.Red.incrementGoalShotAngle(0.4)
-        );
+                () -> shooter.incrementTurretOffset(-TurretOffsetAdjustment));
 
         incrementRightButton.runOnceBlocking(
                 gameMap.IncrementRight(),
-                () -> MechConstants.Red.incrementGoalShotAngle(-0.4)
-        );
+                () -> shooter.incrementTurretOffset(TurretOffsetAdjustment));
 
         intakeButton.toggle(
                 gameMap.Intake(),
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
                 () -> intake.stopIntake());
-
-        vertIntakeButton.toggle(
-                gameMap.VertIntake(),
-                () -> verticalIntake.run(FORWARD),
-                () -> verticalIntake.run(REVERSE),
-                () -> verticalIntake.stop());
-
 
         resetIntakeCounterButton.runOnce(
                 gameMap.ResetIntakeCounter(),
@@ -136,9 +128,8 @@ public abstract class Tele extends OpModeBase {
         stopIntakeButton.runOnce(
                 gameMap.StopAllIntakes(),
                 () -> intake.stopIntake(),
-                () -> verticalIntake.stop(),
-                () -> intakeButton.resetToggle(),
-                () -> vertIntakeButton.resetToggle()
+                () -> rearIntake.stop(),
+                () -> intakeButton.resetToggle()
         );
 
         shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
@@ -148,13 +139,14 @@ public abstract class Tele extends OpModeBase {
         drive.putPacketData("target RPM", shooter.getTargetRPM());
         drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));
 //        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
-        telemetry.addData("Rings Intaked", IntakeController.getNumRings());
-        telemetry.addLine("<strong>Goal angle: </strong>" + MechConstants.Red.GoalShotAngle);
-        telemetry.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
-        telemetry.addData("Rings: Width", VerticalRingDetector.getRingWidth());
-        telemetry.addLine("<strong>Match time: </strong>" + Math.round(matchTime));
-        telemetry.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
-        telemetry.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
+        telemetryd.addData("Rings Intaked", IntakeController.getNumRings());
+        telemetryd.addLine("<strong>Turret Offset: </strong>" + ShooterController.TURRET_OFFSET);
+        telemetryd.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
+        telemetryd.addData("Rings: Width", VerticalRingDetector.getRingWidth());
+        telemetryd.addLine("<strong>Match time: </strong>" + Math.round(matchTime));
+        telemetryd.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
+        telemetryd.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
+
     }
 
     protected abstract void autoShot();

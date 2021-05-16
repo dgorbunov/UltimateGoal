@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,9 +22,10 @@ public class IntakeController implements Controller {
     private HardwareMap hardwareMap;
     private DcMotorEx intake;
     private DcMotorEx intake2;
-    private static CRServo topRoller;
-    private static CRServo leftRoller;
-    private static CRServo rightRoller;
+    private CRServo topRoller;
+    private CRServo leftRoller;
+    private CRServo rightRoller;
+    private Servo gate;
     private DistanceSensor intakeSensor;
 
     public static String ControllerName;
@@ -33,10 +35,14 @@ public class IntakeController implements Controller {
     public static volatile AtomicInteger numRings = new AtomicInteger(0);
     public static int numRingsStale;
 
-    public static double IntakePower = 0.8;
+    public static double IntakePower = 0.65;
     public static double Intake2Power = 1.0;
     public static double RollerPower = 1.0;
     public static double HorizontalPower = 1.0;
+
+    public static double gateInitPos = 0;
+    public static double gateExtendPos = 0;
+    public static double gateLiftPos = 0;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -44,7 +50,7 @@ public class IntakeController implements Controller {
     * */
 
     public static CRServo.Direction topRollerDirection = CRServo.Direction.REVERSE;
-    public static CRServo.Direction leftRollerDirection = CRServo.Direction.FORWARD;
+    public static CRServo.Direction leftRollerDirection = CRServo.Direction.REVERSE;
     public static CRServo.Direction rightRollerDirection = CRServo.Direction.FORWARD;
 
     public IntakeController(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -61,6 +67,7 @@ public class IntakeController implements Controller {
         topRoller = hardwareMap.get(CRServo.class, "top_roller");
         leftRoller = hardwareMap.get(CRServo.class, "left_roller");
         rightRoller = hardwareMap.get(CRServo.class, "right_roller");
+        gate = hardwareMap.get(Servo.class, "intake_gate");
 //        intakeSensor = hardwareMap.get(DistanceSensor.class, "intake_sensor");
 
         topRoller.setDirection(topRollerDirection);
