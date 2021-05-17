@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.BlueRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedLeftSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.RedRightSequence;
 import org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence;
+import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
+import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.RingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Left;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Right;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 
 @Disabled
 @Autonomous(name="Auto", group="Iterative Opmode")
@@ -34,11 +38,15 @@ public class Auto extends OpModeBase {
     public static FieldConstants.Side side;
     public static FieldConstants.Alliance alliance;
     private int ringCount = -1;
+    private TurretUpdateThread turretUpdateThread;
 
     @Override
     public void init() {
         OPMODE_TYPE = OPMODE.Auto;
         super.init();
+
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        shooter.spinUp(RPMPowerShot);
 
         makeSequences();
         synchronized (lock) {
@@ -67,8 +75,10 @@ public class Auto extends OpModeBase {
 
                 telemetryd.addLine("Executing sequence: " + getSequenceName(currentSequence));
 
-                // execute runs async
-                currentSequence.execute();
+//                turretUpdateThread = new TurretUpdateThread(drive);
+//                turretUpdateThread.start();
+
+                currentSequence.execute(); //runs async
             } catch (Exception e) {
                 RobotLog.addGlobalWarningMessage("Exception while executing sequence: " + e.toString());
             }
@@ -80,6 +90,7 @@ public class Auto extends OpModeBase {
 
     @Override
     public void stop() {
+//        if (turretUpdateThread != null) turretUpdateThread.killThread();
         synchronized (lock) {
             if (currentSequence != null) currentSequence.stop();
             super.stop();
@@ -151,6 +162,28 @@ public class Auto extends OpModeBase {
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1); //if null return -1
             telemetryd.addData("Camera returned rings", ringCount);
+        }
+    }
+
+    class TurretUpdateThread extends Thread {
+        public double updateTime = ShooterController.TURRET_UPDATE_RATE;
+        private DrivetrainController drive;
+        boolean alive = true;
+
+        TurretUpdateThread(DrivetrainController drive) {
+            this.drive = drive;
+        }
+
+        public void killThread() {
+            alive = false;
+        }
+
+        public void run() {
+            while (alive) {
+                shooter.robotPos = drive.getPoseEstimate();
+                Sleep.sleep(updateTime);
+            }
+            interrupt();
         }
     }
 }

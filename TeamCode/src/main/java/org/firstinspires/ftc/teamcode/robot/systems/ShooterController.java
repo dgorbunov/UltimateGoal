@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.Controller;
+import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.robot.systems.IntakeController.numRings;
@@ -29,17 +30,17 @@ public class ShooterController implements Controller {
     public static volatile double Delay1 = 750;
     public static volatile double Delay2 = 750;
 
-    public static double BumpPosition = 0.3;
+    public static double BumpPosition = 0.28;
     public static double RetractPosition = 0.38;
 
     private final double TICKS_PER_REV = 28; //Do not modify
 
     public static double MAX_VEL;
     public static double kP = 2;
-    public static double kI = 0.25;
-    public static double kD = 5.4;
+    public static double kI = 0.2;
+    public static double kD = 6.5;
     public static double F = 11.7;
-    public static double PID_ADMISSIBLE_ERROR = 40 ; //in RPM
+    public static double PID_ADMISSIBLE_ERROR = 40 ; //RPM
 
     public volatile boolean shootingState;
     private volatile double targetRPM;
@@ -54,8 +55,8 @@ public class ShooterController implements Controller {
     public static double TURRET_LEFT_LIMIT = 75;
     public static int TURRET_UPDATE_RATE = 15;
 
-    public Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
-    public Vector2d targetPos = GoalPos;
+    public static volatile Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
+    public static volatile Vector2d targetPos = GoalPos;
     private TurretThread turretThread = new TurretThread();
 
     /**
@@ -89,6 +90,7 @@ public class ShooterController implements Controller {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
     private MultipleTelemetry telemetryd;
+    private Servo turret;
 
     public ShooterController(HardwareMap hardwareMap, Telemetry telemetry, MultipleTelemetry telemetryd) {
         this.telemetry = telemetry;
@@ -101,6 +103,7 @@ public class ShooterController implements Controller {
     public void init() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
+        turret = hardwareMap.get(Servo.class, "turret");
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
         turretThread.start();
@@ -123,7 +126,7 @@ public class ShooterController implements Controller {
         turretThread.killThread();
     }
 
-    private void stopShooter() {
+    public void stopShooter() {
         targetRPM = 0;
         shooter.setPower(0);
         shooter.setMotorDisable();
@@ -143,6 +146,18 @@ public class ShooterController implements Controller {
     public void updateTurret(Pose2d robotPos, Vector2d targetPos) {
         this.robotPos = robotPos;
         this.targetPos = targetPos;
+    }
+
+    public void turnTurret(Pose2d robotPos, Vector2d targetPos) {
+        this.robotPos = robotPos;
+        this.targetPos = targetPos;
+
+        //Roadrunner uses inverted x/y axes
+        double dX = targetPos.getY() - robotPos.getY();
+        double dY = targetPos.getX() - robotPos.getX();
+        double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY)) - TURRET_OFFSET;
+//                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())); //for testing
+        turret.setPosition(turnTurretAbsolute(deg));
     }
 
     private double turnTurretAbsolute(double deg) {
@@ -166,22 +181,15 @@ public class ShooterController implements Controller {
 
     @Config
     class TurretThread extends Thread {
-        private Servo turret;
         boolean isRunning = true;
         boolean limitSpeak;
 
         public void run() {
-            turret = hardwareMap.get(Servo.class, "turret");
             turret.setPosition(TURRET_CENTER_POS);
             while (isRunning) {
                 try {
                     sleep(TURRET_UPDATE_RATE);
-                    //Roadrunner uses inverted x/y axes
-                    double dX = targetPos.getY() - robotPos.getY();
-                    double dY = targetPos.getX() - robotPos.getX();
-                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY)) - TURRET_OFFSET;
-//                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())); //for testing
-                    turret.setPosition(turnTurretAbsolute(deg));
+                    turnTurret(robotPos, targetPos);
 
                     if (!limitSpeak && limitHit) {
                         limitSpeak = true;
@@ -242,13 +250,10 @@ public class ShooterController implements Controller {
     public synchronized void powerShot(double RPM){
         stopWheelOnFinish = false;
 
-//        if (powerShotCount == 0 || powerShotCount == 3) {
-//            checkSpeed(RPM);
-//            powerShotCount = 0;
-//        }
-        sleep(125); //buffer
+        checkSpeed(RPM);
         bumpRings(1);
         powerShotCount++;
+        Sleep.sleep(100);
     }
 
     public synchronized void powerShotStrafe(double RPM){
@@ -257,7 +262,8 @@ public class ShooterController implements Controller {
         powerShotCount++;
     }
 
-    private synchronized void checkSpeed(double RPM) {
+    private synchronized void checkSpeed(double targetRPM) {
+        this.targetRPM = targetRPM;
         double ADMISSIBLE_ERROR = RPMtoTPS(PID_ADMISSIBLE_ERROR);
         double targetTPS = RPMtoTPS(targetRPM);
 

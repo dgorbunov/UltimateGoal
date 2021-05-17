@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.robot.Controller;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,9 +41,9 @@ public class IntakeController implements Controller {
     public static double RollerPower = 1.0;
     public static double HorizontalPower = 1.0;
 
-    public static double gateInitPos = 0;
-    public static double gateExtendPos = 0;
-    public static double gateLiftPos = 0;
+    public static double gateInitPos = 0.22;
+    public static double gateLowerPos = 0.98;
+    public static double gateLiftPos = 0.8;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -78,6 +79,10 @@ public class IntakeController implements Controller {
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        if (OpModeBase.getOpModeType() == OpModeBase.OPMODE.Auto) {
+            gate.setPosition(gateInitPos);
+        } else gateLower();
     }
 
     @Override
@@ -88,6 +93,7 @@ public class IntakeController implements Controller {
     @Override
     public void stop() {
         stopIntake();
+        gate.setPosition(gateInitPos);
     }
 
     public void stopIntake() {
@@ -153,10 +159,12 @@ public class IntakeController implements Controller {
         }
     }
 
-    private void speak() {
-        //TODO: crashing
-        numRingsStale = numRings.get();
-        telemetry.speak(numRingsStale + " Rings");
+    public void gateLift(){
+        gate.setPosition(gateLiftPos);
+    }
+
+    public void gateLower() {
+        gate.setPosition(gateLowerPos);
     }
 
     private class SensorThread extends Thread {

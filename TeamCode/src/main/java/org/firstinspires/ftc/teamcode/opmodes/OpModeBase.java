@@ -128,7 +128,7 @@ public class OpModeBase extends OpMode {
         telemetryd.addLine("<h3>Stopped</h3>");
     }
 
-    public static OPMODE getRunningOpMode() {
+    public static OPMODE getOpModeType() {
         return OPMODE_TYPE;
     }
 }

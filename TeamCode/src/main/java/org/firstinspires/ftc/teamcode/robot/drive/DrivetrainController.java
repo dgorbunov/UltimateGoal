@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetect
 import org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants;
 import org.firstinspires.ftc.teamcode.robot.drive.params.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.MockDcMotorEx;
@@ -55,7 +56,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.robot.camera.CameraController.Objects.VERTICAL_RING;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.robot.drive.params.DriveConstants.MAX_ANG_ACCEL;
@@ -77,8 +77,8 @@ public class DrivetrainController extends MecanumDrive implements Controller {
     public static double ALIGNMENT_VEL = 0.02;
     public static double ALIGNMENT_POWER = 0.4;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9, 0.25, 0.6);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0.2, 0.45);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0.8, 0.8);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 1.5, 1);
 
     public static boolean TESTING = false;
 
@@ -347,7 +347,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         Canvas fieldOverlay = packet.fieldOverlay();
         sendExternalPacketData(packet);
         if (drawRings) drawRings(fieldOverlay);
-        DashboardUtil.drawTurretLine(fieldOverlay, getPoseEstimate(), GoalPos);
+        DashboardUtil.drawTurretLine(fieldOverlay, getPoseEstimate(), ShooterController.targetPos);
 
         packet.put("mode", mode);
 

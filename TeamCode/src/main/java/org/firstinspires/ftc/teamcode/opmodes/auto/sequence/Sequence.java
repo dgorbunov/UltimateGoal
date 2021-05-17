@@ -19,17 +19,14 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotStrafePos;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY1;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY2;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotY3;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotOffset;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildBackTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLinearTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedSplineTrajectory;
-import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildLinearTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineHeadingTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildSplineLinearHeadingTrajectory;
@@ -95,17 +92,21 @@ public abstract class Sequence {
     }
 
     public void moveToDropWobble(Vector2d targetZone, double speed) {
-        double endTangent = 0;
-        double targetHeading = 0;
-        double startTangent = 0;
-        if (ringCount == 0) {
-            targetHeading = 0.1; //rotate other way
-            endTangent = -30;
-        }
-        else if (ringCount == 4) endTangent = -20;
+//        double endTangent = 0;
+        double targetHeading = 180;
+//        double startTangent = 0;
+//        if (ringCount == 0) {
+//            targetHeading = 0.1; //rotate other way
+//            endTangent = -30;
+//        }
+//        else if (ringCount == 4) endTangent = -20;
 
-        moveSplineCustomSpeed(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset,
-                targetHeading, startTangent, endTangent, speed);
+        drive.turnAbsolute(Math.toRadians(targetHeading));
+
+//        moveSplineCustomSpeed(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset,
+//                targetHeading, startTangent, endTangent, speed);
+
+        moveLinear(targetZone.getX() + FrontWobbleXOffset, targetZone.getY() + FrontWobbleYOffset, targetHeading);
     }
 
     public void moveLinearTurn(double x, double y, double targetHeading) {
@@ -174,23 +175,19 @@ public abstract class Sequence {
         telemetry.addData("Sequence","moveToWobble");
         WobbleController wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
 
-
-        //TODO: remove or use less backup
-        if (numRings == 1) {
-            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+//        if (numRings == 1) {
+//            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
+//            wobble.readyToPickup();
+//            drive.followTrajectory(buildLinearTrajectory(drive, pos);
+//        } else {
+//            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
             wobble.readyToPickup();
-//            drive.turnAbsolute(175);
-//            drive.followTrajectory(buildLinearTrajectory(drive, drive.getPoseEstimate().getX(), pos.getY(), 180));
-            drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.65));
-        } else {
-            drive.followTrajectory(buildBackTrajectory(drive, 18)); //move back to not hit wobble on turn
-            wobble.readyToPickup();
-            drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, pos.getX(), pos.getY(), 180, 0.85));
-        }
+            drive.followTrajectory(buildLinearTrajectory(drive, pos, 0));
+//        }
     }
 
     public void approachWobble(Vector2d wobblePos) {
-        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 180, 0.70));
+        drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 0, 0.70));
     }
 
     public void shootSequence(Vector2d position, double targetHeading, double RPM, int numRings) {
@@ -212,7 +209,7 @@ public abstract class Sequence {
 
     public void stopShooter(){
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.stop();
+        shooter.stopShooter();
     }
 
     public void shootGoal(int numRings, double RPM) {
@@ -235,39 +232,27 @@ public abstract class Sequence {
     public void powerShot(double RPM) {
         telemetry.addData("Sequence", "powerShot");
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        double sleepDelay = 200;
+        double sleep = 400;
+        sleep(sleep);
 
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.55);
-        sleep(450);
-        //TODO: TURN TO FACE POINT
-        //TODO: INCREASE ACCURACY IN DRIVETRAIN/SLOW DOWN MORE?
-
-        boolean twoRings = false; //hit three powershots with two rings
-        if (twoRings) {
+        Vector2d[] targets = {
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY() + PowerShotOffset + 1.5),
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY()),
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY() - PowerShotOffset + 0.5),
+        };
+        double[] speeds = {
+                RPMPowerShot,
+                RPMPowerShot - 25,
+                RPMPowerShot - 50,
+        };
+        for (int i = 0; i < 3; i++) {
+            shooter.spinUp(speeds[i]);
+            sleep(sleep);
+            drive.update();
+            shooter.turnTurret(drive.getPoseEstimate(), targets[i]);
+            sleep(sleep);
             shooter.powerShot(RPM);
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[1] + PowerShotAbsoluteAngles[2]), 0.55);
-            shooter.powerShot(RPM);
-        } else {
-            shooter.powerShot(RPM);
-            sleep(sleepDelay);
-            for (int i = 1; i < 3; i++) {
-                drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.55);
-                sleep(sleepDelay);
-                shooter.powerShot(RPM);
-                sleep(sleepDelay);
-            }
         }
-        shooter.stop();
-    }
-
-    public void powerShotStrafe(double RPM) {
-        telemetry.addData("Sequence", "powerShotStrafe");
-        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-
-        shooter.spinUp(RPM);
-        drive.followTrajectory(TrajectoryHelper.buildPowerShotStrafeTrajectory(drive, shooter, RPM, PowerShotStrafePos, 0,
-                PowerShotY1, PowerShotY2, PowerShotY3, 0.85));
-        shooter.stop();
     }
 
     public void intakeRings(int numRings, Vector2d position, double heading) {
@@ -317,6 +302,6 @@ public abstract class Sequence {
 
     public void moveToLaunchLine(Vector2d position) {
         telemetry.addData("Sequence","moveToLaunchLine" );
-        drive.followTrajectory(buildLineTrajectory(drive, position.getX(), position.getY()));
+        drive.followTrajectory(buildLinearTrajectory(drive, position, 0));
     }
 }

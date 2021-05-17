@@ -66,7 +66,7 @@ public abstract class Tele extends OpModeBase {
 //            driveModeButton.resetToggle();
 
 //        } else {
-            shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false));
+            shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false), () -> intake.gateLift());
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
             if (matchTime > 85) {
                 driveModeButton.toggleLoop(
@@ -132,13 +132,13 @@ public abstract class Tele extends OpModeBase {
                 () -> intakeButton.resetToggle()
         );
 
+        if (gameMap.Intake()) intake.gateLower();
+
         shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
 
-//        drive.putPacketData("intake sensor", intake.getSensorReading());
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
         drive.putPacketData("target RPM", shooter.getTargetRPM());
         drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));
-//        drive.putPacketData("Num rings intaked", IntakeController.getNumRings());
         telemetryd.addData("Rings Intaked", IntakeController.getNumRings());
         telemetryd.addLine("<strong>Turret Offset: </strong>" + ShooterController.TURRET_OFFSET);
         telemetryd.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());

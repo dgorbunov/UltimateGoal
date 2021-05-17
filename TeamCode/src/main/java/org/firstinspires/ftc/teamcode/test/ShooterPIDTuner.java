@@ -14,8 +14,8 @@ public class ShooterPIDTuner extends OpModeBase {
     //https://docs.google.com/document/u/2/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic
 
     public static double kP = 2;
-    public static double kI = 0.25;
-    public static double kD = 5.4;
+    public static double kI = 0.2;
+    public static double kD = 6.5;
     public static double F = 11.7;
 
     @Override

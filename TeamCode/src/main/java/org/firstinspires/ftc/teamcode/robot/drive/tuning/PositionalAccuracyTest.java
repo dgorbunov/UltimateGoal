@@ -28,7 +28,7 @@ public class PositionalAccuracyTest extends LinearOpMode {
         RED_LEFT, RED_RIGHT, RED_LOCALIZE_POS
     }
 
-    public static StartPos StartPosition = StartPos.RED_LOCALIZE_POS;
+    public static StartPos StartPosition = StartPos.RED_LEFT;
 
     @Override
     public void runOpMode() throws InterruptedException {

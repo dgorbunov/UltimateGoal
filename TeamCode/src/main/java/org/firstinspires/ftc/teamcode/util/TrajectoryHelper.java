@@ -47,6 +47,13 @@ public class TrajectoryHelper {
         return trajectory.build();
     }
 
+    public static Trajectory buildLinearTrajectory(DrivetrainController drive, Vector2d vector, double heading) {
+        TrajectoryBuilder trajectory = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint());
+        trajectory.lineToLinearHeading(new Pose2d(vector, Math.toRadians(heading)));
+
+        return trajectory.build();
+    }
+
     public static Trajectory buildSplineTrajectory(DrivetrainController drive, Pose2d... positions){
         TrajectoryBuilder trajectoryBuilder = new TrajectoryBuilder(drive.getPoseEstimate(), getMaxAngVelConstraint(), getMaxAccelConstraint());
         for (Pose2d position : positions) {
@@ -151,11 +158,11 @@ public class TrajectoryHelper {
                 Math.toRadians(endTangent),
                 new MinVelocityConstraint(
                         Arrays.asList(
-                                new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL),
+                                new AngularVelocityConstraint(speed * DriveConstants.MAX_ANG_VEL),
                                 new MecanumVelocityConstraint(speed * MAX_VEL, DriveConstants.TRACK_WIDTH)
                         )
                 ),
-                new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                new ProfileAccelerationConstraint(speed * DriveConstants.MAX_ACCEL))
                 .build();
 
         return trajectory;

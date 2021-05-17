@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.EndingPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShootingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
@@ -34,10 +36,12 @@ public class RedLeftSequence extends Sequence {
                 break;
         }
 
-        actions.add(() -> spinUp(MechConstants.RPMPowerShot));
-//        actions.add(() -> moveSplineCustomSpeed(PowerShotPos, 0, 40, -10, 0.90));
+        /**
+         * Begin Sequence
+         */
+
+        actions.add(() -> moveSplineCustomSpeed(PowerShootingPos, 0, 0, -45, 0.75));
         actions.add(() -> powerShot(MechConstants.RPMPowerShot));
-//        actions.add(() -> powerShotStrafe(MechConstants.RPMPowerShot));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
         //TODO: LINEAR INSTEAD OF SPLINE
@@ -45,12 +49,14 @@ public class RedLeftSequence extends Sequence {
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, -4, RPMAuto, 1));
+            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMAuto, 1));
         }
         else if (ringCount == 4) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, -4, RPMAuto, 3));
+            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMAuto, 3));
         }
+
+        actions.add(() -> stopShooter());
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
@@ -67,7 +73,8 @@ public class RedLeftSequence extends Sequence {
         } else if (ringCount == 1){
             actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
         } else {
-            actions.add(() -> strafe(RedField.EndingPosition.getX() - 18, RedField.EndingPosition.getY()));
+            actions.add(() -> strafe(drive.getPoseEstimate().getX() - 8, drive.getPoseEstimate().getY()));
+            actions.add(() -> strafe(drive.getPoseEstimate().getX(), EndingPosition.getY()));
             actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
         }
 

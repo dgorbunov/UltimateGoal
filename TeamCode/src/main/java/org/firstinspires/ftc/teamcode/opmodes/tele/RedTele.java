@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPosTele;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.IntakePos;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShootingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
@@ -51,7 +51,7 @@ public class RedTele extends Tele {
         double sleepDelay = 200;
         shooter.spinUp(RPMPowerShot);
         intake.stopWheels();
-        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPos, PowerShotAbsoluteAngles[0], TeleTrajectorySpeed));
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShootingPos, PowerShotAbsoluteAngles[0], TeleTrajectorySpeed));
         intake.stopIntake(false);
 
         sleep(sleepDelay);
