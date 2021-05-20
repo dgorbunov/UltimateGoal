@@ -157,7 +157,7 @@ public class DrivetrainController extends MecanumDrive implements Controller {
         accelConstraint = new ProfileAccelerationConstraint(MAX_ACCEL);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(0.75)), 0.75);
+                new Pose2d(0.5, 0.5, Math.toRadians(1.5)), 0.75);
         //TODO: TUNE this!!
 
         poseHistory = new LinkedList<>();

@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotOffset;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShotAuto;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildBackTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLineTrajectory;
@@ -241,17 +241,17 @@ public abstract class Sequence {
                 new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY() - PowerShotOffset + 0.5),
         };
         double[] speeds = {
-                RPMPowerShot,
-                RPMPowerShot - 25,
-                RPMPowerShot - 50,
+                RPMPowerShotAuto,
+                RPMPowerShotAuto + 75,
+                RPMPowerShotAuto + 75,
         };
         for (int i = 0; i < 3; i++) {
-            shooter.spinUp(speeds[i]);
-            sleep(sleep);
             drive.update();
             shooter.turnTurret(drive.getPoseEstimate(), targets[i]);
             sleep(sleep);
             shooter.powerShot(RPM);
+            shooter.spinUp(speeds[i]);
+            sleep(400);
         }
     }
 

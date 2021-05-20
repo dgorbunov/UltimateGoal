@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
-import org.firstinspires.ftc.teamcode.robot.camera.algorithms.VerticalRingDetector;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
@@ -66,17 +65,17 @@ public abstract class Tele extends OpModeBase {
 //            driveModeButton.resetToggle();
 
 //        } else {
-            shootButton.runOnce(gameMap.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false), () -> intake.gateLift());
+            shootButton.runOnce(gamepad.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false), () -> intake.gateLift());
             //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
             if (matchTime > 85) {
                 driveModeButton.toggleLoop(
-                        gameMap.DriveMode(),
+                        gamepad.DriveMode(),
                         () -> drive.driveFieldCentric(gamepad1, 1.0, Auto.getAlliance()),
                         () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
                 );
             } else {
                 driveModeButton.toggleLoop(
-                        gameMap.DriveMode(),
+                        gamepad.DriveMode(),
                         () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
                         () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
                 );
@@ -86,65 +85,65 @@ public abstract class Tele extends OpModeBase {
         drive.update();
 
         incrementLeftButton.runOnceBlocking(
-                gameMap.IncrementLeft(),
+                gamepad.IncrementLeft(),
                 () -> shooter.incrementTurretOffset(-TurretOffsetAdjustment));
 
         incrementRightButton.runOnceBlocking(
-                gameMap.IncrementRight(),
+                gamepad.IncrementRight(),
                 () -> shooter.incrementTurretOffset(TurretOffsetAdjustment));
 
         intakeButton.toggle(
-                gameMap.Intake(),
+                gamepad.Intake(),
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
                 () -> intake.stopIntake());
 
         resetIntakeCounterButton.runOnce(
-                gameMap.ResetIntakeCounter(),
+                gamepad.ResetIntakeCounter(),
                 () -> IntakeController.numRings.set(0));
 
         wobbleButton.toggle(
-                gameMap.Wobble(),
+                gamepad.Wobble(),
                 () -> wobble.dropTele(),
                 () -> wobble.pickupTele());
 
         wobbleDeliverButton.toggle(
-                gameMap.WobbleDeliver(),
+                gamepad.WobbleDeliver(),
                 () -> wobble.release());
 
         powerShotButton.runOnceBlocking(
-                gameMap.PowerShot(),
+                gamepad.PowerShot(),
                 this::powerShot);
 
         autoIntakeButton.runOnceBlocking(
-                gameMap.AutoIntake(),
+                gamepad.AutoIntake(),
                 this::autoIntake);
 
         localizeButton.runOnce(
-                gameMap.Localize(),
+                gamepad.Localize(),
                 this::localizeWithCorner
         );
 
         stopIntakeButton.runOnce(
-                gameMap.StopAllIntakes(),
+                gamepad.StopAllIntakes(),
                 () -> intake.stopIntake(),
                 () -> rearIntake.stop(),
                 () -> intakeButton.resetToggle()
         );
 
-        if (gameMap.Intake()) intake.gateLower();
+        if (gamepad.Intake()) intake.gateLower();
 
         shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
 
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
         drive.putPacketData("target RPM", shooter.getTargetRPM());
         drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));
-        telemetryd.addData("Rings Intaked", IntakeController.getNumRings());
+        telemetryd.addLine(shooter.getSpeedStability());
         telemetryd.addLine("<strong>Turret Offset: </strong>" + ShooterController.TURRET_OFFSET);
-        telemetryd.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
-        telemetryd.addData("Rings: Width", VerticalRingDetector.getRingWidth());
+//        telemetryd.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
+//        telemetryd.addData("Rings: Width", VerticalRingDetector.getRingWidth());
         telemetryd.addLine("<strong>Match time: </strong>" + Math.round(matchTime));
-        telemetryd.addLine("<strong>Using: </strong>" + hub.getFormattedCurrentDraw());
+        telemetryd.addLine("<strong>Power Consumption: </strong>" + hub.getFormattedCurrentDraw());
         telemetryd.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
 
     }

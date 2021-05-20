@@ -30,8 +30,8 @@ public class ShooterController implements Controller {
     public static volatile double Delay1 = 750;
     public static volatile double Delay2 = 750;
 
-    public static double BumpPosition = 0.28;
-    public static double RetractPosition = 0.38;
+    public static double ServoBumpPosition = 0.18;
+    public static double ServoRetractPosition = 0.33;
 
     private final double TICKS_PER_REV = 28; //Do not modify
 
@@ -40,7 +40,7 @@ public class ShooterController implements Controller {
     public static double kI = 0.2;
     public static double kD = 6.5;
     public static double F = 11.7;
-    public static double PID_ADMISSIBLE_ERROR = 40 ; //RPM
+    public static double SHOOTER_ADMISSIBLE_ERROR = 40; //RPM
 
     public volatile boolean shootingState;
     private volatile double targetRPM;
@@ -130,7 +130,7 @@ public class ShooterController implements Controller {
         targetRPM = 0;
         shooter.setPower(0);
         shooter.setMotorDisable();
-        bumper.setPosition(RetractPosition);
+        bumper.setPosition(ServoRetractPosition);
         shootingState = false;
     }
 
@@ -253,7 +253,7 @@ public class ShooterController implements Controller {
         checkSpeed(RPM);
         bumpRings(1);
         powerShotCount++;
-        Sleep.sleep(100);
+        Sleep.sleep(150);
     }
 
     public synchronized void powerShotStrafe(double RPM){
@@ -264,7 +264,7 @@ public class ShooterController implements Controller {
 
     private synchronized void checkSpeed(double targetRPM) {
         this.targetRPM = targetRPM;
-        double ADMISSIBLE_ERROR = RPMtoTPS(PID_ADMISSIBLE_ERROR);
+        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
         double targetTPS = RPMtoTPS(targetRPM);
 
         NanoClock systemClock = NanoClock.system();
@@ -281,6 +281,13 @@ public class ShooterController implements Controller {
            RobotLog.clearGlobalWarningMsg();
            RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
        }
+    }
+
+    public String getSpeedStability() {
+        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
+        double targetTPS = RPMtoTPS(targetRPM);
+        if ((Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)) return "<strong>Waiting for shooter velocity to stabilize</strong>";
+        else return "<strong>Shooter velocity is stable</strong>";
     }
 
     /**
@@ -406,10 +413,10 @@ public class ShooterController implements Controller {
     }
 
     private void bump() {
-        bumper.setPosition(BumpPosition);
+        bumper.setPosition(ServoBumpPosition);
     }
     private void retract() {
-        bumper.setPosition(RetractPosition);
+        bumper.setPosition(ServoRetractPosition);
     }
 
 }

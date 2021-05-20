@@ -21,7 +21,7 @@ public class MechConstants {
     public static double RPMAuto = 3850;
     @Deprecated
     public static double RPMGoalFromStack = 3600;
-    public static double RPMPowerShot = 3200;
+    public static double RPMPowerShotAuto = 3230;
     public static double TurretOffsetAdjustment = 3;
     public static double TeleTrajectorySpeed = 0.95;
 

@@ -58,9 +58,9 @@ public class RedRightSequence extends Sequence {
 //        actions.add(() -> shootGoal(3, MechConstants.RPMGoal));
 
         actions.add(() -> moveLinear(RedRight.PowerShotIntermediatePos, 0));
-        actions.add(() -> spinUp(MechConstants.RPMPowerShot));
+        actions.add(() -> spinUp(MechConstants.RPMPowerShotAuto));
         actions.add(() -> moveLinear(PowerShootingPos, 0));
-        actions.add(() -> powerShot(MechConstants.RPMPowerShot));
+        actions.add(() -> powerShot(MechConstants.RPMPowerShotAuto));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
         //TODO: RESPONSIBLE FOR INACCURACY IN COMPOUND LINEAR MOVES..?

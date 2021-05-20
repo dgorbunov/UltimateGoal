@@ -41,7 +41,7 @@ public class RedLeftSequence extends Sequence {
          */
 
         actions.add(() -> moveSplineCustomSpeed(PowerShootingPos, 0, 0, -45, 0.75));
-        actions.add(() -> powerShot(MechConstants.RPMPowerShot));
+        actions.add(() -> powerShot(MechConstants.RPMPowerShotAuto));
 
         //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
         //TODO: LINEAR INSTEAD OF SPLINE

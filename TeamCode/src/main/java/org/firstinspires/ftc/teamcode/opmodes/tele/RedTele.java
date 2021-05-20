@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.IntakePos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShootingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShotAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TeleTrajectorySpeed;
@@ -49,7 +49,7 @@ public class RedTele extends Tele {
         rearIntake.stop();
 
         double sleepDelay = 200;
-        shooter.spinUp(RPMPowerShot);
+        shooter.spinUp(RPMPowerShotAuto);
         intake.stopWheels();
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShootingPos, PowerShotAbsoluteAngles[0], TeleTrajectorySpeed));
         intake.stopIntake(false);
@@ -58,12 +58,12 @@ public class RedTele extends Tele {
         drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
         sleep(sleepDelay);
 
-        shooter.powerShot(RPMPowerShot);
+        shooter.powerShot(RPMPowerShotAuto);
         sleep(sleepDelay);
         for (int i = 1; i < 3; i++) {
             drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
             sleep(sleepDelay);
-            shooter.powerShot(RPMPowerShot);
+            shooter.powerShot(RPMPowerShotAuto);
             sleep(sleepDelay);
         }
 

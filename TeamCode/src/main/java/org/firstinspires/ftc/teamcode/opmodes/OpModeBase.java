@@ -16,15 +16,15 @@ import org.firstinspires.ftc.teamcode.robot.camera.libs.OpenCVController.PIPELIN
 import org.firstinspires.ftc.teamcode.robot.drive.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.systems.HubController;
 import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
-import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.RearIntakeController;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.robot.systems.WobbleController;
 import org.firstinspires.ftc.teamcode.util.Button;
 
 
 @Disabled
 public class OpModeBase extends OpMode {
-    protected GamepadMappings gameMap;
+    protected GamepadMappings gamepad;
     protected Button intakeButton = new Button();
     protected Button resetIntakeCounterButton = new Button();
     protected Button autoIntakeButton = new Button();
@@ -94,7 +94,7 @@ public class OpModeBase extends OpMode {
 
         controllers.init();
 
-        gameMap = new GamepadMappings(gamepad1, gamepad2);
+        gamepad = new GamepadMappings(gamepad1, gamepad2);
 
         telemetryd.addLine("<h3>Initialized</h3>");
     }
@@ -122,8 +122,6 @@ public class OpModeBase extends OpMode {
         telemetryd.addLine("<strong>Stopping...</strong>");
 
         controllers.stop();
-//        gamepad1.stop();
-//        gamepad2.stop();
 
         telemetryd.addLine("<h3>Stopped</h3>");
     }
