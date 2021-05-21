@@ -40,7 +40,7 @@ public class RingDetector extends OpenCvPipeline {
 
 
     public static enum ringNames {
-        NONE, ONE, FOUR
+        NO, ONE, FOUR
     }
 
     public RingDetector(Telemetry telemetry, boolean debug) {
@@ -158,7 +158,7 @@ public class RingDetector extends OpenCvPipeline {
                 }
             } else {
                 ringCount = 0; // ZERO
-                ringCountStr = ringNames.NONE.toString();
+                ringCountStr = ringNames.NO.toString();
             }
 
             if (debug) telemetry.addData("Vision: Height", ringCountStr);

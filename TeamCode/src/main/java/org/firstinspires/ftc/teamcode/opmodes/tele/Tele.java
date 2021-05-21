@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.opmodes.OpModeBase;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.GamepadMappings;
 import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
-import org.firstinspires.ftc.teamcode.robot.systems.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
@@ -59,30 +58,27 @@ public abstract class Tele extends OpModeBase {
         loopTime = systemClock.seconds();
         double matchTime = loopTime - initTime;
 
-//        if (shooter.shootingState) {
-//            //whenever shooting, drive slow
-//            drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance());
-//            driveModeButton.resetToggle();
-
-//        } else {
-            shootButton.runOnce(gamepad.Shoot(), () -> shooter.shoot(1, MechConstants.RPMGoal, false), () -> intake.gateLift());
-            //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
-            if (matchTime > 85) {
-                driveModeButton.toggleLoop(
-                        gamepad.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, 1.0, Auto.getAlliance()),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
-                );
-            } else {
-                driveModeButton.toggleLoop(
-                        gamepad.DriveMode(),
-                        () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
-                        () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
-                );
-            }
-//        }
+        //TODO: FIX OPMODE STUCK LOOP TIMEOUT, USE ITERATIVE OP MODE
+        if (matchTime > 85) {
+            driveModeButton.toggleLoop(
+                    gamepad.DriveMode(),
+                    () -> drive.driveFieldCentric(gamepad1, 1.0, Auto.getAlliance()),
+                    () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
+            );
+        } else {
+            driveModeButton.toggleLoop(
+                    gamepad.DriveMode(),
+                    () -> drive.driveFieldCentric(gamepad1, DriveFullPower, Auto.getAlliance()),
+                    () -> drive.driveFieldCentric(gamepad1, DriveSlowPower, Auto.getAlliance())
+            );
+        }
 
         drive.update();
+
+        shootButton.runInQueueAsync(gamepad.Shoot(),
+                () -> intake.gateLift(),
+                () -> shooter.shoot(1, MechConstants.RPMGoal, false),
+                () -> intake.gateLower());
 
         incrementLeftButton.runOnceBlocking(
                 gamepad.IncrementLeft(),
@@ -97,10 +93,6 @@ public abstract class Tele extends OpModeBase {
                 () -> intake.run(FORWARD),
                 () -> intake.run(REVERSE),
                 () -> intake.stopIntake());
-
-        resetIntakeCounterButton.runOnce(
-                gamepad.ResetIntakeCounter(),
-                () -> IntakeController.numRings.set(0));
 
         wobbleButton.toggle(
                 gamepad.Wobble(),
@@ -130,8 +122,6 @@ public abstract class Tele extends OpModeBase {
                 () -> rearIntake.stop(),
                 () -> intakeButton.resetToggle()
         );
-
-        if (gamepad.Intake()) intake.gateLower();
 
         shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
 

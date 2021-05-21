@@ -16,6 +16,8 @@ public class TurretTest extends OpMode {
     public static double turretLowerLimit = 0.25;
     public static double turretUpperLimit = 0.75;
 
+    Servo turret;
+
     /**
      * Origin in center
      * ===========================
@@ -27,7 +29,17 @@ public class TurretTest extends OpMode {
      * | -90 -------|  •  |---------- +90 deg
      */
 
-    Servo turret;
+
+    /**
+     * Servo positions
+     * ===========================
+     * |               | centerPos
+     * |               |
+     * |               |
+     * |               |
+     * |             _____
+     * | 1   -------|  •  |---------- 0
+     */
 
     @Override
     public void init() {

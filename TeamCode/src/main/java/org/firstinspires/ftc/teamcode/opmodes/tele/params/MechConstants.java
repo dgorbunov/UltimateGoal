@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
 @Config
 public class MechConstants {
 
-    public static Pose2d TeleStartingPose = new Pose2d(FieldConstants.RedLeft.StartingPos, 0);
+    public static Pose2d TeleStartingPose = new Pose2d(FieldConstants.RedField.LocalizePos, 0);
     /**
-     * Set by Sequence
+     * This is a default, it is set by Sequence
      * @see org.firstinspires.ftc.teamcode.opmodes.auto.sequence.Sequence#stop()
      */
 
@@ -19,10 +19,8 @@ public class MechConstants {
 
     public static double RPMGoal = 3175;
     public static double RPMAuto = 3850;
-    @Deprecated
-    public static double RPMGoalFromStack = 3600;
     public static double RPMPowerShotAuto = 3230;
-    public static double TurretOffsetAdjustment = 3;
+    public static double TurretOffsetAdjustment = 2;
     public static double TeleTrajectorySpeed = 0.95;
 
     @Config

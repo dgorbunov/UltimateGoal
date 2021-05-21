@@ -86,6 +86,7 @@ public class RedTele extends Tele {
 
     @Override
     protected synchronized void autoIntake() {
+        drive.stop();
         drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, IntakePos,0, TeleTrajectorySpeed));
     }
 

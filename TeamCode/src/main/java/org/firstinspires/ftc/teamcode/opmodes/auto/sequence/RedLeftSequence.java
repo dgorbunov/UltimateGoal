@@ -49,11 +49,11 @@ public class RedLeftSequence extends Sequence {
 
         if (ringCount == 1) {
             actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMAuto, 1));
+            actions.add(() -> goalShot(RedField.GoalShotPos, 0, RPMAuto, 1));
         }
         else if (ringCount == 4) {
-            actions.add(() -> intakeRings(ringCount, RedField.IntakeFourPos, 0));
-            actions.add(() -> shootSequence(RedField.GoalShotPos, 0, RPMAuto, 3));
+            actions.add(() -> intakeRings(4, RedField.IntakeFourPos, 0));
+            actions.add(() -> goalShot(RedField.GoalShotPos, 0, RPMAuto, 3));
         }
 
         actions.add(() -> stopShooter());
@@ -69,13 +69,13 @@ public class RedLeftSequence extends Sequence {
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {
-            actions.add(() -> moveToLaunchLine(RedField.EndingPositionFour));
+            actions.add(() -> moveToLaunchLine(EndingPosition.getX()));
         } else if (ringCount == 1){
-            actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+            actions.add(() -> moveToLaunchLine(EndingPosition.getX()));
         } else {
             actions.add(() -> strafe(drive.getPoseEstimate().getX() - 8, drive.getPoseEstimate().getY()));
             actions.add(() -> strafe(drive.getPoseEstimate().getX(), EndingPosition.getY()));
-            actions.add(() -> moveToLaunchLine(RedField.EndingPosition));
+            actions.add(() -> moveToLaunchLine(EndingPosition.getX()));
         }
 
         actions.add(() -> stop());

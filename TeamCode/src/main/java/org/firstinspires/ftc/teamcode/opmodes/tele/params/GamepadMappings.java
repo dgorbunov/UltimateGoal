@@ -18,9 +18,6 @@ public class GamepadMappings {
 
     public boolean DriveMode() { return gamepad1.right_bumper && !gamepad1.left_bumper; }
     public boolean Shoot() { return gamepad1.a && !gamepad1.start; }
-    public boolean ShootManual() {
-        return gamepad1.y;
-    }
     public boolean PowerShot() {
         return gamepad1.b && !gamepad1.start;
     }
@@ -33,14 +30,7 @@ public class GamepadMappings {
     }
     public boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
-        return gamepad2.back;
-    }
-    public boolean VertIntake() {
-        if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.start && !gamepad1.b && !gamepad1.a;
-        return gamepad2.start && !gamepad2.b && !gamepad2.a;
-    }
-    public boolean SweepFloor() {
-        return gamepad2.right_bumper;
+        return gamepad2.back || (gamepad2.start && !gamepad2.b);
     }
     public boolean StopAllIntakes() {
         return gamepad2.x;
@@ -55,9 +45,6 @@ public class GamepadMappings {
     public boolean WobbleDeliver() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_left || gamepad1.dpad_right;
         return gamepad2.b && !gamepad2.start;
-    }
-    public boolean WobbleAlign() {
-        return gamepad1.start && gamepad1.back;
     }
 
     public boolean Localize() {

@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.util.Actions;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.FrontWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
@@ -190,7 +189,7 @@ public abstract class Sequence {
         drive.followTrajectory(buildCustomSpeedLinearTrajectory(drive, wobblePos.getX(), wobblePos.getY(), 0, 0.70));
     }
 
-    public void shootSequence(Vector2d position, double targetHeading, double RPM, int numRings) {
+    public void goalShot(Vector2d position, double targetHeading, double RPM, int numRings) {
         telemetry.addData("Sequence","moveToShoot" );
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
@@ -266,29 +265,26 @@ public abstract class Sequence {
 
             case (1):
                 telemetry.addData("Sequence", "intake 1 ring");
-//                drive.turn(Math.toRadians(heading));
-                drive.turnToFacePoint(position);
+//                drive.turnToFacePoint(position);
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.85));
-                while (IntakeController.numRings.get() < 1 && drive.isBusy()) drive.update();
+                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, position, 0.80));
+//                while (IntakeController.numRings.get() < 1 && drive.isBusy()) drive.update();
                 drive.stop();
                 break;
 
             case (4):
-                telemetry.addData("Sequence", "intake 4 rings");
-//                drive.turn(Math.toRadians(heading));
-                drive.turnToFacePoint(new Vector2d(position.getX() + 3, position.getY()));
+                telemetry.addData("Sequence", "intake 4 rings");;
+//                drive.turnToFacePoint(new Vector2d(position.getX() + 3, position.getY()));
                 intake.run(FORWARD);
 
-                drive.followTrajectoryAsync(buildCustomSpeedLineTrajectory(drive, position, 0.35));
-                while (IntakeController.numRings.get() < 3 && drive.isBusy()) {
-                    drive.update();
-                    telemetry.addData("NumRings:", IntakeController.numRings.get());
-                    telemetry.update();
-                }
-                drive.stop();
-                intake.runWheels(REVERSE);
+                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, position, 0.40));
+//                while (IntakeController.numRings.get() < 3 && drive.isBusy()) {
+//                    drive.update();
+//                    telemetry.addData("NumRings:", IntakeController.numRings.get());
+//                    telemetry.update();
+//                }
+//                drive.stop();
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");
@@ -300,8 +296,8 @@ public abstract class Sequence {
         intake.stopIntake();
     }
 
-    public void moveToLaunchLine(Vector2d position) {
+    public void moveToLaunchLine(double x) {
         telemetry.addData("Sequence","moveToLaunchLine" );
-        drive.followTrajectory(buildLinearTrajectory(drive, position, 0));
+        moveLinear(x, drive.getPoseEstimate().getY(),0);
     }
 }

@@ -55,32 +55,18 @@ public class ShooterController implements Controller {
     public static double TURRET_LEFT_LIMIT = 75;
     public static int TURRET_UPDATE_RATE = 15;
 
+    public static final double SPEED_FUNC_SLOPE = 8.154761905;
+    public static final double SPEED_FUNC_INTERCEPT = 2653.571429;
+    public static final double SPEED_FUNC_POWERSHOT_OFFSET = -325;
+    
+    public static enum ShootingMode {
+        GOAL, POWERSHOT
+    };
+    public static volatile ShootingMode shootingMode = ShootingMode.GOAL;
+
     public static volatile Pose2d robotPos = new Pose2d(FieldConstants.RedRight.StartingPos, 0);
     public static volatile Vector2d targetPos = GoalPos;
     private TurretThread turretThread = new TurretThread();
-
-    /**
-     * Origin in center
-     * ===========================
-     * |               | 0 deg
-     * |               |
-     * |               |
-     * |               |
-     * |             _____
-     * | -90 -------|  •  |---------- +90 deg
-     */
-
-
-    /**
-     * Servo positions
-     * ===========================
-     * |               | centerPos
-     * |               |
-     * |               |
-     * |               |
-     * |             _____
-     * | 1   -------|  •  |---------- 0
-     */
 
     public static DcMotorSimple.Direction Direction = DcMotorSimple.Direction.REVERSE;
     public static String ControllerName;
@@ -146,6 +132,7 @@ public class ShooterController implements Controller {
     public void updateTurret(Pose2d robotPos, Vector2d targetPos) {
         this.robotPos = robotPos;
         this.targetPos = targetPos;
+        setRPM(calculateRPM(robotPos, targetPos, shootingMode));
     }
 
     public void turnTurret(Pose2d robotPos, Vector2d targetPos) {
@@ -158,6 +145,16 @@ public class ShooterController implements Controller {
         double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())) + Math.toDegrees(Math.atan(dX/dY)) - TURRET_OFFSET;
 //                    double deg = -Math.toDegrees(Angle.normDelta(robotPos.getHeading())); //for testing
         turret.setPosition(turnTurretAbsolute(deg));
+    }
+
+    private double calculateRPM(Pose2d robotPos, Vector2d goalPos, ShootingMode mode) {
+        double a = goalPos.getY() - robotPos.getY();
+        double b = goalPos.getX() - robotPos.getX();
+        double distance = Math.sqrt(a*a + b*b) + 9; //measurement bias
+        double speed = SPEED_FUNC_SLOPE * distance + SPEED_FUNC_INTERCEPT;
+
+        if (mode == ShootingMode.POWERSHOT) return speed + SPEED_FUNC_POWERSHOT_OFFSET;
+        return speed;
     }
 
     private double turnTurretAbsolute(double deg) {
@@ -402,8 +399,8 @@ public class ShooterController implements Controller {
         return targetRPM;
     }
 
-    private void setRPM(double RPM) {
-        targetRPM = RPM;
+    private void setRPM(double targetRPM) {
+        this.targetRPM = targetRPM;
         shooter.setMotorEnable();
         shooter.setVelocity(RPMtoTPS(targetRPM));
     }

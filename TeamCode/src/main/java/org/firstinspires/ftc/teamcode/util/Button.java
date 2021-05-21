@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 /**
  * Author: Daniel
  * Easy to use interface for logic operations for booleans
- * Recommended to only use one of these methods per boolean
+ * Use one method and one object per boolean
  */
 
 public class Button {
@@ -69,6 +69,20 @@ public class Button {
                 for (Runnable method: methods) {
                     method.run();
                 }
+            }
+        } else pressed = false;
+    }
+
+    /**
+     * Runs method(s) once, no matter the length of button press
+     */
+    public void runInQueueAsync(boolean buttonState, Runnable... methods){
+        if (buttonState) {
+            if (!pressed) {
+                pressed = true;
+                Actions actions = new Actions();
+                for (Runnable method : methods) actions.add(method);
+                new Thread(actions::run).start();
             }
         } else pressed = false;
     }

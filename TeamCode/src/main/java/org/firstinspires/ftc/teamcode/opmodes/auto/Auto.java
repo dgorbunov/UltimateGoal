@@ -157,12 +157,10 @@ public class Auto extends OpModeBase {
             return;
         }
 
-        telemetryd.addData("Camera returned rings", camera.getRingCountStr());
-
         int rings = camera.getRingCount();
         synchronized (lock) {
             ringCount = Optional.ofNullable(rings).orElse(-1); //if null return -1
-            telemetryd.addData("Camera returned rings", ringCount);
+            telemetryd.addLine(ringCount + " (" + camera.getRingCountStr() + ") " + "rings detected");
         }
     }
 
