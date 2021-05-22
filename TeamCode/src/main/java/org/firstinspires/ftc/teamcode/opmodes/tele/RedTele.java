@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.tele;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
+import org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants;
+import org.firstinspires.ftc.teamcode.robot.systems.ShooterController;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 import org.firstinspires.ftc.teamcode.util.TrajectoryHelper;
 
@@ -11,11 +14,12 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShotPosTele;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.IntakePos;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShootingPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotOffset;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPosAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShotAuto;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.PowerShotAbsoluteAngles;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TeleTrajectorySpeed;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
@@ -45,30 +49,32 @@ public class RedTele extends Tele {
 
     @Override
     protected synchronized void powerShot() {
-        drive.stop();
-        rearIntake.stop();
+        telemetry.addData("Sequence", "powerShot");
+        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+        double sleep = 500;
 
-        double sleepDelay = 200;
-        shooter.spinUp(RPMPowerShotAuto);
-        intake.stopWheels();
-        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShootingPos, PowerShotAbsoluteAngles[0], TeleTrajectorySpeed));
-        intake.stopIntake(false);
+        drive.followTrajectory(TrajectoryHelper.buildCustomSpeedLinearTrajectory(drive, PowerShotPosAuto, 0, 0.90));
 
-        sleep(sleepDelay);
-        drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[0]), 0.65);
-        sleep(sleepDelay);
+        Vector2d[] targets = {
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY() + PowerShotOffset),
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY()),
+                new Vector2d(FieldConstants.RedField.MiddlePowerShotPos.getX(), MiddlePowerShotPos.getY() - PowerShotOffset),
+        };
 
-        shooter.powerShot(RPMPowerShotAuto);
-        sleep(sleepDelay);
-        for (int i = 1; i < 3; i++) {
-            drive.turnAbsolute(Math.toRadians(PowerShotAbsoluteAngles[i]), 0.65);
-            sleep(sleepDelay);
-            shooter.powerShot(RPMPowerShotAuto);
-            sleep(sleepDelay);
+        double[] speeds = {
+                RPMPowerShot,
+                RPMPowerShot,
+                RPMPowerShot,
+        };
+        for (int i = 0; i < 3; i++) {
+            drive.update();
+            shooter.updateTurretAuto(drive.getPoseEstimate(), targets[i]);
+            sleep(sleep * 1.5);
+            shooter.powerShot(RPMPowerShot);
+            shooter.updateTurretAuto(drive.getPoseEstimate(), new Vector2d(drive.getPoseEstimate().getX() + 10, drive.getPoseEstimate().getY() - 5)); //reset
+            shooter.spinUp(speeds[i]);
+            sleep(sleep);
         }
-
-        sleep(50); //buffer
-        shooter.stop();
     }
 
     @Override

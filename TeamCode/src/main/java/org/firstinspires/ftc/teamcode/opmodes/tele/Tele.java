@@ -111,6 +111,16 @@ public abstract class Tele extends OpModeBase {
                 gamepad.AutoIntake(),
                 this::autoIntake);
 
+        increasePowerButton.runOnce(
+                gamepad.IncreasePower(),
+                () -> shooter.incrementPower(35)
+        );
+
+        decreasePowerButton.runOnce(
+                gamepad.DecreasePower(),
+                () -> shooter.incrementPower(-35)
+        );
+
         localizeButton.runOnce(
                 gamepad.Localize(),
                 this::localizeWithCorner
@@ -123,17 +133,25 @@ public abstract class Tele extends OpModeBase {
                 () -> intakeButton.resetToggle()
         );
 
-        shooter.updateTurret(drive.getPoseEstimate(), GoalPos);
+        straightenTurretButton.toggleLoop(
+                gamepad.StraightenTurret(),
+                () -> shooter.updateTurret(drive.getPoseEstimate(), GoalPos),
+                () -> shooter.lockTurret()
+        );
+
+        tapperButton.toggle(
+                gamepad.Tapper(),
+                () -> shooter.tapperExtend(),
+                () -> shooter.tapperRetract()
+        );
 
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());
         drive.putPacketData("target RPM", shooter.getTargetRPM());
         drive.putPacketData("loop time", Math.round(systemClock.seconds() * 1000 - loopTime  * 1000));
         telemetryd.addLine(shooter.getSpeedStability());
         telemetryd.addLine("<strong>Turret Offset: </strong>" + ShooterController.TURRET_OFFSET);
-//        telemetryd.addData("Rings: Aspect Ratio", VerticalRingDetector.getAspectRatio());
-//        telemetryd.addData("Rings: Width", VerticalRingDetector.getRingWidth());
-        telemetryd.addLine("<strong>Match time: </strong>" + Math.round(matchTime));
         telemetryd.addLine("<strong>Power Consumption: </strong>" + hub.getFormattedCurrentDraw());
+        telemetryd.addLine("<strong>Match Time: </strong>" + Math.round(matchTime));
         telemetryd.addLine("<strong>Loop Time: </strong>" + Math.round(systemClock.seconds() * 1000 - loopTime  * 1000) + " ms");
 
     }

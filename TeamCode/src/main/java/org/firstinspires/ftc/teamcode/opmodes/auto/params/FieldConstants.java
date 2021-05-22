@@ -42,10 +42,10 @@ public class FieldConstants {
         public static final Vector2d TargetZoneB = new Vector2d(36,-37);
         public static final Vector2d TargetZoneC = new Vector2d(58.5,-61); //really x=60
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
-        public static final Vector2d GoalShotPos = new Vector2d(-4, -41);
         public static final Vector2d PowerShotStrafePos = new Vector2d(-4, -8);
         public static final Vector2d IntakeOnePos = RingPos;
-        public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 12, RingPos.getY());
+        public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 22, -36.5);
+        public static final Vector2d IntakeFourIntermediatePos = new Vector2d(RingPos.getX() + 8, -36.5);
         public static final Vector2d LeftWobblePos = new Vector2d(-36, -20);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 7, LeftWobblePos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-35.5, -49);
@@ -58,15 +58,13 @@ public class FieldConstants {
         public static final Vector2d GoalShotPosTele = IntakePos;
         public static final Vector2d GoalPos = new Vector2d(72, -36);
         public static final Vector2d MiddlePowerShotPos = new Vector2d (72, -12);
-        public static final Vector2d PowerShootingPos = new Vector2d(RingPos.getX() - 12, RingPos.getY());
-        public static double PowerShotOffset = 7.5;
+        public static final Vector2d GoalShootingPosAuto = new Vector2d(RingPos.getX() - 12, -36.5);
+        public static final Vector2d PowerShotPosAuto = new Vector2d(-2, -36.5);
+        public static final double PowerShotOffset = 7.5;
         public static final double SideWobbleXOffset = 0;
-        public static final double SideWobbleYOffset = 6;
+        public static final double SideWobbleYOffset = 7.5;
         public static final double FrontWobbleXOffset = -15;
         public static final double FrontWobbleYOffset = 3;
-        public static final double PowerShotY1 = -10;
-        public static final double PowerShotY2 = -15;
-        public static final double PowerShotY3 = -20;
     }
 
     @Config
@@ -81,7 +79,7 @@ public class FieldConstants {
         public static final Vector2d StartingPos = new Vector2d(-61.75, -50.50); //offset from center beam is 8mm = 0.3 in, tape offset from mat is +- 2.2 in
         public static final Vector2d LaunchLine = new Vector2d(12 - TapeWidth, StartingPos.getY());
         public static final Vector2d IntermediatePos = new Vector2d(RedField.RingPos.getX() + 6, RedField.RingPos.getY() - 19);
-        public static final Vector2d PowerShotIntermediatePos = new Vector2d(RedField.PowerShootingPos.getX(), -52);
+        public static final Vector2d PowerShotIntermediatePos = new Vector2d(RedField.GoalShootingPosAuto.getX(), -52);
     }
 
     @Config

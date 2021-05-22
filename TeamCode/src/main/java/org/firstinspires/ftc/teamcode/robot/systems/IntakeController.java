@@ -41,9 +41,9 @@ public class IntakeController implements Controller {
     public static double RollerPower = 1.0;
     public static double HorizontalPower = 1.0;
 
-    public static double gateInitPos = 0.22;
-    public static double gateLowerPos = 0.98;
-    public static double gateLiftPos = 0.8;
+    public static double gateInitPos = 0.05;
+    public static double gateLowerPos = 0.8;
+    public static double gateLiftPos = 0.7;
 
     /*
     * Do not change motor direction to avoid breaking odometry
@@ -80,13 +80,13 @@ public class IntakeController implements Controller {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        if (OpModeBase.getOpModeType() == OpModeBase.OPMODE.Auto) {
-            gate.setPosition(gateInitPos);
-        } else gateLower();
+        if (OpModeBase.getOpModeType() == OpModeBase.OPMODE.Auto) gate.setPosition(gateInitPos);
     }
 
     @Override
     public void start() {
+
+        if (OpModeBase.getOpModeType() == OpModeBase.OPMODE.Tele) gate.setPosition(gateLowerPos);
 
     }
 
@@ -147,6 +147,27 @@ public class IntakeController implements Controller {
             topRoller.setPower(RollerPower);
             leftRoller.setPower(HorizontalPower);
             rightRoller.setPower(HorizontalPower);
+        }
+    }
+
+    public void run(DcMotorEx.Direction Direction, double power) {
+        isRunning = true;
+//        if (!sensorThread.isAlive()) sensorThread.start();
+        telemetry.addData(ControllerName, "Intaking");
+
+        if (Direction == DcMotorSimple.Direction.FORWARD) {
+            intake.setPower(-IntakePower * power);
+            intake2.setPower(-Intake2Power * power);
+            topRoller.setPower(-RollerPower * power);
+            leftRoller.setPower(-HorizontalPower * power);
+            rightRoller.setPower(-HorizontalPower * power);
+        }
+        else {
+            intake.setPower(IntakePower * power);
+            intake2.setPower(Intake2Power * power);
+            topRoller.setPower(RollerPower * power);
+            leftRoller.setPower(HorizontalPower * power);
+            rightRoller.setPower(HorizontalPower * power);
         }
     }
 

@@ -16,27 +16,41 @@ public class GamepadMappings {
         this.gamepad2 = gamepad2;
     }
 
-    public boolean DriveMode() { return gamepad1.right_bumper && !gamepad1.left_bumper; }
-    public boolean Shoot() { return gamepad1.a && !gamepad1.start; }
+    public boolean DriveMode() {
+        return gamepad1.right_bumper && !gamepad1.left_bumper;
+    }
+
+    public boolean Shoot() {
+        return gamepad1.a && !gamepad1.start;
+    }
+
     public boolean PowerShot() {
         return gamepad1.b && !gamepad1.start;
     }
+
     public boolean AutoIntake() {
         return gamepad1.x;
     }
-    public boolean IncrementLeft() { return gamepad1.dpad_up; }
+
+    public boolean IncrementLeft() {
+        return gamepad1.dpad_up;
+    }
+
     public boolean IncrementRight() {
         return gamepad1.dpad_down;
     }
+
     public boolean Intake() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.back;
-        return gamepad2.back || (gamepad2.start && !gamepad2.b);
+        return gamepad2.back;
     }
+    public boolean StraightenTurret() { return gamepad1.y; }
+    public boolean IncreasePower() { return gamepad1.dpad_right; }
+    public boolean DecreasePower() { return gamepad1.dpad_left; }
+
+    public boolean Tapper() { return gamepad2.y; }
     public boolean StopAllIntakes() {
         return gamepad2.x;
-    }
-    public boolean ResetIntakeCounter() {
-        return gamepad1.back && gamepad1.start && !gamepad1.a;
     }
     public boolean Wobble() {
         if (Tele.DriverMode == DriverMode.OneDriver) return gamepad1.dpad_up || gamepad1.dpad_down;

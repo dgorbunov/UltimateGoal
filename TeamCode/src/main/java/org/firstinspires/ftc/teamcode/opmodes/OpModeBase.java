@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.util.Button;
 public class OpModeBase extends OpMode {
     protected GamepadMappings gamepad;
     protected Button intakeButton = new Button();
-    protected Button resetIntakeCounterButton = new Button();
     protected Button autoIntakeButton = new Button();
     protected Button stopIntakeButton = new Button();
     protected Button localizeButton = new Button();
@@ -38,6 +37,10 @@ public class OpModeBase extends OpMode {
     protected Button driveModeButton = new Button();
     protected Button incrementLeftButton = new Button();
     protected Button incrementRightButton = new Button();
+    protected Button straightenTurretButton = new Button();
+    protected Button increasePowerButton = new Button();
+    protected Button decreasePowerButton = new Button();
+    protected Button tapperButton = new Button();
 
     protected DrivetrainController drive;
     protected IntakeController intake;
@@ -51,7 +54,7 @@ public class OpModeBase extends OpMode {
     protected MultipleTelemetry telemetryd;
     protected NanoClock systemClock = NanoClock.system();
 
-    public enum OPMODE{
+    public enum OPMODE {
         Tele, Auto
     }
 
@@ -61,21 +64,6 @@ public class OpModeBase extends OpMode {
     public void init() {
         telemetryd = new MultipleTelemetry(super.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryd.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-
-//        Properties properties = new Properties();
-//        try {
-//            properties.load(this.getClass().getClassLoader().getResourceAsStream("/version.properties"));
-//            if (properties != null) {
-//                String patch = properties.getProperty("VERSION_PATCH");
-//                String build = properties.getProperty("VERSION_BUILD");
-//                telemetry.addLine("Running Patch: " + patch + ", Build: " + build);
-//                Log.i("Status, ","Running Patch: " + patch + ", Build: " + build);
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         telemetryd.addLine("<strong>Initializing...</strong>");
 
         if (OPMODE_TYPE != null && OPMODE_TYPE == OPMODE.Auto) OpenCVController.DEFAULT_PIPELINE = PIPELINE.AUTO;
@@ -91,17 +79,15 @@ public class OpModeBase extends OpMode {
         rearIntake = controllers.get(RearIntakeController.class, FieldConstants.VertIntake);
         wobble = controllers.get(WobbleController.class, FieldConstants.Wobble);
         camera = controllers.get(CameraController.class, FieldConstants.Camera);
-
         controllers.init();
 
         gamepad = new GamepadMappings(gamepad1, gamepad2);
-
-        telemetryd.addLine("<h3>Initialized</h3>");
     }
 
     @Override
     public void init_loop() {
-
+        telemetryd.addLine("<h3>Initialized</h3>");
+        telemetryd.addLine(shooter.getSpeedStability());
     }
 
     @Override
@@ -109,7 +95,6 @@ public class OpModeBase extends OpMode {
         telemetryd.clear();
         controllers.start();
     }
-
 
     @Override
     public void loop() {

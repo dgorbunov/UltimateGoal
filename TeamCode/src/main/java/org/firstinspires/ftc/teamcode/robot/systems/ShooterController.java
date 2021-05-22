@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
-import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,40 +23,47 @@ import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 @Config
 public class ShooterController implements Controller {
 
-    public static volatile double RetractDelay = 200;
+    public static volatile double RetractDelay = 100;
     public static volatile double[] ShootingDelay = {250,250,0};
     public static volatile boolean useDelayArray = false;
-    public static volatile double Delay1 = 750;
-    public static volatile double Delay2 = 750;
+    public static volatile double Delay1 = 800;
+    public static volatile double Delay2 = 1200;
 
-    public static double ServoBumpPosition = 0.18;
-    public static double ServoRetractPosition = 0.33;
+    public static double BumperExtendPosition = 0.02;
+    public static double BumperRetractPosition = 0.37;
+    public static double TapperExtendPosition = 0;
+    public static double TapperRetractPosition = 0;
 
-    private final double TICKS_PER_REV = 28; //Do not modify
+    private final double TICKS_PER_REV = 28.0; //Do not modify
 
     public static double MAX_VEL;
-    public static double kP = 2;
-    public static double kI = 0.2;
-    public static double kD = 6.5;
-    public static double F = 11.7;
-    public static double SHOOTER_ADMISSIBLE_ERROR = 40; //RPM
+    public static volatile double kP = 6;
+    public static volatile double kI = 0.2; //us``ed to rev up
+    public static volatile double kD = 6.5;
+    public static volatile double F = 11.7;
+    public static volatile double kP2 = 5; //used for shooting
+    public static volatile double kI2 = 0.3;
+    public static volatile double kD2 = 0;
+    public static double SHOOTER_ADMISSIBLE_ERROR = 60; //in RPM
 
     public volatile boolean shootingState;
     private volatile double targetRPM;
     private boolean stopWheelOnFinish = true;
-    private int powerShotCount = 0;
     private static volatile boolean limitHit;
+    private static volatile boolean lockTurret = false;
 
     public static double TURRET_CENTER_POS = 0.41;
     public static double TURRET_OFFSET = 6;
     public static double TURRET_MAX_ANGLE = 140;
-    public static double TURRET_RIGHT_LIMIT = -17;
+    public static double TURRET_RIGHT_LIMIT = -29;
     public static double TURRET_LEFT_LIMIT = 75;
     public static int TURRET_UPDATE_RATE = 15;
 
-    public static final double SPEED_FUNC_SLOPE = 8.154761905;
-    public static final double SPEED_FUNC_INTERCEPT = 2653.571429;
-    public static final double SPEED_FUNC_POWERSHOT_OFFSET = -325;
+    public static final double SPEED_FUNC_SLOPE = 5.20833;
+    public static double SPEED_FUNC_INTERCEPT = 2842.5;
+    public static final double SPEED_FUNC_POWERSHOT_OFFSET = -224;
+    public static final double ANGLE_FUNC_SLOPE = 5.20833; //to account for shot curving
+    public static final double ANGLE_FUNC_INTERCEPT = 2877.5;
     
     public static enum ShootingMode {
         GOAL, POWERSHOT
@@ -77,6 +83,7 @@ public class ShooterController implements Controller {
     private Telemetry telemetry;
     private MultipleTelemetry telemetryd;
     private Servo turret;
+    private Servo tapper;
 
     public ShooterController(HardwareMap hardwareMap, Telemetry telemetry, MultipleTelemetry telemetryd) {
         this.telemetry = telemetry;
@@ -90,52 +97,67 @@ public class ShooterController implements Controller {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
         turret = hardwareMap.get(Servo.class, "turret");
+        turret = hardwareMap.get(Servo.class, "tapper");
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
         turretThread.start();
 
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
-        //TODO: re-tune
-        telemetry.addData("F", F);
 
         //this is acting as our state variable
         shooter.setMotorDisable();
+        TURRET_OFFSET = 6;
         retract();
     }
 
     @Override
-    public void start() { }
+    public void start() {
+        shooter.setVelocityPIDFCoefficients(kP2, kI2, kD2, F);
+    }
 
     @Override
     public void stop() {
         stopShooter();
         turretThread.killThread();
+        turret.setPosition(TURRET_CENTER_POS);
+        tapperRetract();
     }
 
     public void stopShooter() {
         targetRPM = 0;
         shooter.setPower(0);
         shooter.setMotorDisable();
-        bumper.setPosition(ServoRetractPosition);
+        bumper.setPosition(BumperRetractPosition);
         shootingState = false;
     }
 
-    private void setPID() {
-        //https://docs.google.com/document/u/2/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/mobilebasic
-        MAX_VEL = RPMtoTPS(6000);
-        F = 32767 / MAX_VEL;
-        kP = 0.1 * F;
-        kI = 0.1 * kP;
-        kD = 0;
+    public void tapperExtend() {
+        tapper.setPosition(TapperExtendPosition);
+    }
+
+    public void tapperRetract() {
+        tapper.setPosition(TapperRetractPosition);
     }
 
     public void updateTurret(Pose2d robotPos, Vector2d targetPos) {
+        lockTurret = false;
         this.robotPos = robotPos;
         this.targetPos = targetPos;
         setRPM(calculateRPM(robotPos, targetPos, shootingMode));
     }
 
+    public void updateTurretAuto(Pose2d robotPos, Vector2d targetPos) {
+        lockTurret = false;
+        this.robotPos = robotPos;
+        this.targetPos = targetPos;
+    }
+
+    public void lockTurret(){
+        lockTurret = true;
+    }
+
     public void turnTurret(Pose2d robotPos, Vector2d targetPos) {
+        lockTurret = false;
         this.robotPos = robotPos;
         this.targetPos = targetPos;
 
@@ -158,6 +180,7 @@ public class ShooterController implements Controller {
     }
 
     private double turnTurretAbsolute(double deg) {
+        lockTurret = false;
         double degree = deg;
 
         if (degree > TURRET_LEFT_LIMIT) {
@@ -185,13 +208,14 @@ public class ShooterController implements Controller {
             turret.setPosition(TURRET_CENTER_POS);
             while (isRunning) {
                 try {
-                    sleep(TURRET_UPDATE_RATE);
-                    turnTurret(robotPos, targetPos);
-
                     if (!limitSpeak && limitHit) {
                         limitSpeak = true;
                         telemetry.speak("limit");
                     } else if (limitSpeak && !limitHit) limitSpeak = false;
+
+                    sleep(TURRET_UPDATE_RATE);
+                    if (!lockTurret) turnTurret(robotPos, targetPos);
+                    else turret.setPosition(TURRET_CENTER_POS);
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
@@ -232,64 +256,74 @@ public class ShooterController implements Controller {
     public synchronized void shootAsync(int ringCount, double RPM){
         shootingState = true;
         stopWheelOnFinish = true;
-        new ShooterThread(ringCount, RPM).start();
+        shootingMode = ShootingMode.GOAL;
+        if (!limitHit) new ShooterThread(ringCount, RPM).start();
     }
 
     public void shoot(int ringCount, double RPM, boolean stop){
         shootingState = true;
         stopWheelOnFinish = stop;
+        shootingMode = ShootingMode.GOAL;
 
         setRPM(RPM);
         checkSpeed(RPM);
+        if (!limitHit) bumpRings(ringCount);
+    }
+
+    public void bump(int ringCount){
         bumpRings(ringCount);
     }
 
     public synchronized void powerShot(double RPM){
         stopWheelOnFinish = false;
+        shootingMode = ShootingMode.POWERSHOT;
 
         checkSpeed(RPM);
         bumpRings(1);
-        powerShotCount++;
         Sleep.sleep(150);
     }
 
     public synchronized void powerShotStrafe(double RPM){
         stopWheelOnFinish = false;
+        shootingMode = ShootingMode.POWERSHOT;
+
         bumpRings(1);
-        powerShotCount++;
     }
 
     private synchronized void checkSpeed(double targetRPM) {
-        this.targetRPM = targetRPM;
-        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
-        double targetTPS = RPMtoTPS(targetRPM);
-
-        NanoClock systemClock = NanoClock.system();
-        double initialTime = systemClock.seconds();
-        double maxDelay = 4.5; //while loop exits after maxDelay seconds
-        int i = 0;
-
-        while (systemClock.seconds() - initialTime < maxDelay && (Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)){
-            if (i == 0) telemetry.addLine("Waiting for shooter to spin up");
-            i++;
-        }
-
-       if (systemClock.seconds() - initialTime > maxDelay) {
-           RobotLog.clearGlobalWarningMsg();
-           RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
-       }
+//        this.targetRPM = targetRPM;
+//        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
+//        double targetTPS = RPMtoTPS(targetRPM);
+//
+//        NanoClock systemClock = NanoClock.system();
+//        double initialTime = systemClock.seconds();
+//        double maxDelay = 3; //while loop exits after maxDelay seconds
+//        int i = 0;
+//
+//        RobotLog.clearGlobalWarningMsg();
+//
+//        while (systemClock.seconds() - initialTime < maxDelay && (Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)){
+//            if (i == 0) telemetryd.addLine("Waiting for shooter to spin up");
+//            i++;
+//            sleep(15);
+//        }
+//
+//       if (systemClock.seconds() - initialTime > maxDelay) {
+//           RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
+//       }
     }
 
     public String getSpeedStability() {
         double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
         double targetTPS = RPMtoTPS(targetRPM);
-        if ((Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)) return "<strong>Waiting for shooter velocity to stabilize</strong>";
+        if ((Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)) return "<strong>[WARN] Shooter velocity is NOT stable</strong>";
         else return "<strong>Shooter velocity is stable</strong>";
     }
 
-    /**
-     * Spin up flywheel before shooting to save time
-     **/
+    public void incrementPower(double increment) {
+        SPEED_FUNC_INTERCEPT += increment;
+    }
+
     public void spinUp(double RPM){
         setRPM(RPM);
     }
@@ -406,14 +440,14 @@ public class ShooterController implements Controller {
     }
 
     private double RPMtoTPS(double RPM){
-        return RPM * TICKS_PER_REV / 60;
+        return RPM * TICKS_PER_REV / 60.0;
     }
 
     private void bump() {
-        bumper.setPosition(ServoBumpPosition);
+        bumper.setPosition(BumperExtendPosition);
     }
     private void retract() {
-        bumper.setPosition(ServoRetractPosition);
+        bumper.setPosition(BumperRetractPosition);
     }
 
 }

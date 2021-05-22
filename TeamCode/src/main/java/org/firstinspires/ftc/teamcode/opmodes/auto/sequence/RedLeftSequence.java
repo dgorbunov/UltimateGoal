@@ -3,16 +3,18 @@ package org.firstinspires.ftc.teamcode.opmodes.auto.sequence;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants;
 import org.firstinspires.ftc.teamcode.robot.ControllerManager;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.EndingPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShootingPos;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalShootingPosAuto;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPosAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMAuto;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoalAuto;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 
 public class RedLeftSequence extends Sequence {
 
@@ -35,28 +37,22 @@ public class RedLeftSequence extends Sequence {
                 targetZone = RedField.TargetZoneC;
                 break;
         }
-
         /**
          * Begin Sequence
          */
-
-        actions.add(() -> moveSplineCustomSpeed(PowerShootingPos, 0, 0, -45, 0.75));
-        actions.add(() -> powerShot(MechConstants.RPMPowerShotAuto));
-
-        //TODO: TUNE LATERAL MULTIPLIER/XY MULTIPLIERS
-        //TODO: LINEAR INSTEAD OF SPLINE
-        //TODO: LINEAR HEADING VS. SPLINE HEADING? CHECK IN SPLINETEST CLASS
+        actions.add(() -> moveSplineCustomSpeed(GoalShootingPosAuto, 0, 0, -45, 0.8));
+        actions.add(() -> goalShot(RPMGoalAuto, 3));
 
         if (ringCount == 1) {
-            actions.add(() -> intakeRings(ringCount, RedField.IntakeOnePos, 0));
-            actions.add(() -> goalShot(RedField.GoalShotPos, 0, RPMAuto, 1));
+            actions.add(() -> intakeShootSequence(ringCount, RPMGoal, RedField.IntakeOnePos, RedField.IntakeOnePos, 0));
         }
         else if (ringCount == 4) {
-            actions.add(() -> intakeRings(4, RedField.IntakeFourPos, 0));
-            actions.add(() -> goalShot(RedField.GoalShotPos, 0, RPMAuto, 3));
+            actions.add(() -> intakeShootSequence(ringCount, RPMGoal, RedField.IntakeFourIntermediatePos, RedField.IntakeFourPos, 0));
         }
 
-        actions.add(() -> stopShooter());
+        actions.add(() -> moveLinear(PowerShotPosAuto,0));
+        actions.add(() -> powerShot(RPMPowerShot));
+        actions.add(() -> stopIntake());
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());

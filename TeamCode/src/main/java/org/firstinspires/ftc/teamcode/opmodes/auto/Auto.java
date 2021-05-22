@@ -21,10 +21,11 @@ import java.util.Optional;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Blue;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Alliance.Red;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.RingPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Left;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.Side.Right;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShotAuto;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoalAuto;
 
 @Disabled
 @Autonomous(name="Auto", group="Iterative Opmode")
@@ -46,7 +47,8 @@ public class Auto extends OpModeBase {
         super.init();
 
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        shooter.spinUp(RPMPowerShotAuto);
+        shooter.spinUp(RPMGoalAuto);
+        shooter.updateTurretAuto(drive.getPoseEstimate(), MiddlePowerShotPos);
 
         makeSequences();
         synchronized (lock) {
