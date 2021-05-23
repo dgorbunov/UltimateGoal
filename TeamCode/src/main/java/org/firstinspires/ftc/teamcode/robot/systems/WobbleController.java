@@ -34,6 +34,7 @@ public class WobbleController implements Controller {
     public static double ArmPickupPos = 0.7;
     public static double ArmPickupPosAuto = 0.2; //lower, doesn't need to clear wall
     public static double ArmInitPos = 0.9; //to be within 18in
+    public static double ArmAutoPos = 0.8; //to be within 18in
 
     public static int grabDelay = 300;
     public static int releaseDelay = 150;

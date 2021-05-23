@@ -14,7 +14,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveFullPower;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.DriveSlowPower;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoalAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TurretOffsetAdjustment;
 
 @TeleOp(name="Tele", group="Iterative Opmode")
@@ -38,7 +38,7 @@ public abstract class Tele extends OpModeBase {
         initTime = systemClock.seconds();
 
         drive.setPoseEstimate(MechConstants.TeleStartingPose);
-        shooter.spinUp(RPMGoal);
+        shooter.spinUp(RPMGoalAuto);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class Tele extends OpModeBase {
 
         shootButton.runInQueueAsync(gamepad.Shoot(),
                 () -> intake.gateLift(),
-                () -> shooter.shoot(1, MechConstants.RPMGoal, false),
+                () -> shooter.shoot(1, MechConstants.RPMGoalAuto, false),
                 () -> intake.gateLower());
 
         incrementLeftButton.runOnceBlocking(
@@ -139,10 +139,9 @@ public abstract class Tele extends OpModeBase {
                 () -> shooter.lockTurret()
         );
 
-        tapperButton.toggle(
+        tapperButton.runOnce(
                 gamepad.Tapper(),
-                () -> shooter.tapperExtend(),
-                () -> shooter.tapperRetract()
+                () -> shooter.tapRings()
         );
 
         drive.putPacketData("shooter RPM", shooter.getCurrentRPM());

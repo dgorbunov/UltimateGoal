@@ -12,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleXOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.SideWobbleYOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedLeft;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMFromStack;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoalAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 
@@ -40,28 +40,30 @@ public class RedLeftSequence extends Sequence {
         /**
          * Begin Sequence
          */
-        actions.add(() -> moveSplineCustomSpeed(GoalShootingPosAuto, 0, 0, -45, 0.8));
-        actions.add(() -> goalShot(RPMGoalAuto, 3));
+        actions.add(() -> moveSplineCustomSpeed(GoalShootingPosAuto, 0, 0, -45, 0.9));
+        actions.add(() -> goalShot(RPMFromStack, 3));
 
         if (ringCount == 1) {
-            actions.add(() -> intakeShootSequence(ringCount, RPMGoal, RedField.IntakeOnePos, RedField.IntakeOnePos, 0));
+            actions.add(() -> intakeShootSequence(ringCount, RPMGoalAuto, RedField.IntakeOnePos, RedField.IntakeOnePos, 0));
         }
         else if (ringCount == 4) {
-            actions.add(() -> intakeShootSequence(ringCount, RPMGoal, RedField.IntakeFourIntermediatePos, RedField.IntakeFourPos, 0));
+            actions.add(() -> intakeShootSequence(ringCount, RPMGoalAuto, RedField.IntakeFourIntermediatePos, RedField.IntakeFourPos, 0));
         }
 
         actions.add(() -> moveLinear(PowerShotPosAuto,0));
         actions.add(() -> powerShot(RPMPowerShot));
-        actions.add(() -> stopIntake());
+//        actions.add(() -> goalShot(RPMGoalAuto, 3));
+        actions.add(() -> stopShooter());
 
         actions.add(() -> moveLinear(targetZone.getX() + SideWobbleXOffset, targetZone.getY() + SideWobbleYOffset,0));
         actions.add(() -> dropWobbleSide());
+        actions.add(() -> stopIntake());
 
         actions.add(() -> moveToWobble(RedField.RightWobbleIntermediate, ringCount));
         actions.add(() -> approachWobble(RedField.RightWobblePos));
         actions.add(() -> pickupWobble());
 
-        actions.add(() -> moveToDropWobble(targetZone, 0.85));
+        actions.add(() -> moveToDropWobble(targetZone, 1.0));
         actions.add(() -> dropWobble());
 
         if (ringCount == 4) {

@@ -15,12 +15,11 @@ public class MechConstants {
      */
 
     public static double DriveFullPower = 0.90;
-    public static double DriveSlowPower = 0.16;
+    public static double DriveSlowPower = 0.18;
 
-    public static int RPMGoal = 3100;
-    public static double RPMAuto = 3850;
-    public static double RPMGoalAuto = 3350;
-    public static double RPMPowerShot = 3000;
+    public static int RPMGoalAuto = 3100;
+    public static double RPMFromStack = 3400;
+    public static double RPMPowerShot = 2940;
     public static double TurretOffsetAdjustment = 2;
     public static double TeleTrajectorySpeed = 0.95;
 

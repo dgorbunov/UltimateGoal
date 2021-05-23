@@ -22,9 +22,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotOffset;
-import static org.firstinspires.ftc.teamcode.robot.systems.ShooterController.TURRET_OFFSET;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
-import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildBackTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLineTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedLinearTrajectory;
 import static org.firstinspires.ftc.teamcode.util.TrajectoryHelper.buildCustomSpeedSplineTrajectory;
@@ -195,11 +193,13 @@ public abstract class Sequence {
         telemetry.addData("Sequence","moveToShoot" );
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
 
-        TURRET_OFFSET -= 3;
+        ShooterController.TURRET_OFFSET -= 4.5;
         shooter.turnTurret(drive.getPoseEstimate(), GoalPos);
-        sleep(100);
-        shooter.shoot(numRings, RPM, false);
-        TURRET_OFFSET += 3;
+        sleep(800);
+        shooter.shoot(3, RPM, false);
+//        sleep(800);
+//        shooter.shoot(1, RPM, false);
+        ShooterController.TURRET_OFFSET += 4.5;
     }
 
     public void spinUp(double RPM){
@@ -210,18 +210,6 @@ public abstract class Sequence {
     public void stopShooter(){
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
         shooter.stopShooter();
-    }
-
-    public void shootGoal(int numRings, double RPM) {
-        telemetry.addData("Sequence","shootRings: " + numRings);
-        ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
-        drive.turnAbsolute(0, 0.75);
-        shooter.shoot(numRings, RPM, true);
-    }
-
-    public void backOffFromWobbles (double distance) {
-        telemetry.addData("Sequence", "back off from wobbles");
-        drive.followTrajectory(buildBackTrajectory(drive, distance));
     }
 
     public void strafe (double x, double y) {
@@ -245,24 +233,23 @@ public abstract class Sequence {
                 RPM - 10,
                 RPM - 10,
         };
-        double offset = TURRET_OFFSET;
-        TURRET_OFFSET = 0;
 
         for (int i = 0; i < 3; i++) {
             drive.update();
             shooter.updateTurretAuto(drive.getPoseEstimate(), targets[i]);
             sleep(sleep * 1.5);
             shooter.powerShot(RPM);
-            shooter.updateTurretAuto(drive.getPoseEstimate(), new Vector2d(drive.getPoseEstimate().getX() + 10, drive.getPoseEstimate().getY() - 5)); //reset
+            shooter.lockTurret();
             shooter.spinUp(speeds[i]);
             sleep(sleep);
         }
-        TURRET_OFFSET = offset;
     }
 
     public void intakeShootSequence(int numRings, int RPM, Vector2d intermediate, Vector2d position, double heading) {
         IntakeController intake = controllers.get(IntakeController.class, FieldConstants.Intake);
         ShooterController shooter = controllers.get(ShooterController.class, FieldConstants.Shooter);
+
+        shooter.spinUp(RPM);
 
         switch (numRings) {
             case (0):
@@ -282,8 +269,7 @@ public abstract class Sequence {
                 telemetry.addData("Sequence", "intake 4 rings");;
                 intake.run(FORWARD);
 
-                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, intermediate, 0.30));
-                Sleep.sleep(1000);
+                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, intermediate, 0.70));
 //                boolean shoot = true;
 //                Actions intakeSequence = new Actions();
 //                intakeSequence.add(() -> Sleep.sleep(7000));
@@ -294,11 +280,13 @@ public abstract class Sequence {
 //                }
 //                drive.stop();
 //                intakeSequence.add(() -> shooter.shoot(1, RPMGoal - 175, false));
-                shooter.bump(2);
-                Sleep.sleep(1500);
+                Sleep.sleep(2500);
+                shooter.tapRings();
+                Sleep.sleep(350);
                 shooter.shoot(1, RPM, false);
-                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, position, 0.25));
-                Sleep.sleep(1500);
+                drive.followTrajectory(buildCustomSpeedLineTrajectory(drive, position, 0.15));
+                Sleep.sleep(1000);
+                shooter.tapRings();
                 break;
             default:
                 telemetry.addData("Sequence", "unsupported # of rings to intake");

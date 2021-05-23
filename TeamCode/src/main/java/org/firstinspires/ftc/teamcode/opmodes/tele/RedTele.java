@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.MiddlePowerShotPos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotOffset;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.PowerShotPosAuto;
-import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoal;
+import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMGoalAuto;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.RPMPowerShot;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.Red.GoalShotAngle;
 import static org.firstinspires.ftc.teamcode.opmodes.tele.params.MechConstants.TeleTrajectorySpeed;
@@ -36,7 +36,7 @@ public class RedTele extends Tele {
         drive.stop();
         rearIntake.stop();
 
-        shooter.spinUp(RPMGoal);
+        shooter.spinUp(RPMGoalAuto);
         intake.stopWheels();
 
         //TODO: fix opmode timeout. make trajectory async
@@ -44,7 +44,7 @@ public class RedTele extends Tele {
         drive.turnAbsolute(Math.toRadians(GoalShotAngle), 0.95);
         sleep(250);
         intake.stopIntake(false);
-        shooter.shoot(3, RPMGoal, true);
+        shooter.shoot(3, RPMGoalAuto, true);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class RedTele extends Tele {
         manualShoot = true;
         intake.stopIntake(false);
 
-        shooter.shoot(3, RPMGoal, true);
+        shooter.shoot(3, RPMGoalAuto, true);
         while (shooter.shootingState) {
             Sleep.sleep(10);
         }

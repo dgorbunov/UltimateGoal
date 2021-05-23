@@ -44,9 +44,9 @@ public class FieldConstants {
         public static final Vector2d RingPos = new Vector2d(-24, -36.5);
         public static final Vector2d PowerShotStrafePos = new Vector2d(-4, -8);
         public static final Vector2d IntakeOnePos = RingPos;
-        public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 22, -36.5);
-        public static final Vector2d IntakeFourIntermediatePos = new Vector2d(RingPos.getX() + 8, -36.5);
-        public static final Vector2d LeftWobblePos = new Vector2d(-36, -20);
+        public static final Vector2d IntakeFourPos = new Vector2d(RingPos.getX() + 27, -38.5);
+        public static final Vector2d IntakeFourIntermediatePos = new Vector2d(RingPos.getX() + 8, -38.5);
+        public static final Vector2d LeftWobblePos = new Vector2d(-36, -18);
         public static final Vector2d LeftWobbleIntermediate = new Vector2d(LeftWobblePos.getX() + 7, LeftWobblePos.getY());
         public static final Vector2d RightWobblePos = new Vector2d(-35.5, -49);
         public static final Vector2d RightWobbleIntermediate = new Vector2d(RightWobblePos.getX() + 7, RightWobblePos.getY());
@@ -58,11 +58,11 @@ public class FieldConstants {
         public static final Vector2d GoalShotPosTele = IntakePos;
         public static final Vector2d GoalPos = new Vector2d(72, -36);
         public static final Vector2d MiddlePowerShotPos = new Vector2d (72, -12);
-        public static final Vector2d GoalShootingPosAuto = new Vector2d(RingPos.getX() - 12, -36.5);
+        public static final Vector2d GoalShootingPosAuto = new Vector2d(RingPos.getX() - 12, -38.5);
         public static final Vector2d PowerShotPosAuto = new Vector2d(-2, -36.5);
         public static final double PowerShotOffset = 7.5;
         public static final double SideWobbleXOffset = 0;
-        public static final double SideWobbleYOffset = 7.5;
+        public static final double SideWobbleYOffset = 8.5;
         public static final double FrontWobbleXOffset = -15;
         public static final double FrontWobbleYOffset = 3;
     }

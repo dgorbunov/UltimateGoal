@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,7 +18,6 @@ import org.firstinspires.ftc.teamcode.robot.Controller;
 import org.firstinspires.ftc.teamcode.util.Sleep;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.params.FieldConstants.RedField.GoalPos;
-import static org.firstinspires.ftc.teamcode.robot.systems.IntakeController.numRings;
 import static org.firstinspires.ftc.teamcode.util.Sleep.sleep;
 
 @Config
@@ -26,13 +26,14 @@ public class ShooterController implements Controller {
     public static volatile double RetractDelay = 100;
     public static volatile double[] ShootingDelay = {250,250,0};
     public static volatile boolean useDelayArray = false;
-    public static volatile double Delay1 = 800;
-    public static volatile double Delay2 = 1200;
+    public static volatile double Delay1 = 1000;
+    public static volatile double Delay2 = 1000;
 
-    public static double BumperExtendPosition = 0.02;
-    public static double BumperRetractPosition = 0.37;
-    public static double TapperExtendPosition = 0;
-    public static double TapperRetractPosition = 0;
+    public static double BumperExtendPosition = 0.18;
+    public static double BumperRetractPosition = 0.355;
+    public static double TapperExtendPosition = 0.35;
+    public static double TapperRetractPosition = 0.8;
+    public static double TapperDelay = 300;
 
     private final double TICKS_PER_REV = 28.0; //Do not modify
 
@@ -44,7 +45,7 @@ public class ShooterController implements Controller {
     public static volatile double kP2 = 5; //used for shooting
     public static volatile double kI2 = 0.3;
     public static volatile double kD2 = 0;
-    public static double SHOOTER_ADMISSIBLE_ERROR = 60; //in RPM
+    public static double SHOOTER_ADMISSIBLE_ERROR = 75; //in RPM
 
     public volatile boolean shootingState;
     private volatile double targetRPM;
@@ -53,15 +54,15 @@ public class ShooterController implements Controller {
     private static volatile boolean lockTurret = false;
 
     public static double TURRET_CENTER_POS = 0.41;
-    public static double TURRET_OFFSET = 6;
+    public static double TURRET_OFFSET = 3.5;
     public static double TURRET_MAX_ANGLE = 140;
     public static double TURRET_RIGHT_LIMIT = -29;
     public static double TURRET_LEFT_LIMIT = 75;
     public static int TURRET_UPDATE_RATE = 15;
 
-    public static final double SPEED_FUNC_SLOPE = 5.20833;
+    public static double SPEED_FUNC_SLOPE = 5.10833;
     public static double SPEED_FUNC_INTERCEPT = 2842.5;
-    public static final double SPEED_FUNC_POWERSHOT_OFFSET = -224;
+    public static double SPEED_FUNC_POWERSHOT_OFFSET = -224;
     public static final double ANGLE_FUNC_SLOPE = 5.20833; //to account for shot curving
     public static final double ANGLE_FUNC_INTERCEPT = 2877.5;
     
@@ -97,7 +98,7 @@ public class ShooterController implements Controller {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         bumper = hardwareMap.get(Servo.class, "bumper");
         turret = hardwareMap.get(Servo.class, "turret");
-        turret = hardwareMap.get(Servo.class, "tapper");
+        tapper = hardwareMap.get(Servo.class, "tapper");
         shooter.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(Direction);
         turretThread.start();
@@ -105,14 +106,15 @@ public class ShooterController implements Controller {
         shooter.setVelocityPIDFCoefficients(kP, kI, kD, F);
 
         //this is acting as our state variable
+        TURRET_OFFSET = 3.5;
         shooter.setMotorDisable();
-        TURRET_OFFSET = 6;
-        retract();
+        bumperRetract();
     }
 
     @Override
     public void start() {
         shooter.setVelocityPIDFCoefficients(kP2, kI2, kD2, F);
+        tapperRetract();
     }
 
     @Override
@@ -121,6 +123,7 @@ public class ShooterController implements Controller {
         turretThread.killThread();
         turret.setPosition(TURRET_CENTER_POS);
         tapperRetract();
+        bumperExtend(); //to zero out position drift
     }
 
     public void stopShooter() {
@@ -131,11 +134,13 @@ public class ShooterController implements Controller {
         shootingState = false;
     }
 
-    public void tapperExtend() {
-        tapper.setPosition(TapperExtendPosition);
+    private void tapperRetract() {
+        tapper.setPosition(TapperRetractPosition);
     }
 
-    public void tapperRetract() {
+    public void tapRings() {
+        tapper.setPosition(TapperExtendPosition);
+        Sleep.sleep(TapperDelay);
         tapper.setPosition(TapperRetractPosition);
     }
 
@@ -154,6 +159,10 @@ public class ShooterController implements Controller {
 
     public void lockTurret(){
         lockTurret = true;
+    }
+
+    public void unlockTurret(){
+        lockTurret = false;
     }
 
     public void turnTurret(Pose2d robotPos, Vector2d targetPos) {
@@ -266,8 +275,15 @@ public class ShooterController implements Controller {
         shootingMode = ShootingMode.GOAL;
 
         setRPM(RPM);
-        checkSpeed(RPM);
         if (!limitHit) bumpRings(ringCount);
+    }
+    public void shootCheckSpeed(int ringCount, double RPM, boolean stop){
+        shootingState = true;
+        stopWheelOnFinish = stop;
+        shootingMode = ShootingMode.GOAL;
+
+        setRPM(RPM);
+        if (!limitHit) bumpRingsCheckSpeed(RPM, ringCount);
     }
 
     public void bump(int ringCount){
@@ -278,7 +294,6 @@ public class ShooterController implements Controller {
         stopWheelOnFinish = false;
         shootingMode = ShootingMode.POWERSHOT;
 
-        checkSpeed(RPM);
         bumpRings(1);
         Sleep.sleep(150);
     }
@@ -291,26 +306,26 @@ public class ShooterController implements Controller {
     }
 
     private synchronized void checkSpeed(double targetRPM) {
-//        this.targetRPM = targetRPM;
-//        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
-//        double targetTPS = RPMtoTPS(targetRPM);
-//
-//        NanoClock systemClock = NanoClock.system();
-//        double initialTime = systemClock.seconds();
-//        double maxDelay = 3; //while loop exits after maxDelay seconds
-//        int i = 0;
-//
-//        RobotLog.clearGlobalWarningMsg();
-//
-//        while (systemClock.seconds() - initialTime < maxDelay && (Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)){
-//            if (i == 0) telemetryd.addLine("Waiting for shooter to spin up");
-//            i++;
-//            sleep(15);
-//        }
-//
-//       if (systemClock.seconds() - initialTime > maxDelay) {
-//           RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
-//       }
+        this.targetRPM = targetRPM;
+        double ADMISSIBLE_ERROR = RPMtoTPS(SHOOTER_ADMISSIBLE_ERROR);
+        double targetTPS = RPMtoTPS(targetRPM);
+
+        NanoClock systemClock = NanoClock.system();
+        double initialTime = systemClock.seconds();
+        double maxDelay = 3; //while loop exits after maxDelay seconds
+        int i = 0;
+
+        RobotLog.clearGlobalWarningMsg();
+
+        while (systemClock.seconds() - initialTime < maxDelay && (Math.abs(shooter.getVelocity() - targetTPS) > ADMISSIBLE_ERROR)){
+            if (i == 0) telemetryd.addLine("Waiting for shooter to spin up");
+            i++;
+            sleep(15);
+        }
+
+       if (systemClock.seconds() - initialTime > maxDelay) {
+           RobotLog.addGlobalWarningMessage("Shooter was unable to reach set velocity in " + maxDelay + " s");
+       }
     }
 
     public String getSpeedStability() {
@@ -334,45 +349,42 @@ public class ShooterController implements Controller {
         if (useDelayArray) {
             for (int i = 0; i < ringCount; i++) {
                 checkSpeed(RPM);
-                bump();
+                bumperExtend();
                 sleep(RetractDelay);
-                retract();
+                bumperRetract();
 //                sleep(ShootingDelay[i]);
             }
         } else if (ringCount == 3) {
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
-//            sleep(Delay1);
+            bumperRetract();
+            sleep(Delay1);
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
-//            sleep(Delay2);
+            bumperRetract();
+            sleep(Delay2);
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         } else if (ringCount == 2){
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
-//            sleep(Delay1);
+            bumperRetract();
+           sleep(Delay1);
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         } else {
             checkSpeed(RPM);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         }
-
-        numRings.set(numRings.get() - ringCount);
-        if (numRings.get() < 0) numRings.set(0);
 
         shootingState = false;
         if (stopWheelOnFinish) stopShooter();
@@ -383,39 +395,36 @@ public class ShooterController implements Controller {
         //So we have to resort to this to tune delays =(
         if (useDelayArray) {
             for (int i = 0; i < ringCount; i++) {
-                bump();
+                bumperExtend();
                 sleep(RetractDelay);
-                retract();
+                bumperRetract();
                 sleep(ShootingDelay[i]);
             }
         } else if (ringCount == 3) {
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
             sleep(Delay1);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
             sleep(Delay2);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         } else if (ringCount == 2){
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
             sleep(Delay1);
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         } else {
-            bump();
+            bumperExtend();
             sleep(RetractDelay);
-            retract();
+            bumperRetract();
         }
-
-        numRings.set(numRings.get() - ringCount);
-        if (numRings.get() < 0) numRings.set(0);
 
         shootingState = false;
         if (stopWheelOnFinish) stopShooter();
@@ -443,11 +452,9 @@ public class ShooterController implements Controller {
         return RPM * TICKS_PER_REV / 60.0;
     }
 
-    private void bump() {
+    private void bumperExtend() {
         bumper.setPosition(BumperExtendPosition);
     }
-    private void retract() {
-        bumper.setPosition(BumperRetractPosition);
-    }
+    private void bumperRetract() { bumper.setPosition(BumperRetractPosition); }
 
 }

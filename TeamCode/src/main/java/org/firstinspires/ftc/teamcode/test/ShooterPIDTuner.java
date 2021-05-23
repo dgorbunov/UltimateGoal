@@ -25,8 +25,8 @@ public class ShooterPIDTuner extends OpModeBase {
     public static volatile double kD2 = 0;
     public static volatile double F2 = 11.7;
     public static volatile boolean useSecondSetInLoop = true;
-    public static double shootRPM = MechConstants.RPMGoalAuto;
-    public static double targetRPM = MechConstants.RPMGoalAuto + 75;
+    public static double shootRPM = MechConstants.RPMFromStack;
+    public static double targetRPM = MechConstants.RPMFromStack + 75;
 
     @Override
     public void init() {
